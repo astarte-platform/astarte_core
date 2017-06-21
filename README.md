@@ -1,0 +1,3 @@
+# AstarteCore
+
+AstarteCore librarary
