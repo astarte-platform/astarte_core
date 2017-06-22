@@ -12,4 +12,12 @@ defmodule AstarteCore.Mapping.Retention do
     end
   end
 
+  def from_string(retention) do
+    case retention do
+      "discard" -> :discard
+      "volatile" -> :volatile
+      "stored" -> :stored
+    end
+  end
+
 end
