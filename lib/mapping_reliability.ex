@@ -12,4 +12,12 @@ defmodule AstarteCore.Mapping.Reliability do
     end
   end
 
+  def from_string(reliability) do
+    case reliability do
+      "unreliable" -> :unreliable
+      "guaranteed" -> :guaranteed
+      "unique" -> :unique
+    end
+  end
+
 end
