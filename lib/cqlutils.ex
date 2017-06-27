@@ -1,11 +1,11 @@
 defmodule AstarteCore.CQLUtils do
 
   def interface_name_to_table_name(interface_name, major_version) do
-    String.replace(interface_name, ".", "_") <> "_v" <> Integer.to_string(major_version)
+    String.replace(String.downcase(interface_name), ".", "_") <> "_v" <> Integer.to_string(major_version)
   end
 
   def endpoint_to_db_column_name(endpoint_name) do
-    List.last(String.split(endpoint_name, "/"))
+    List.last(String.split(String.downcase(endpoint_name), "/"))
   end
 
   def mapping_value_type_to_db_type(value_type) do
