@@ -1,4 +1,4 @@
-defmodule AstarteCore.Interface.Ownership do
+defmodule Astarte.Core.Interface.Ownership do
 
   @interface_ownership_thing 1
   @interface_ownership_server 2

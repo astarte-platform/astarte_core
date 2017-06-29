@@ -1,4 +1,4 @@
-defmodule AstarteCore.InterfaceDocument.Utils do
+defmodule Astarte.Core.InterfaceDocument.Utils do
 
   defp choose_string(a, b) do
     if (a != nil) and (String.strip(a) != "") do
@@ -11,29 +11,29 @@ defmodule AstarteCore.InterfaceDocument.Utils do
   def from_json(json_doc) do
     {:ok, interface_object} = Poison.decode(json_doc)
 
-    descriptor = %AstarteCore.InterfaceDescriptor {
+    descriptor = %Astarte.Core.InterfaceDescriptor {
       name: interface_object["interface_name"],
       major_version: interface_object["version_major"],
       minor_version: interface_object["version_minor"],
-      type: AstarteCore.Interface.Type.from_string(interface_object["type"]),
-      ownership: AstarteCore.Interface.Ownership.from_string(choose_string(interface_object["ownership"], interface_object["quality"])),
-      aggregation: AstarteCore.Interface.Aggregation.from_string(choose_string(
+      type: Astarte.Core.Interface.Type.from_string(interface_object["type"]),
+      ownership: Astarte.Core.Interface.Ownership.from_string(choose_string(interface_object["ownership"], interface_object["quality"])),
+      aggregation: Astarte.Core.Interface.Aggregation.from_string(choose_string(
                                                                   (if interface_object["aggregate"], do: "object", else: nil),
                                                                   Map.get(interface_object, "aggregation", "individual")))
     }
 
     maps = for mapping <- interface_object["mappings"] do
-      %AstarteCore.Mapping {
+      %Astarte.Core.Mapping {
         endpoint: choose_string(mapping["endpoint"], mapping["path"]),
-        value_type: AstarteCore.Mapping.ValueType.from_string(mapping["type"]),
-        reliability: AstarteCore.Mapping.Reliability.from_string(Map.get(mapping, "reliability", "unreliable")),
-        retention: AstarteCore.Mapping.Retention.from_string(Map.get(mapping, "retention", "discard")),
+        value_type: Astarte.Core.Mapping.ValueType.from_string(mapping["type"]),
+        reliability: Astarte.Core.Mapping.Reliability.from_string(Map.get(mapping, "reliability", "unreliable")),
+        retention: Astarte.Core.Mapping.Retention.from_string(Map.get(mapping, "retention", "discard")),
         expiry: Map.get(mapping, "expiry", 0),
         allow_unset: Map.get(mapping, "allow_unset", false)
       }
     end
 
-    %AstarteCore.InterfaceDocument {
+    %Astarte.Core.InterfaceDocument {
       descriptor: descriptor,
       mappings: maps,
       source: json_doc

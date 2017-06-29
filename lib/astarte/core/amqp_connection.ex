@@ -1,4 +1,4 @@
-defmodule AstarteCore.AMQPConnection do
+defmodule Astarte.Core.AMQPConnection do
   require Logger
   use GenServer
   use AMQP

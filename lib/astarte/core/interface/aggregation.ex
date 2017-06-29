@@ -1,4 +1,4 @@
-defmodule AstarteCore.Interface.Aggregation do
+defmodule Astarte.Core.Interface.Aggregation do
 
   @interface_aggregation_individual 1
   @interface_aggregation_object 2

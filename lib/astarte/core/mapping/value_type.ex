@@ -1,4 +1,4 @@
-defmodule AstarteCore.Mapping.ValueType do
+defmodule Astarte.Core.Mapping.ValueType do
 
   @mapping_value_type_double 1
   @mapping_value_type_doublearray 2

@@ -1,6 +1,5 @@
-defmodule AstarteCoreTest do
+defmodule Astarte.Core.InterfaceDocumentTest do
   use ExUnit.Case
-  doctest AstarteCore
 
   @aggregated_datastream_interface_json """
 {
@@ -104,7 +103,7 @@ defmodule AstarteCoreTest do
 """
 
   test "aggregated datastream interface deserialization" do
-    interface_document = AstarteCore.InterfaceDocument.Utils.from_json(@aggregated_datastream_interface_json)
+    interface_document = Astarte.Core.InterfaceDocument.Utils.from_json(@aggregated_datastream_interface_json)
     descriptor = interface_document.descriptor
     assert descriptor.name == "com.ispirata.Hemera.DeviceLog"
     assert descriptor.major_version == 1
@@ -131,7 +130,7 @@ defmodule AstarteCoreTest do
   end
 
   test "individual property server owned interface deserialization" do
-    interface_document = AstarteCore.InterfaceDocument.Utils.from_json(@individual_property_server_owned_interface)
+    interface_document = Astarte.Core.InterfaceDocument.Utils.from_json(@individual_property_server_owned_interface)
     descriptor = interface_document.descriptor
     assert descriptor.name == "com.ispirata.Hemera.DeviceLog.Configuration"
     assert descriptor.major_version == 1
@@ -152,7 +151,7 @@ defmodule AstarteCoreTest do
   end
 
   test "individual property thing owned interface deserialization" do
-    interface_document = AstarteCore.InterfaceDocument.Utils.from_json(@individual_property_thing_owned_interface)
+    interface_document = Astarte.Core.InterfaceDocument.Utils.from_json(@individual_property_thing_owned_interface)
     descriptor = interface_document.descriptor
     assert descriptor.name == "com.ispirata.Hemera.DeviceLog.Status"
     assert descriptor.major_version == 2

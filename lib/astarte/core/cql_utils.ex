@@ -1,4 +1,4 @@
-defmodule AstarteCore.CQLUtils do
+defmodule Astarte.Core.CQLUtils do
 
   def interface_name_to_table_name(interface_name, major_version) do
     String.replace(String.downcase(interface_name), ".", "_") <> "_v" <> Integer.to_string(major_version)
