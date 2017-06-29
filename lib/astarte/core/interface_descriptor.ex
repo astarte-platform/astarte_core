@@ -1,4 +1,4 @@
-defmodule AstarteCore.InterfaceDescriptor do
+defmodule Astarte.Core.InterfaceDescriptor do
   defstruct name: "",
     major_version: 0,
     minor_version: 0,
