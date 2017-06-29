@@ -6,11 +6,16 @@ defmodule Astarte.Core.InterfaceDocument do
   def from_json(json_doc) do
     {:ok, interface_object} = Poison.decode(json_doc)
 
+    %{"interface_name" => name,
+      "version_major" => major_version,
+      "version_minor" => minor_version,
+      "type" => type} = interface_object
+
     descriptor = %Astarte.Core.InterfaceDescriptor {
-      name: interface_object["interface_name"],
-      major_version: interface_object["version_major"],
-      minor_version: interface_object["version_minor"],
-      type: Astarte.Core.Interface.Type.from_string(interface_object["type"]),
+      name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: Astarte.Core.Interface.Type.from_string(type),
       ownership: Astarte.Core.Interface.Ownership.from_string(interface_object["ownership"] || interface_object["quality"]),
       aggregation: Astarte.Core.Interface.Aggregation.from_string((if interface_object["aggregate"], do: "object", else: nil)
                                                                   || Map.get(interface_object, "aggregation", "individual"))
