@@ -1,4 +1,4 @@
-defmodule AstarteCore.Mixfile do
+defmodule Astarte.Core.Mixfile do
   use Mix.Project
 
   def project do
