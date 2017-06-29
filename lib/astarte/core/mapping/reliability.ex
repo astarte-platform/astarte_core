@@ -1,4 +1,4 @@
-defmodule AstarteCore.Mapping.Reliability do
+defmodule Astarte.Core.Mapping.Reliability do
 
   @mapping_reliability_unreliable 1
   @mapping_reliability_guaranteed 2
