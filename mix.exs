@@ -7,6 +7,8 @@ defmodule AstarteCore.Mixfile do
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
      deps: deps()]
   end
 
@@ -19,6 +21,10 @@ defmodule AstarteCore.Mixfile do
     [
       {:amqp, "~> 0.2.2"},
       {:poison, "~> 3.1"},
+
+      {:distillery, "~> 1.4", runtime: false},
+
+      {:excoveralls, "~> 0.6", only: :test},
     ]
   end
 end
