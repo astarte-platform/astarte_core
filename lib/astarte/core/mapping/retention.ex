@@ -1,4 +1,4 @@
-defmodule AstarteCore.Mapping.Retention do
+defmodule Astarte.Core.Mapping.Retention do
 
   @mapping_retention_discard 1
   @mapping_retention_volatile 2
