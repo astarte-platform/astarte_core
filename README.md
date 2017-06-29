@@ -1,3 +1,3 @@
-# AstarteCore
+# Astarte Core
 
-AstarteCore librarary
+Astarte Core library
