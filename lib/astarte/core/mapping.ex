@@ -1,4 +1,4 @@
-defmodule AstarteCore.Mapping do
+defmodule Astarte.Core.Mapping do
   defstruct endpoint: "",
     value_type: nil,
     reliability: nil,
