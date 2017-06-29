@@ -21,6 +21,8 @@ defmodule AstarteCore.Mixfile do
       {:poison, "~> 3.1"},
 
       {:distillery, "~> 1.4", runtime: false},
+
+      {:excoveralls, "~> 0.6", only: :test},
     ]
   end
 end
