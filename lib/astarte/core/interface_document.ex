@@ -3,6 +3,14 @@ defmodule Astarte.Core.InterfaceDocument do
     mappings: [],
     source: ""
 
+  defp check_mappings([mapping | tail]) do
+    Astarte.Core.Mapping.is_valid?(mapping) and check_mappings(tail)
+  end
+
+  defp check_mappings([]) do
+    true
+  end
+
   def from_json(json_doc) do
     {:ok, interface_object} = Poison.decode(json_doc)
 
@@ -32,10 +40,15 @@ defmodule Astarte.Core.InterfaceDocument do
       }
     end
 
-    %Astarte.Core.InterfaceDocument {
-      descriptor: descriptor,
-      mappings: maps,
-      source: json_doc
-    }
+    if (check_mappings(maps) and Astarte.Core.InterfaceDescriptor.is_valid?(descriptor)) do
+      %Astarte.Core.InterfaceDocument {
+        descriptor: descriptor,
+        mappings: maps,
+        source: json_doc
+      }
+    else
+      nil
+    end
   end
+
 end
