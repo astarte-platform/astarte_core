@@ -102,6 +102,23 @@ defmodule Astarte.Core.InterfaceDocumentTest do
 }
 """
 
+  @invalid_mapping_document """
+{
+     "interface_name": "com.ispirata.Hemera.DeviceLog.Status",
+     "version_major": 2,
+     "version_minor": 1,
+     "type": "properties",
+     "quality": "producer",
+     "mappings": [
+         {
+             "path": "/filterRules/%{ruleId}/; DROP TABLE endpoints; //",
+             "type": "string",
+             "allow_unset": true
+         }
+     ]
+}
+"""
+
   test "aggregated datastream interface deserialization" do
     interface_document = Astarte.Core.InterfaceDocument.from_json(@aggregated_datastream_interface_json)
     descriptor = interface_document.descriptor
@@ -170,4 +187,72 @@ defmodule Astarte.Core.InterfaceDocumentTest do
 
     assert interface_document.source == @individual_property_thing_owned_interface
   end
+
+  test "invalid mapping document" do
+    interface_document = Astarte.Core.InterfaceDocument.from_json(@invalid_mapping_document)
+    assert interface_document == nil
+  end
+
+  test "invalid mappings" do
+    mapping = %Astarte.Core.Mapping {
+        endpoint: "/this/is/almost/%{ok}",
+        value_type: nil
+    }
+    assert Astarte.Core.Mapping.is_valid?(mapping) == false
+
+    mapping = %Astarte.Core.Mapping {
+        endpoint: "//this/is/almost/%{ok}",
+        value_type: :integer
+    }
+    assert Astarte.Core.Mapping.is_valid?(mapping) == false
+
+    mapping = %Astarte.Core.Mapping {
+        endpoint: "/this/is/%{ok}",
+        value_type: :integer
+    }
+    assert Astarte.Core.Mapping.is_valid?(mapping) == true
+  end
+
+  test "invalid document descriptor" do
+    descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "notok; DROP KEYSPACE astarte;//",
+        major_version: 1,
+        minor_version: 0,
+        type: :properties,
+        ownership: :thing,
+        aggregation: :individual
+    }
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
+
+    descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "notok",
+        major_version: 1,
+        minor_version: 0,
+        type: :a_typo_here,
+        ownership: :thing,
+        aggregation: :individual
+    }
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
+
+    descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "longlonglonglonglonglonglonglonglonglong.v1",
+        major_version: 1,
+        minor_version: 0,
+        type: :properties,
+        ownership: :thing,
+        aggregation: :individual
+    }
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
+
+    descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "nowok",
+        major_version: 1,
+        minor_version: 0,
+        type: :properties,
+        ownership: :thing,
+        aggregation: :individual
+    }
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
+  end
+
 end
