@@ -19,7 +19,6 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
-      {:amqp, "~> 0.2.2"},
       {:poison, "~> 3.1"},
 
       {:distillery, "~> 1.4", runtime: false},
