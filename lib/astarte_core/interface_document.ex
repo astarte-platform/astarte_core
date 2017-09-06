@@ -26,7 +26,9 @@ defmodule Astarte.Core.InterfaceDocument do
       type: Astarte.Core.Interface.Type.from_string(type),
       ownership: Astarte.Core.Interface.Ownership.from_string(interface_object["ownership"] || interface_object["quality"]),
       aggregation: Astarte.Core.Interface.Aggregation.from_string((if interface_object["aggregate"], do: "object", else: nil)
-                                                                  || Map.get(interface_object, "aggregation", "individual"))
+                                                                  || Map.get(interface_object, "aggregation", "individual")),
+      has_metadata: Map.get(interface_object, "has_metadata", false),
+      explicit_timestamp: Map.get(interface_object, "explicit_timestamp", false)
     }
 
     maps = for mapping <- interface_object["mappings"] do
