@@ -4,7 +4,8 @@ defmodule Astarte.Core.InterfaceDescriptor do
     minor_version: 0,
     type: nil,
     ownership: nil,
-    aggregation: nil
+    aggregation: nil,
+    has_metadata: false
 
   def is_valid?(interface_descriptor) do
     if ((interface_descriptor != nil) and (interface_descriptor != "") and (interface_descriptor != [])) do
