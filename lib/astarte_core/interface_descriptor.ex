@@ -5,6 +5,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
     type: nil,
     ownership: nil,
     aggregation: nil,
+    explicit_timestamp: false,
     has_metadata: false
 
   def is_valid?(interface_descriptor) do
