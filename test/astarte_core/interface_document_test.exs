@@ -222,6 +222,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         ownership: :thing,
         aggregation: :individual
     }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :invalid_interface_name}
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
 
     descriptor = %Astarte.Core.InterfaceDescriptor {
@@ -232,6 +233,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         ownership: :thing,
         aggregation: :individual
     }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :invalid_interface_type}
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
 
     descriptor = %Astarte.Core.InterfaceDescriptor {
@@ -242,6 +244,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         ownership: :thing,
         aggregation: :individual
     }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == :ok
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
 
     descriptor = %Astarte.Core.InterfaceDescriptor {
@@ -252,6 +255,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         ownership: :thing,
         aggregation: :individual
     }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == :ok
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
   end
 
