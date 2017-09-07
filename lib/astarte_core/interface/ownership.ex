@@ -10,6 +10,13 @@ defmodule Astarte.Core.Interface.Ownership do
     end
   end
 
+  def from_int(ownership_int) do
+    case ownership_int do
+      @interface_ownership_thing -> :thing
+      @interface_ownership_server -> :server
+    end
+  end
+
   def from_string(ownership) do
     case ownership do
       "thing" -> :thing
