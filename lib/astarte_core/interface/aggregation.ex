@@ -10,6 +10,13 @@ defmodule Astarte.Core.Interface.Aggregation do
     end
   end
 
+  def from_int(aggregation_int) do
+    case aggregation_int do
+      @interface_aggregation_individual -> :individual
+      @interface_aggregation_object -> :object
+    end
+  end
+
   def from_string(aggregation) do
     case aggregation do
       "individual" -> :individual

@@ -34,6 +34,25 @@ defmodule Astarte.Core.Mapping.ValueType do
     end
   end
 
+  def from_int(value_type_int) do
+    case value_type_int do
+      @mapping_value_type_double -> :double
+      @mapping_value_type_integer -> :integer
+      @mapping_value_type_boolean -> :boolean
+      @mapping_value_type_longinteger -> :longinteger
+      @mapping_value_type_string -> :string
+      @mapping_value_type_binaryblob -> :binaryblob
+      @mapping_value_type_datetime -> :datetime
+      @mapping_value_type_doublearray -> :doublearray
+      @mapping_value_type_integerarray -> :integerarray
+      @mapping_value_type_booleanarray -> :booleanarray
+      @mapping_value_type_longintegerarray -> :longintegerarray
+      @mapping_value_type_stringarray -> :stringarray
+      @mapping_value_type_binaryblobarray -> :binaryblobarray
+      @mapping_value_type_datetimearray -> :datetimearray
+    end
+  end
+
   def from_string(value_type) do
     case value_type do
       "double" -> :double

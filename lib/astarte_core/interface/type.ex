@@ -10,6 +10,13 @@ defmodule Astarte.Core.Interface.Type do
     end
   end
 
+  def from_int(type_int) do
+    case type_int do
+      @interface_type_properties -> :properties
+      @interface_type_datastream -> :datastream
+    end
+  end
+
   def from_string(type) do
     case type do
       "properties" -> :properties
