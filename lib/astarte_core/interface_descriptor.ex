@@ -43,6 +43,12 @@ defmodule Astarte.Core.InterfaceDescriptor do
       ((interface_descriptor.aggregation == :individual) or (interface_descriptor.aggregation == :object)) == false ->
         {:error, :invalid_interface_aggregation}
 
+      (interface_descriptor.type != :datastream) and interface_descriptor.explicit_timestamp ->
+        {:error, :explicit_timestamp_not_allowed}
+
+      ((interface_descriptor.aggregation != :individual) or (interface_descriptor.type != :datastream)) and interface_descriptor.has_metadata ->
+        {:error, :metadata_not_allowed}
+
       true ->
         :ok
     end
