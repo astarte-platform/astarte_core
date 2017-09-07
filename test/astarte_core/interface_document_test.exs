@@ -236,6 +236,30 @@ defmodule Astarte.Core.InterfaceDocumentTest do
     assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :invalid_interface_type}
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
 
+   descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "nowok",
+        major_version: 1,
+        minor_version: 0,
+        type: :datastream,
+        ownership: :thing,
+        aggregation: :object,
+        has_metadata: true
+    }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :metadata_not_allowed}
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
+
+   descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "nowok",
+        major_version: 1,
+        minor_version: 0,
+        type: :properties,
+        ownership: :thing,
+        aggregation: :object,
+        explicit_timestamp: true
+    }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :explicit_timestamp_not_allowed}
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == false
+
     descriptor = %Astarte.Core.InterfaceDescriptor {
         name: "longlonglonglonglonglonglonglonglonglong.v1",
         major_version: 1,
@@ -254,6 +278,19 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         type: :properties,
         ownership: :thing,
         aggregation: :individual
+    }
+    assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == :ok
+    assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
+
+    descriptor = %Astarte.Core.InterfaceDescriptor {
+        name: "nowok",
+        major_version: 1,
+        minor_version: 0,
+        type: :datastream,
+        ownership: :thing,
+        aggregation: :individual,
+        has_metadata: true,
+        explicit_timestamp: true
     }
     assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == :ok
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
