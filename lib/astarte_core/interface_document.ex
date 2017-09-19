@@ -3,14 +3,6 @@ defmodule Astarte.Core.InterfaceDocument do
     mappings: [],
     source: ""
 
-  defp check_mappings([mapping | tail]) do
-    Astarte.Core.Mapping.is_valid?(mapping) and check_mappings(tail)
-  end
-
-  defp check_mappings([]) do
-    true
-  end
-
   @doc """
   Creates an `%InterfaceDocument{}` starting from its JSON description.
 
@@ -62,5 +54,13 @@ defmodule Astarte.Core.InterfaceDocument do
           :error
         end
       end
+  end
+
+  defp check_mappings([mapping | tail]) do
+    Astarte.Core.Mapping.is_valid?(mapping) and check_mappings(tail)
+  end
+
+  defp check_mappings([]) do
+    true
   end
 end
