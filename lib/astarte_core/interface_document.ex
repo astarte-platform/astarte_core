@@ -56,11 +56,7 @@ defmodule Astarte.Core.InterfaceDocument do
       end
   end
 
-  defp check_mappings([mapping | tail]) do
-    Astarte.Core.Mapping.is_valid?(mapping) and check_mappings(tail)
-  end
-
-  defp check_mappings([]) do
-    true
+  defp check_mappings(mappings) do
+    Enum.all?(mappings, &Astarte.Core.Mapping.is_valid?/1)
   end
 end
