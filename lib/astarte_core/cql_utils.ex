@@ -1,4 +1,7 @@
 defmodule Astarte.Core.CQLUtils do
+  @moduledoc """
+  This module contains a set of functions that should be used to map Astarte types and concepts to C*
+  """
 
   @interface_descriptor_statement """
     SELECT name, major_version, minor_version, type, quality, flags
@@ -6,18 +9,30 @@ defmodule Astarte.Core.CQLUtils do
     WHERE name=:name AND major_version=:major_version
   """
 
+  @doc """
+  Returns a generated table name that might be used during table creation."
+  """
   def interface_name_to_table_name(interface_name, major_version) do
     String.replace(String.downcase(interface_name), ".", "_") <> "_v" <> Integer.to_string(major_version)
   end
 
+  @doc """
+  Returns the column name for a certain endpoint that will be used for object interface tables.
+  """
   def endpoint_to_db_column_name(endpoint_name) do
     List.last(String.split(String.downcase(endpoint_name), "/"))
   end
 
+  @doc """
+  Returns the CQL query statement that should be used to retrieve interface descriptor from the database.
+  """
   def interface_descriptor_statement() do
     @interface_descriptor_statement
   end
 
+  @doc """
+  Returns a CQL type for a given mapping value type atom
+  """
   def mapping_value_type_to_db_type(value_type) do
     case value_type do
       :double -> "double"
@@ -37,6 +52,9 @@ defmodule Astarte.Core.CQLUtils do
     end
   end
 
+  @doc """
+  Returns table column name that stores a certain type.
+  """
   def type_to_db_column_name(column_type) do
     case column_type do
       :double -> "double_value"
@@ -57,7 +75,7 @@ defmodule Astarte.Core.CQLUtils do
   end
 
   @doc """
-  returns interface UUID for a certain `interface_name` with a certain `interface_major`
+  Returns interface UUID for a certain `interface_name` with a certain `interface_major`
   """
   def interface_id(interface_name, interface_major) do
     :crypto.hash(:md5, "iid:#{interface_name}:#{Integer.to_string(interface_major)}")
