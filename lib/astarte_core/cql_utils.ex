@@ -60,7 +60,7 @@ defmodule Astarte.Core.CQLUtils do
   returns interface UUID for a certain `interface_name` with a certain `interface_major`
   """
   def interface_id(interface_name, interface_major) do
-    :crypto.hash(:md5, "iid:" <> interface_name <> ":" <> Integer.to_string(interface_major))
+    :crypto.hash(:md5, "iid:#{interface_name}:#{Integer.to_string(interface_major)}")
   end
 
 end
