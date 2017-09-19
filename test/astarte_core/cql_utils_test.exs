@@ -59,4 +59,12 @@ defmodule Astarte.Core.CQLUtilsTest do
     assert_raise CaseClauseError, fn -> Astarte.Core.CQLUtils.type_to_db_column_name(:float) end
   end
 
+  test "interface id generation" do
+    assert Astarte.Core.CQLUtils.interface_id("com.foo", 2) == Astarte.Core.CQLUtils.interface_id("com.foo", 2)
+    assert Astarte.Core.CQLUtils.interface_id("com.test", 0) != Astarte.Core.CQLUtils.interface_id("com.test", 1)
+    assert Astarte.Core.CQLUtils.interface_id("com.test1", 0) != Astarte.Core.CQLUtils.interface_id("com.test", 10)
+    assert Astarte.Core.CQLUtils.interface_id("a", 1) != Astarte.Core.CQLUtils.interface_id("b", 1)
+    assert Astarte.Core.CQLUtils.interface_id("astarte.is.cool", 10) == <<130, 183, 0, 172, 236, 95, 170, 50, 48, 172, 31, 81, 226, 57, 154, 178>>
+  end
+
 end
