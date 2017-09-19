@@ -1,4 +1,6 @@
 defmodule Astarte.Core.InterfaceDescriptor do
+  alias Astarte.Core.InterfaceDescriptor
+
   defstruct name: "",
     major_version: 0,
     minor_version: 0,
@@ -58,4 +60,35 @@ defmodule Astarte.Core.InterfaceDescriptor do
     validate(interface_descriptor) == :ok
   end
 
+  @doc """
+  Deserializes an `%InterfaceDescriptor{}` from `db_result`.
+  `db_result` can be a keyword list or a map.
+
+  Returns the `%InterfaceDescriptor{}` on success,
+  raises on failure
+  """
+  def from_db_result!(db_result) when not is_map(db_result) do
+    db_result
+    |> Enum.into(%{})
+    |> from_db_result!()
+  end
+
+  def from_db_result!(db_result) do
+    %{name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: type,
+      ownership: ownership,
+      aggregation: aggregation,
+    } = db_result
+
+    %InterfaceDescriptor{
+      name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: Astarte.Core.Interface.Type.from_int(type),
+      ownership: Astarte.Core.Interface.Ownership.from_int(ownership),
+      aggregation: Astarte.Core.Interface.Aggregation.from_int(aggregation),
+    }
+  end
 end
