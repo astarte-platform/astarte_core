@@ -9,13 +9,12 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
     ["" | path_tokens] = String.split(path, "/")
 
     states = do_transitions(path_tokens, [0], transitions)
-    [state|_] = states
 
     cond do
       states == [] ->
-        :not_found
-      length(states) == 1 and accepting_states[state] != nil ->
-        {:ok, accepting_states[state]}
+        {:error, :not_found}
+      length(states) == 1 and accepting_states[hd(states)] != nil ->
+        {:ok, accepting_states[hd(states)]}
 
       true ->
         states = force_transitions(states, transitions, accepting_states)
