@@ -146,11 +146,14 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
 
     # Guessed match
     assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/world", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
+    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/world/", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
     assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
     assert EndpointsAutomaton.resolve_endpoint("/filterRules", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
     assert EndpointsAutomaton.resolve_endpoint("/test/0", automaton) == {:guessed, ["/test/%{ind}/v"]}
     assert EndpointsAutomaton.resolve_endpoint("/test", automaton) == {:guessed, ["/test/%{ind}/v"]}
     assert {:guessed, all_endpoints} = EndpointsAutomaton.resolve_endpoint("", automaton)
+    assert Enum.sort(all_endpoints) ==  ["/applicationId", "/cmdLine", "/filterRules/%{ruleId}/%{filterKey}/value", "/message", "/monotonicTimestamp", "/pid", "/test/%{ind}/v", "/test2/pluto/v", "/timestamp"]
+    assert {:guessed, all_endpoints} = EndpointsAutomaton.resolve_endpoint("/", automaton)
     assert Enum.sort(all_endpoints) ==  ["/applicationId", "/cmdLine", "/filterRules/%{ruleId}/%{filterKey}/value", "/message", "/monotonicTimestamp", "/pid", "/test/%{ind}/v", "/test2/pluto/v", "/timestamp"]
   end
 

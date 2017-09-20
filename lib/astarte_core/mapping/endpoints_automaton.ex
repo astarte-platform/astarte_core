@@ -1,12 +1,11 @@
 defmodule Astarte.Core.Mapping.EndpointsAutomaton do
 
   @doc """
-  returns ``:ok`` and an endpoint for a given ``path`` using a previously built automata (``{transitions, accepting_states}``).
-  path must be a likely valid path, (e.g. no trailing slashes).
-  if path is not complete one or more endpoints will be gussed and ``:gussed`` followed by a list of endpoints is returned.
+  returns `:ok` and an endpoint for a given `path` using a previously built automata (`{transitions, accepting_states}`).
+  if path is not complete one or more endpoints will be guessed and `:guessed` followed by a list of endpoints is returned.
   """
   def resolve_endpoint(path, {transitions, accepting_states}) do
-    ["" | path_tokens] = String.split(path, "/")
+    path_tokens = String.split(path, "/", trim: true)
 
     states = do_transitions(path_tokens, [0], transitions)
 
@@ -27,7 +26,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   end
 
   @doc """
-  builds the automaton for given `mappings`, returns ``:ok`` followed by the automaton tuple if build succeeded, otherwise ``:error`` and the reason.
+  builds the automaton for given `mappings`, returns `:ok` followed by the automaton tuple if build succeeded, otherwise `:error` and the reason.
   """
   def build(mappings) do
     nfa = do_build(mappings)
@@ -40,7 +39,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   end
 
   @doc """
-  returns true if ``nfa`` is valid for given ``mappings``
+  returns true if `nfa` is valid for given `mappings`
   """
   def is_valid?(nfa, mappings) do
     Enum.reduce(mappings, true, fn(mapping, valid) ->
@@ -49,7 +48,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   end
 
   @doc """
-  returns a list of likely invalid endpoints for a certain list of ``mappings``.
+  returns a list of likely invalid endpoints for a certain list of `mappings`.
   """
   def lint(mappings) do
     nfa = do_build(mappings)
@@ -74,48 +73,71 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   end
 
   defp do_transitions([token | tail_tokens], current_states, transitions) do
-    next_states = for state <- current_states do
-      [transitions[{state, token}] || [], transitions[{state, ""}] || []]
-    end
+    next_states = List.foldl(current_states, [], fn(state, acc) ->
+      transition = Map.get(transitions, {state, token})
+      epsi_transition = Map.get(transitions, {state, ""})
 
-    do_transitions(tail_tokens, List.flatten(next_states), transitions)
+      transition_list = if transition do
+        [transition]
+      else
+        []
+      end
+      epsi_transition_list = if epsi_transition do
+        [epsi_transition]
+      else
+        []
+      end
+
+      transition_list ++ epsi_transition_list ++ acc
+    end)
+
+    do_transitions(tail_tokens, next_states, transitions)
   end
 
   defp force_transitions(current_states, transitions, accepting_states) do
-    next_states = for state <- current_states do
-      if accepting_states[state] == nil do
-        for found <- (Enum.filter(transitions, fn(transition) -> match?({{^state, _}, _}, transition) end) || []) do
-          {_, next_state} = found
-
-          next_state
-        end
+    next_states = List.foldl(current_states, [], fn(state, acc) ->
+      good_state = if accepting_states[state] == nil do
+        Enum.reduce(transitions, [], fn(transition, acc) ->
+          if match?({{^state, _}, _}, transition) do
+            {_, next_state} = transition
+            [next_state] ++ acc
+          else
+            acc
+          end
+        end)
       else
-        state
+        [state]
       end
-    end
 
-    flat_next = List.flatten(next_states)
+      good_state ++ acc
+    end)
 
-    finished = Enum.reduce(flat_next, true, fn(state, finished) ->
-      finished and (accepting_states[state] != nil)
+    finished = Enum.all?(next_states, fn(state) ->
+      accepting_states[state]
     end)
 
     if finished do
-      flat_next
+      next_states
     else
-      force_transitions(flat_next, transitions, accepting_states)
+      force_transitions(next_states, transitions, accepting_states)
     end
   end
 
   defp do_build(mappings) do
-    {transitions, _, accepting_states} = Enum.reduce(mappings, {%{}, [], %{}}, fn(mapping, {transitions, states, accepting_states}) ->
-      ["" | path_tokens] = mapping.endpoint
-        |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
-        |> String.split("/")
+    {transitions, _, accepting_states} = Enum.reduce(mappings, {%{}, [], %{}}, &parse_endpoint/2)
 
-      {states, _, _, transitions} = Enum.reduce(path_tokens, {states, 0, "", transitions}, fn(token, {states, previous_state, partial_endpoint, transitions}) ->
-        new_partial_endpoint = "#{partial_endpoint}/#{token}"
-        candidate_previous = Enum.find_index(states, fn(state) -> state == new_partial_endpoint end)
+    {transitions, accepting_states}
+  end
+
+  def parse_endpoint(mapping, {transitions, states, accepting_states}) do
+    ["" | path_tokens] =
+      mapping.endpoint
+      |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
+      |> String.split("/")
+
+    {states, _, _, transitions} = Enum.reduce(path_tokens, {states, 0, "", transitions}, fn(token, {states, previous_state, partial_endpoint, transitions}) ->
+      new_partial_endpoint = "#{partial_endpoint}/#{token}"
+      candidate_previous = Enum.find_index(states, fn(state) -> state == new_partial_endpoint end)
 
         if candidate_previous != nil do
           {states, candidate_previous + 1, new_partial_endpoint, transitions}
@@ -124,13 +146,11 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
           new_state = length(states)
           {states, new_state, new_partial_endpoint, Map.put(transitions, {previous_state, token}, new_state)}
         end
-      end)
-
-      accepting_states = Map.put(accepting_states, length(states), mapping.endpoint)
-
-      {transitions, states, accepting_states}
     end)
 
-    {transitions, accepting_states}
+    accepting_states = Map.put(accepting_states, length(states), mapping.endpoint)
+
+    {transitions, states, accepting_states}
   end
+
 end
