@@ -27,6 +27,45 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
     end
   end
 
+  @doc """
+  builds the automaton for given `mappings`, returns ``:ok`` followed by the automaton tuple if build succeeded, otherwise ``:error`` and the reason.
+  """
+  def build(mappings) do
+    nfa = do_build(mappings)
+
+    if is_valid?(nfa, mappings) do
+      {:ok, nfa}
+    else
+      {:error, :overlapping_mappings}
+    end
+  end
+
+  @doc """
+  returns true if ``nfa`` is valid for given ``mappings``
+  """
+  def is_valid?(nfa, mappings) do
+    Enum.reduce(mappings, true, fn(mapping, valid) ->
+      valid and (resolve_endpoint(mapping.endpoint, nfa) == {:ok, mapping.endpoint})
+    end)
+  end
+
+  @doc """
+  returns a list of likely invalid endpoints for a certain list of ``mappings``.
+  """
+  def lint(mappings) do
+    nfa = do_build(mappings)
+
+    errors_list = for mapping <- mappings do
+      if (resolve_endpoint(mapping.endpoint, nfa) == {:ok, mapping.endpoint}) do
+        []
+      else
+        mapping.endpoint
+      end
+    end
+
+    List.flatten(errors_list)
+  end
+
   defp do_transitions([], current_states, _transitions) do
     current_states
   end
@@ -69,4 +108,30 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
     end
   end
 
+  defp do_build(mappings) do
+    {transitions, _, accepting_states} = Enum.reduce(mappings, {%{}, [], %{}}, fn(mapping, {transitions, states, accepting_states}) ->
+      ["" | path_tokens] = mapping.endpoint
+        |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
+        |> String.split("/")
+
+      {states, _, _, transitions} = Enum.reduce(path_tokens, {states, 0, "", transitions}, fn(token, {states, previous_state, partial_endpoint, transitions}) ->
+        new_partial_endpoint = "#{partial_endpoint}/#{token}"
+        candidate_previous = Enum.find_index(states, fn(state) -> state == new_partial_endpoint end)
+
+        if candidate_previous != nil do
+          {states, candidate_previous + 1, new_partial_endpoint, transitions}
+        else
+          states = states ++ [partial_endpoint]
+          new_state = length(states)
+          {states, new_state, new_partial_endpoint, Map.put(transitions, {previous_state, token}, new_state)}
+        end
+      end)
+
+      accepting_states = Map.put(accepting_states, length(states), mapping.endpoint)
+
+      {transitions, states, accepting_states}
+    end)
+
+    {transitions, accepting_states}
+  end
 end
