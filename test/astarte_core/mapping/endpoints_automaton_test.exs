@@ -134,6 +134,37 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
 }
   """
 
+  @test_draft_interface_a_0 """
+    {
+      "interface_name": "com.ispirata.Draft",
+      "version_major": 0,
+      "version_minor": 2,
+      "type": "properties",
+      "quality": "consumer",
+      "mappings": [
+        {
+          "path": "/filterRules/%{ruleId}/%{filterKey}/value",
+          "type": "string",
+          "allow_unset": true
+        },
+        {
+          "path": "/filterRules/%{ruleId}/%{filterKey}/foo",
+          "type": "boolean",
+          "allow_unset": false
+        }
+      ]
+    }
+  """
+
+  test "build endpoints automaton" do
+    {:ok, document} = Astarte.Core.InterfaceDocument.from_json(@test_draft_interface_a_0)
+
+    assert {status, automaton} = EndpointsAutomaton.build(document.mappings)
+    assert EndpointsAutomaton.lint(document.mappings) == []
+    assert EndpointsAutomaton.is_valid?(automaton, document.mappings) == true
+    assert status == :ok
+  end
+
   test "build endpoints automaton and resolve some endpoints" do
     {:ok, document} = Astarte.Core.InterfaceDocument.from_json(@valid_interface)
 

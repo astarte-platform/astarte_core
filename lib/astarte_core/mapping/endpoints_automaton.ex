@@ -138,7 +138,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
       candidate_previous = Enum.find_index(states, fn(state) -> state == new_partial_endpoint end)
 
         if candidate_previous != nil do
-          {states, candidate_previous + 1, new_partial_endpoint, transitions}
+          {states, candidate_previous, new_partial_endpoint, transitions}
         else
           states = states ++ [partial_endpoint]
           new_state = length(states)
