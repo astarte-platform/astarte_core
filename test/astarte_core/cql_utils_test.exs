@@ -69,11 +69,10 @@ defmodule CQLUtilsTest do
   end
 
   test "endpoint id generation" do
-    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo", :float) == Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo", :float)
-    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo", :float) != Astarte.Core.CQLUtils.endpoint_id("com.foo", 3, "/test/foo", :float)
-    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo", :float) != Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo", :integer)
-    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 1, "/test/foo", :float) != Astarte.Core.CQLUtils.endpoint_id("com.bar", 2, "/test/foo", :float)
-    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 1, "/test/foo", :string) == <<219, 3, 255, 18, 65, 224, 57, 99, 144, 43, 234, 154, 231, 108, 196, 204>>
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo") == Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo")
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo") != Astarte.Core.CQLUtils.endpoint_id("com.foo", 3, "/test/foo")
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 1, "/test/foo") != Astarte.Core.CQLUtils.endpoint_id("com.bar", 1, "/test/foo")
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 1, "/test/foo") == <<70, 183, 225, 18, 23, 42, 133, 243, 125, 50, 212, 187, 67, 186, 155, 223>>
   end
 
 end

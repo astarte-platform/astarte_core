@@ -82,14 +82,14 @@ defmodule Astarte.Core.CQLUtils do
   end
 
   @doc """
-  returns an endpoint UUID for a certain `endpoint` on a certain `interface_name` with a certain `interface_major` and `endpoint_type`.
+  returns an endpoint UUID for a certain `endpoint` on a certain `interface_name` with a certain `interface_major`.
   """
-  def endpoint_id(interface_name, interface_major, endpoint, endpoint_type) do
+  def endpoint_id(interface_name, interface_major, endpoint) do
     stripped_endpoint =
       endpoint
       |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
 
-    :crypto.hash(:md5, "eid:#{interface_name}:#{Integer.to_string(interface_major)}:#{stripped_endpoint}:#{to_string(endpoint_type)}:")
+    :crypto.hash(:md5, "eid:#{interface_name}:#{Integer.to_string(interface_major)}:#{stripped_endpoint}:")
   end
 
 end
