@@ -42,8 +42,8 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   returns true if `nfa` is valid for given `mappings`
   """
   def is_valid?(nfa, mappings) do
-    Enum.reduce(mappings, true, fn(mapping, valid) ->
-      valid and (resolve_path(mapping.endpoint, nfa) == {:ok, mapping.endpoint})
+    Enum.all?(mappings, fn(mapping) ->
+      resolve_path(mapping.endpoint, nfa) == {:ok, mapping.endpoint}
     end)
   end
 
