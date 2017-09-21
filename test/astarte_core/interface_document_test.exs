@@ -295,4 +295,18 @@ defmodule Astarte.Core.InterfaceDocumentTest do
     assert Astarte.Core.InterfaceDescriptor.is_valid?(descriptor) == true
   end
 
+  test "document members" do
+    {:ok, %Astarte.Core.InterfaceDocument{
+      descriptor: %Astarte.Core.InterfaceDescriptor {
+        name: "com.ispirata.Hemera.DeviceLog",
+        major_version: 1,
+        minor_version: 2,
+        type: :datastream,
+        ownership: :thing,
+        aggregation: :object,
+      },
+      mappings: [_ | _],
+      source: @aggregated_datastream_interface_json
+    }} = Astarte.Core.InterfaceDocument.from_json(@aggregated_datastream_interface_json)
+  end
 end
