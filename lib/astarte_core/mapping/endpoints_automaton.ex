@@ -17,9 +17,10 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
 
       true ->
         states = force_transitions(states, transitions, accepting_states)
-        guessed_endpoints = for state <- states do
-          accepting_states[state]
-        end
+        guessed_endpoints =
+          for state <- states do
+            accepting_states[state]
+          end
 
         {:guessed, guessed_endpoints}
     end
@@ -53,15 +54,9 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   def lint(mappings) do
     nfa = do_build(mappings)
 
-    errors_list = for mapping <- mappings do
-      if (resolve_path(mapping.endpoint, nfa) == {:ok, mapping.endpoint}) do
-        []
-      else
-        mapping.endpoint
-      end
-    end
-
-    List.flatten(errors_list)
+    mappings
+    |> Enum.filter(fn(mapping) -> (resolve_path(mapping.endpoint, nfa) != {:ok, mapping.endpoint}) end)
+    |> Enum.map(fn(mapping) -> mapping.endpoint end)
   end
 
   defp do_transitions([], current_states, _transitions) do
@@ -77,16 +72,18 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
       transition = Map.get(transitions, {state, token})
       epsi_transition = Map.get(transitions, {state, ""})
 
-      transition_list = if transition do
-        [transition]
-      else
-        []
-      end
-      epsi_transition_list = if epsi_transition do
-        [epsi_transition]
-      else
-        []
-      end
+      transition_list =
+        if transition do
+          [transition]
+        else
+          []
+        end
+      epsi_transition_list =
+        if epsi_transition do
+          [epsi_transition]
+        else
+          []
+        end
 
       transition_list ++ epsi_transition_list ++ acc
     end)
@@ -96,18 +93,19 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
 
   defp force_transitions(current_states, transitions, accepting_states) do
     next_states = List.foldl(current_states, [], fn(state, acc) ->
-      good_state = if accepting_states[state] == nil do
-        Enum.reduce(transitions, [], fn(transition, acc) ->
-          if match?({{^state, _}, _}, transition) do
-            {_, next_state} = transition
-            [next_state] ++ acc
-          else
-            acc
-          end
-        end)
-      else
-        [state]
-      end
+      good_state =
+        if accepting_states[state] == nil do
+          Enum.reduce(transitions, [], fn(transition, acc) ->
+            if match?({{^state, _}, _}, transition) do
+              {_, next_state} = transition
+              [next_state | acc]
+            else
+              acc
+            end
+          end)
+        else
+          [state]
+        end
 
       good_state ++ acc
     end)
@@ -124,7 +122,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   end
 
   defp do_build(mappings) do
-    {transitions, _, accepting_states} = Enum.reduce(mappings, {%{}, [], %{}}, &parse_endpoint/2)
+    {transitions, _, accepting_states} = List.foldl(mappings, {%{}, [], %{}}, &parse_endpoint/2)
 
     {transitions, accepting_states}
   end
@@ -135,7 +133,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
       |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
       |> String.split("/")
 
-    {states, _, _, transitions} = Enum.reduce(path_tokens, {states, 0, "", transitions}, fn(token, {states, previous_state, partial_endpoint, transitions}) ->
+    {states, _, _, transitions} = List.foldl(path_tokens, {states, 0, "", transitions}, fn(token, {states, previous_state, partial_endpoint, transitions}) ->
       new_partial_endpoint = "#{partial_endpoint}/#{token}"
       candidate_previous = Enum.find_index(states, fn(state) -> state == new_partial_endpoint end)
 
