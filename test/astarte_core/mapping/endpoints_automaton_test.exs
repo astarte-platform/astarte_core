@@ -163,6 +163,9 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     assert EndpointsAutomaton.lint(document.mappings) == []
     assert EndpointsAutomaton.is_valid?(automaton, document.mappings) == true
     assert status == :ok
+
+    assert Enum.count(elem(automaton, 0)) == 5
+    assert Enum.count(elem(automaton, 1)) == 2
   end
 
   test "build endpoints automaton and resolve some endpoints" do
@@ -170,6 +173,8 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
 
     assert {:ok, automaton} = EndpointsAutomaton.build(document.mappings)
     assert EndpointsAutomaton.is_valid?(automaton, document.mappings) == true
+
+    assert Enum.count(elem(automaton, 1)) == length(document.mappings)
 
     # Exact match
     assert EndpointsAutomaton.resolve_path("/filterRules/hello/world/value", automaton) == {:ok, "/filterRules/%{ruleId}/%{filterKey}/value"}
