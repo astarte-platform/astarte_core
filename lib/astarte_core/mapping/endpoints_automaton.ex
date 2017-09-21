@@ -4,7 +4,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   returns `:ok` and an endpoint for a given `path` using a previously built automata (`{transitions, accepting_states}`).
   if path is not complete one or more endpoints will be guessed and `:guessed` followed by a list of endpoints is returned.
   """
-  def resolve_endpoint(path, {transitions, accepting_states}) do
+  def resolve_path(path, {transitions, accepting_states}) do
     path_tokens = String.split(path, "/", trim: true)
 
     states = do_transitions(path_tokens, [0], transitions)
@@ -43,7 +43,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   """
   def is_valid?(nfa, mappings) do
     Enum.reduce(mappings, true, fn(mapping, valid) ->
-      valid and (resolve_endpoint(mapping.endpoint, nfa) == {:ok, mapping.endpoint})
+      valid and (resolve_path(mapping.endpoint, nfa) == {:ok, mapping.endpoint})
     end)
   end
 
@@ -54,7 +54,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
     nfa = do_build(mappings)
 
     errors_list = for mapping <- mappings do
-      if (resolve_endpoint(mapping.endpoint, nfa) == {:ok, mapping.endpoint}) do
+      if (resolve_path(mapping.endpoint, nfa) == {:ok, mapping.endpoint}) do
         []
       else
         mapping.endpoint

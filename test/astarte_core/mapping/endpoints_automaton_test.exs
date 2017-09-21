@@ -141,19 +141,19 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     assert EndpointsAutomaton.is_valid?(automaton, document.mappings) == true
 
     # Exact match
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/world/value", automaton) == {:ok, "/filterRules/%{ruleId}/%{filterKey}/value"}
-    assert EndpointsAutomaton.resolve_endpoint("/test/0/v", automaton) == {:ok, "/test/%{ind}/v"}
+    assert EndpointsAutomaton.resolve_path("/filterRules/hello/world/value", automaton) == {:ok, "/filterRules/%{ruleId}/%{filterKey}/value"}
+    assert EndpointsAutomaton.resolve_path("/test/0/v", automaton) == {:ok, "/test/%{ind}/v"}
 
     # Guessed match
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/world", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/world/", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
-    assert EndpointsAutomaton.resolve_endpoint("/test/0", automaton) == {:guessed, ["/test/%{ind}/v"]}
-    assert EndpointsAutomaton.resolve_endpoint("/test", automaton) == {:guessed, ["/test/%{ind}/v"]}
-    assert {:guessed, all_endpoints} = EndpointsAutomaton.resolve_endpoint("", automaton)
+    assert EndpointsAutomaton.resolve_path("/filterRules/hello/world", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
+    assert EndpointsAutomaton.resolve_path("/filterRules/hello/world/", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
+    assert EndpointsAutomaton.resolve_path("/filterRules/hello", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
+    assert EndpointsAutomaton.resolve_path("/filterRules", automaton) == {:guessed, ["/filterRules/%{ruleId}/%{filterKey}/value"]}
+    assert EndpointsAutomaton.resolve_path("/test/0", automaton) == {:guessed, ["/test/%{ind}/v"]}
+    assert EndpointsAutomaton.resolve_path("/test", automaton) == {:guessed, ["/test/%{ind}/v"]}
+    assert {:guessed, all_endpoints} = EndpointsAutomaton.resolve_path("", automaton)
     assert Enum.sort(all_endpoints) ==  ["/applicationId", "/cmdLine", "/filterRules/%{ruleId}/%{filterKey}/value", "/message", "/monotonicTimestamp", "/pid", "/test/%{ind}/v", "/test2/pluto/v", "/timestamp"]
-    assert {:guessed, all_endpoints} = EndpointsAutomaton.resolve_endpoint("/", automaton)
+    assert {:guessed, all_endpoints} = EndpointsAutomaton.resolve_path("/", automaton)
     assert Enum.sort(all_endpoints) ==  ["/applicationId", "/cmdLine", "/filterRules/%{ruleId}/%{filterKey}/value", "/message", "/monotonicTimestamp", "/pid", "/test/%{ind}/v", "/test2/pluto/v", "/timestamp"]
   end
 
@@ -162,9 +162,9 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
 
     assert {:ok, automaton} = EndpointsAutomaton.build(document.mappings)
 
-    assert EndpointsAutomaton.resolve_endpoint("/notFound/hello/world/value", automaton) == {:error, :not_found}
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/world/value/too/long", automaton) == {:error, :not_found}
-    assert EndpointsAutomaton.resolve_endpoint("/filterRules/hello/value/other/things", automaton) == {:error, :not_found}
+    assert EndpointsAutomaton.resolve_path("/notFound/hello/world/value", automaton) == {:error, :not_found}
+    assert EndpointsAutomaton.resolve_path("/filterRules/hello/world/value/too/long", automaton) == {:error, :not_found}
+    assert EndpointsAutomaton.resolve_path("/filterRules/hello/value/other/things", automaton) == {:error, :not_found}
   end
 
   test "build endpoints automaton and fail due to invalid interface" do
