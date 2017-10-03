@@ -1,0 +1,111 @@
+{
+    "title": "Hyperspace (Astarte) Schema Interface",
+    "description" : "This schema describes how a Hyperspace interface should be declared",
+    "type": "object",
+    "properties": {
+        "interface_name": {
+            "type": "string",
+            "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+            "description": "The name of the interface. This has to be an unique, alphanumeric RDNS."
+        },
+        "version_major": {
+            "type": "integer",
+            "description": "A Major version qualifier for this interface. Interfaces with the same id and different version_major number are deemed incompatible. It is then acceptable to redefine any property of the interface when changing the major version number."
+        },
+        "version_minor": {
+            "type": "integer",
+            "description": "A Minor version qualifier for this interface. Interfaces with the same id and major version number and different version_minor number are deemed compatible between each other. When changing the minor number, it is then only possible to insert further mappings. Any other modification might lead to incompatibilities and undefined behavior."
+        },
+        "type": {
+            "type": "string",
+            "enum": ["datastream", "properties"],
+            "description": "Identifies the type of this Interface. Currently two types are supported: datastream and properties. datastream shold be used when dealing with streams of non-persistent data, where a single mapping receives updates and there's no concept of state. properties, instead, are meant to be an actual state and as such they have only a change history, and are retained."
+        },
+        "quality": {
+            "type": "string",
+            "enum": ["producer", "consumer"],
+            "description": "Identifies the quality of the interface. Interfaces are meant to be unidirectional, and this property defines who's sending or receiving data. producer means the device/gateway is sending data to the transport, consumer means the device/gateway is receiving data from the transport. Bidirectional mode is not supported, you should instantiate another interface for that."
+        },
+        "aggregate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Identifies the aggregation of the mappings of the interface. A false value means every mapping changes state or streams data independently from the other, whereas a true value treats the interface as an object, making all the mappings changes interdependent. Choosing the right aggregation might drastically improve performances, especially in stateful transports (e.g.: Astarte)"
+        },
+        "explicit_timestamp": {
+            "type": "boolean",
+            "default": false,
+            "description": "Allow to set a custom timestamp, otherwise a timestamp is added when the message is received. If true explicit timestamp will also be used for sorting. This feature is only supported on datastreams."
+        },
+        "has_metadata": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true it will be possible to decorate the value with additional metadata. This feature is only supported on non aggregate interfaces."
+        },
+        "description": {
+            "type": "string",
+            "description": "An optional description of the interface, useful since JSON doesn't support comments"
+        },
+        "doc": {
+            "type": "string",
+            "description": "A string containing Doxygen documentation that will be injected in the generated class"
+        },
+        "mappings": {
+            "type": "array",
+            "description": "Mappings define the endpoint of the interface, where actual data is stored/streamed. They are defined as relative URLs (e.g. /my/path) and can be parametrized (e.g.: /%{myparam}/path). A valid interface must have no mappings clash, which means that every mapping must resolve to a unique path or collection of paths (including parametrization). Every mapping acquires type, quality and aggregation of the interface.",
+            "items": {
+                "type": "object",
+                "description": "A mapping object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "pattern": "^(/(%{([a-zA-Z0-9]+)}|[a-zA-Z0-9]+))+$",
+                        "description": "Path of the mapping. This is a UNIX-like path (e.g. /my/path) and can be parametrized. Parameters are in the %{name} form, and can be used to create interfaces which represent dictionaries of mappings. When the interface aggregation is object, an object is composed by all the mappings for one specific parameter combination."
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["double", "integer", "boolean", "longinteger",
+                            "string", "binaryblob", "datetime",
+                            "doublearray", "integerarray", "booleanarray", "longintegerarray",
+                            "stringarray", "binaryblobarray", "datetimearray"],
+                            "description": "Defines the type of the mapping."
+                    },
+                    "reliability": {
+                        "type": "string",
+                        "enum": ["unreliable", "guaranteed", "unique"],
+                        "default": "unreliable",
+                        "description": "Useful only with datastream. Defines whether the sent data should be considered delivered when the transport successfully sends the data (unreliable), when we know that the data has been received at least once (guaranteed) or when we know that the data has been received exactly once (unique). unreliable by default. When using reliable data, consider you might incur in additional resource usage on both the transport and the device's end."
+                    },
+                    "retention": {
+                        "type": "string",
+                        "enum": ["discard", "volatile", "stored"],
+                        "default": "discard",
+                        "description": "Useful only with datastream. Defines whether the sent data should be discarded if the transport is temporarily uncapable of delivering it (discard) or should be kept in a cache in memory (volatile) or on disk (stored), and guaranteed to be delivered in the timeframe defined by the expiry. discard by default."
+                    },
+                    "expiry": {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Useful when retention is stored. Defines after how many seconds a specific data entry should be kept before giving up and erasing it from the persistent cache. A value <= 0 means the persistent cache never expires, and is the default."
+                    },
+                    "allow_unset": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Used only with properties. Used with producers, it generates a method to unset the property. Used with consumers, it generates code to call an unset method when an empty payload is received"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "An optional description of the mapping, useful since JSON doesn't support comments"
+                    },
+                    "doc": {
+                        "type": "string",
+                        "description": "A string containing Doxygen documentation that will be injected in the generated class"
+                    }
+                },
+                "required": ["path", "type"]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+
+        }
+    },
+    "required": ["interface_name", "version_minor", "version_major", "type", "quality", "mappings"]
+}
