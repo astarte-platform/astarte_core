@@ -1,12 +1,14 @@
 {
-    "title": "Hyperspace (Astarte) Schema Interface",
-    "description" : "This schema describes how a Hyperspace interface should be declared",
+    "title": "Astarte Interface Schema",
+    "description" : "This schema describes how an Astarte interface should be declared",
     "type": "object",
     "properties": {
         "interface_name": {
             "type": "string",
             "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
-            "description": "The name of the interface. This has to be an unique, alphanumeric RDNS."
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "The name of the interface. This has to be an unique, alphanumeric reverse internet domain name, shorther than 128 characters."
         },
         "version_major": {
             "type": "integer",
@@ -19,17 +21,18 @@
         "type": {
             "type": "string",
             "enum": ["datastream", "properties"],
-            "description": "Identifies the type of this Interface. Currently two types are supported: datastream and properties. datastream shold be used when dealing with streams of non-persistent data, where a single mapping receives updates and there's no concept of state. properties, instead, are meant to be an actual state and as such they have only a change history, and are retained."
+            "description": "Identifies the type of this Interface. Currently two types are supported: datastream and properties. datastream should be used when dealing with streams of non-persistent data, where a single path receives updates and there's no concept of state. properties, instead, are meant to be an actual state and as such they have only a change history, and are retained."
         },
-        "quality": {
+        "ownership": {
             "type": "string",
-            "enum": ["producer", "consumer"],
-            "description": "Identifies the quality of the interface. Interfaces are meant to be unidirectional, and this property defines who's sending or receiving data. producer means the device/gateway is sending data to the transport, consumer means the device/gateway is receiving data from the transport. Bidirectional mode is not supported, you should instantiate another interface for that."
+            "enum": ["thing", "server"],
+            "description": "Identifies the quality of the interface. Interfaces are meant to be unidirectional, and this property defines who's sending or receiving data. thing means the device/gateway is sending data to Astarte, consumer means the device/gateway is receiving data from Astarte. Bidirectional mode is not supported, you should instantiate another interface for that."
         },
-        "aggregate": {
-            "type": "boolean",
-            "default": false,
-            "description": "Identifies the aggregation of the mappings of the interface. A false value means every mapping changes state or streams data independently from the other, whereas a true value treats the interface as an object, making all the mappings changes interdependent. Choosing the right aggregation might drastically improve performances, especially in stateful transports (e.g.: Astarte)"
+        "aggregation": {
+            "type": "string",
+            "enum": ["individual", "object"],
+            "default": "individual",
+            "description": "Identifies the aggregation of the mappings of the interface. Individual means every mapping changes state or streams data independently, whereas an object aggregation treats the interface as an object, making all the mappings changes interdependent. Choosing the right aggregation might drastically improve performances."
         },
         "explicit_timestamp": {
             "type": "boolean",
@@ -43,11 +46,11 @@
         },
         "description": {
             "type": "string",
-            "description": "An optional description of the interface, useful since JSON doesn't support comments"
+            "description": "An optional description of the interface."
         },
         "doc": {
             "type": "string",
-            "description": "A string containing Doxygen documentation that will be injected in the generated class"
+            "description": "A string containing documentation that will be injected in the generated client code."
         },
         "mappings": {
             "type": "array",
@@ -56,10 +59,12 @@
                 "type": "object",
                 "description": "A mapping object",
                 "properties": {
-                    "path": {
+                    "endpoint": {
                         "type": "string",
-                        "pattern": "^(/(%{([a-zA-Z0-9]+)}|[a-zA-Z0-9]+))+$",
-                        "description": "Path of the mapping. This is a UNIX-like path (e.g. /my/path) and can be parametrized. Parameters are in the %{name} form, and can be used to create interfaces which represent dictionaries of mappings. When the interface aggregation is object, an object is composed by all the mappings for one specific parameter combination."
+                        "pattern": "^(/(%{([a-zA-Z][a-zA-Z0-9]*)}|[a-zA-Z][a-zA-Z0-9]*)){1,64}$",
+                        "minLength": 2,
+                        "maxLength": 256,
+                        "description": "The template of the path. This is a UNIX-like path (e.g. /my/path) and can be parametrized. Parameters are in the %{name} form, and can be used to create interfaces which represent dictionaries of mappings. When the interface aggregation is object, an object is composed by all the mappings for one specific parameter combination."
                     },
                     "type": {
                         "type": "string",
@@ -89,23 +94,24 @@
                     "allow_unset": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Used only with properties. Used with producers, it generates a method to unset the property. Used with consumers, it generates code to call an unset method when an empty payload is received"
+                        "description": "Used only with properties. Used with producers, it generates a method to unset the property. Used with consumers, it generates code to call an unset method when an empty payload is received."
                     },
                     "description": {
                         "type": "string",
-                        "description": "An optional description of the mapping, useful since JSON doesn't support comments"
+                        "description": "An optional description of the mapping."
                     },
                     "doc": {
                         "type": "string",
-                        "description": "A string containing Doxygen documentation that will be injected in the generated class"
+                        "description": "A string containing documentation that will be injected in the generated client code."
                     }
                 },
-                "required": ["path", "type"]
+                "required": ["endpoint", "type"]
             },
             "minItems": 1,
+            "maxItems": 1024,
             "uniqueItems": true
 
         }
     },
-    "required": ["interface_name", "version_minor", "version_major", "type", "quality", "mappings"]
+    "required": ["interface_name", "version_minor", "version_major", "type", "ownership", "mappings"]
 }
