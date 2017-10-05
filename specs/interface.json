@@ -1,4 +1,5 @@
 {
+    "$schema": "http://json-schema.org/draft-04/schema",
     "title": "Astarte Interface Schema",
     "description" : "This schema describes how an Astarte interface should be declared",
     "type": "object",
