@@ -1,6 +1,7 @@
 defmodule Astarte.Core.InterfaceDescriptorTest do
   use ExUnit.Case
 
+  alias Astarte.Core.CQLUtils
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.Interface.Type
   alias Astarte.Core.Interface.Ownership
@@ -15,6 +16,8 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
   @interface_fixture_ownership_as_int Ownership.to_int(@interface_fixture_ownership)
   @interface_fixture_aggregation :individual
   @interface_fixture_aggregation_as_int Aggregation.to_int(@interface_fixture_aggregation)
+  @interface_fixture_storage "storage"
+  @interface_fixture_storage_type 0
 
   @interface_descriptor_fixture %InterfaceDescriptor{
     name: @interface_fixture_name,
@@ -22,7 +25,11 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
     minor_version: @interface_fixture_min,
     type: @interface_fixture_type,
     ownership: @interface_fixture_ownership,
-    aggregation: @interface_fixture_aggregation
+    aggregation: @interface_fixture_aggregation,
+    storage: @interface_fixture_storage,
+    storage_type: @interface_fixture_storage_type,
+    automaton: {%{}, %{}},
+    interface_id: CQLUtils.interface_id(@interface_fixture_name, @interface_fixture_maj)
   }
 
   test "keyword list result deserialization" do
@@ -31,8 +38,13 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       major_version: @interface_fixture_maj,
       minor_version: @interface_fixture_min,
       type: @interface_fixture_type_as_int,
-      ownership: @interface_fixture_ownership_as_int,
-      aggregation: @interface_fixture_aggregation_as_int
+      quality: @interface_fixture_ownership_as_int,
+      flags: @interface_fixture_aggregation_as_int,
+      storage: @interface_fixture_storage,
+      storage_type: @interface_fixture_storage_type,
+      automaton_transitions: :erlang.term_to_binary(%{}),
+      automaton_accepting_states: :erlang.term_to_binary(%{}),
+      interface_id: CQLUtils.interface_id(@interface_fixture_name, @interface_fixture_maj)
     ]
 
     assert InterfaceDescriptor.from_db_result!(descriptor_as_keyword_list) == @interface_descriptor_fixture
@@ -59,8 +71,13 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       major_version: @interface_fixture_maj,
       minor_version: @interface_fixture_min,
       type: @interface_fixture_type_as_int,
-      ownership: @interface_fixture_ownership_as_int,
-      aggregation: @interface_fixture_aggregation_as_int
+      quality: @interface_fixture_ownership_as_int,
+      flags: @interface_fixture_aggregation_as_int,
+      storage: @interface_fixture_storage,
+      storage_type: @interface_fixture_storage_type,
+      automaton_transitions: :erlang.term_to_binary(%{}),
+      automaton_accepting_states: :erlang.term_to_binary(%{}),
+      interface_id: CQLUtils.interface_id(@interface_fixture_name, @interface_fixture_maj)
     }
 
     assert InterfaceDescriptor.from_db_result!(descriptor_as_map) == @interface_descriptor_fixture

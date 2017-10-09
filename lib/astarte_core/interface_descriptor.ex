@@ -26,7 +26,11 @@ defmodule Astarte.Core.InterfaceDescriptor do
     ownership: nil,
     aggregation: nil,
     explicit_timestamp: false,
-    has_metadata: false
+    has_metadata: false,
+    interface_id: nil,
+    automaton: nil,
+    storage: nil,
+    storage_type: nil
 
   def validate(interface_descriptor) do
     cond do
@@ -96,8 +100,14 @@ defmodule Astarte.Core.InterfaceDescriptor do
       major_version: major_version,
       minor_version: minor_version,
       type: type,
-      ownership: ownership,
-      aggregation: aggregation,
+      quality: ownership,
+
+      flags: flags,
+      automaton_accepting_states: automaton_accepting_states,
+      automaton_transitions: automaton_transitions,
+      storage: storage,
+      storage_type: storage_type,
+      interface_id: interface_id,
     } = db_result
 
     %InterfaceDescriptor{
@@ -106,7 +116,11 @@ defmodule Astarte.Core.InterfaceDescriptor do
       minor_version: minor_version,
       type: Astarte.Core.Interface.Type.from_int(type),
       ownership: Astarte.Core.Interface.Ownership.from_int(ownership),
-      aggregation: Astarte.Core.Interface.Aggregation.from_int(aggregation),
+      aggregation: Astarte.Core.Interface.Aggregation.from_int(flags),
+      storage: storage,
+      storage_type: storage_type,
+      automaton: {:erlang.binary_to_term(automaton_transitions), :erlang.binary_to_term(automaton_accepting_states)},
+      interface_id: interface_id
     }
   end
 end
