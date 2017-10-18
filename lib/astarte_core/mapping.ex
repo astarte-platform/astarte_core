@@ -28,7 +28,8 @@ defmodule Astarte.Core.Mapping do
     retention: nil,
     expiry: 0,
     allow_unset: false,
-    endpoint_id: nil
+    endpoint_id: nil,
+    interface_id: nil
 
   def is_valid?(mapping) do
     if ((mapping != nil) and (mapping != "") and (mapping != [])) do
@@ -60,7 +61,8 @@ defmodule Astarte.Core.Mapping do
       retention: retention,
       expiry: expiry,
       allow_unset: allow_unset,
-      endpoint_id: endpoint_id
+      endpoint_id: endpoint_id,
+      interface_id: interface_id
     } = db_result
 
     %Mapping{
@@ -70,7 +72,8 @@ defmodule Astarte.Core.Mapping do
       retention: Retention.from_int(retention),
       expiry: expiry,
       allow_unset: allow_unset,
-      endpoint_id: endpoint_id
+      endpoint_id: endpoint_id,
+      interface_id: interface_id
     }
   end
 
