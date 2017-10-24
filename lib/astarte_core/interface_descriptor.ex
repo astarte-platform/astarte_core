@@ -18,6 +18,7 @@
 
 defmodule Astarte.Core.InterfaceDescriptor do
   alias Astarte.Core.InterfaceDescriptor
+  alias Astarte.Core.StorageType
 
   defstruct name: "",
     major_version: 0,
@@ -118,7 +119,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
       ownership: Astarte.Core.Interface.Ownership.from_int(ownership),
       aggregation: Astarte.Core.Interface.Aggregation.from_int(flags),
       storage: storage,
-      storage_type: storage_type,
+      storage_type: StorageType.from_int(storage_type),
       automaton: {:erlang.binary_to_term(automaton_transitions), :erlang.binary_to_term(automaton_accepting_states)},
       interface_id: interface_id
     }
