@@ -6,6 +6,7 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
   alias Astarte.Core.Interface.Type
   alias Astarte.Core.Interface.Ownership
   alias Astarte.Core.Interface.Aggregation
+  alias Astarte.Core.StorageType
 
   @interface_fixture_name "com.ispirata.Hemera.Test"
   @interface_fixture_maj 1
@@ -17,7 +18,8 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
   @interface_fixture_aggregation :individual
   @interface_fixture_aggregation_as_int Aggregation.to_int(@interface_fixture_aggregation)
   @interface_fixture_storage "storage"
-  @interface_fixture_storage_type 0
+  @interface_fixture_storage_type :multi_interface_individual_properties_dbtable
+  @interface_fixture_storage_type_as_int StorageType.to_int(@interface_fixture_storage_type)
 
   @interface_descriptor_fixture %InterfaceDescriptor{
     name: @interface_fixture_name,
@@ -41,7 +43,7 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       quality: @interface_fixture_ownership_as_int,
       flags: @interface_fixture_aggregation_as_int,
       storage: @interface_fixture_storage,
-      storage_type: @interface_fixture_storage_type,
+      storage_type: @interface_fixture_storage_type_as_int,
       automaton_transitions: :erlang.term_to_binary(%{}),
       automaton_accepting_states: :erlang.term_to_binary(%{}),
       interface_id: CQLUtils.interface_id(@interface_fixture_name, @interface_fixture_maj)
@@ -74,7 +76,7 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       quality: @interface_fixture_ownership_as_int,
       flags: @interface_fixture_aggregation_as_int,
       storage: @interface_fixture_storage,
-      storage_type: @interface_fixture_storage_type,
+      storage_type: @interface_fixture_storage_type_as_int,
       automaton_transitions: :erlang.term_to_binary(%{}),
       automaton_accepting_states: :erlang.term_to_binary(%{}),
       interface_id: CQLUtils.interface_id(@interface_fixture_name, @interface_fixture_maj)
