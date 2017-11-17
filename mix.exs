@@ -37,11 +37,12 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
+      {:bson, "~> 0.4.4"},
+      {:exprotobuf, "~> 1.2.7"},
       {:poison, "~> 3.1"},
 
       {:distillery, "~> 1.4", runtime: false},
-
-      {:excoveralls, "~> 0.6", only: :test},
+      {:excoveralls, "~> 0.6", only: :test}
     ]
   end
 end
