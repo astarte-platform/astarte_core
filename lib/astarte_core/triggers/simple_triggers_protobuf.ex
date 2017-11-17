@@ -16,7 +16,7 @@
 # along with Astarte.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-defmodule Astarte.DataUpdaterPlant.SimpleTriggersProtobuf do
+defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf do
   @external_resource Path.expand("simple_triggers_protobuf", __DIR__)
 
   use Protobuf, from: Path.wildcard(Path.expand("simple_triggers_protobuf/*.proto", __DIR__))

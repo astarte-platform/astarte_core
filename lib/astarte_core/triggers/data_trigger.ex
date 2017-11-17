@@ -16,7 +16,7 @@
 # along with Astarte.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-defmodule Astarte.DataUpdaterPlant.DataTrigger do
+defmodule Astarte.Core.Triggers.DataTrigger do
   @enforce_keys [:trigger_targets]
   defstruct [
     :path_match_tokens,

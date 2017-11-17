@@ -16,11 +16,11 @@
 # along with Astarte.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-defmodule Astarte.DataUpdaterPlant.SimpleTriggersProtobuf.Utils do
-  alias Astarte.DataUpdaterPlant.DataTrigger
-  alias Astarte.DataUpdaterPlant.SimpleTriggersProtobuf.DataTrigger, as: SimpleTriggersProtobufDataTrigger
-  alias Astarte.DataUpdaterPlant.SimpleTriggersProtobuf.TriggerTargetContainer
-  alias Astarte.DataUpdaterPlant.SimpleTriggersProtobuf.SimpleTriggerContainer
+defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
+  alias Astarte.Core.Triggers.DataTrigger
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DataTrigger, as: SimpleTriggersProtobufDataTrigger
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TriggerTargetContainer
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.SimpleTriggerContainer
 
   def deserialize_trigger_target(payload) do
     %TriggerTargetContainer{
