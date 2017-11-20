@@ -1,0 +1,42 @@
+//
+// Copyright (C) 2017 Ispirata Srl
+//
+// This file is part of Astarte.
+// Astarte is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Astarte is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with Astarte.  If not, see <http://www.gnu.org/licenses/>.
+//
+
+message SimpleEvent {
+    int32 version = 1 [default = 1];
+
+    bytes simple_trigger_id = 2;
+    bytes parent_trigger_id = 3;
+
+    string realm = 4;
+    string device_id = 5;
+
+    oneof event {
+        DeviceConnectedEvent device_connected_event = 6;
+        DeviceDisconnectedEvent device_disconnected_event = 7;
+        IncomingDataEvent incoming_data_event = 8;
+        ValueChangeEvent value_change_event = 9;
+        ValueChangeAppliedEvent value_change_applied_event = 10;
+        PathCreatedEvent path_created_event = 11;
+        PathRemovedEvent path_removed_event = 12;
+        ValueStoredEvent value_stored_event = 13;
+        IncomingIntrospectionEvent incoming_introspection_event = 14;
+        InterfaceAddedEvent interface_added_event = 15;
+        InterfaceRemovedEvent interface_removed_event = 16;
+        InterfaceMinorUpdatedEvent interface_minor_updated_event = 17;
+    }
+}
