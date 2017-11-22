@@ -18,4 +18,5 @@
 
 message InterfaceRemovedEvent {
   string interface = 1;
+  int32 major_version = 2;
 }
