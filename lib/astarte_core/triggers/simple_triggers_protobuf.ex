@@ -20,4 +20,17 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf do
   @external_resource Path.expand("simple_triggers_protobuf", __DIR__)
 
   use Protobuf, from: Path.wildcard(Path.expand("simple_triggers_protobuf/*.proto", __DIR__))
+
+  @doc """
+  Utility macro, `use Astarte.Core.Triggers.SimpleTriggersProtobuf` injects aliases
+  for all the structs defined in the `Astarte.Core.Triggers.SimpleTriggersProtobuf`
+  namespace
+  """
+  defmacro __using__(_opts) do
+    for {{:msg, msg_module}, _} <- __MODULE__.defs() do
+      quote do
+        alias unquote(msg_module)
+      end
+    end
+  end
 end
