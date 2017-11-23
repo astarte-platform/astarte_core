@@ -19,6 +19,7 @@
 defmodule Astarte.Core.Triggers.DataTrigger do
   @enforce_keys [:trigger_targets]
   defstruct [
+    :interface_id,
     :path_match_tokens,
     :value_match_operator,
     :known_value,
