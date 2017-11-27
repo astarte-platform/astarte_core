@@ -22,6 +22,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TriggerTargetContainer
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.SimpleTriggerContainer
 
+  @any_interface_object_id <<247, 238, 60, 243, 184, 175, 236, 43, 25, 242, 126, 91, 253, 141, 17, 119>>
+
   def deserialize_trigger_target(payload) do
     %TriggerTargetContainer{
       version: 1,
@@ -42,6 +44,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
 
   def simple_trigger_to_data_trigger(protobuf_data_trigger) do
     %SimpleTriggersProtobufDataTrigger{
+      interface_id: interface_id,
       match_path: match_path,
       value_match_operator: value_match_operator,
       known_value: encoded_known_value
@@ -63,12 +66,19 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
         :any_endpoint
       end
 
+    interface_id_or_any =
+      if interface_id == @any_interface_object_id || interface_id == nil do
+        :any_interface
+      else
+        interface_id
+      end
+
     %DataTrigger{
+      interface_id: interface_id_or_any,
       path_match_tokens: path_match_tokens,
       value_match_operator: value_match_operator,
       known_value: plain_value,
       trigger_targets: nil
     }
   end
-
 end
