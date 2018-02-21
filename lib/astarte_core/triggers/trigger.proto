@@ -23,4 +23,6 @@ message Trigger {
     repeated bytes simple_triggers_uuids = 3;
     bytes action = 4;
     // TODO: add condition
+
+    string name = 5;
 }
