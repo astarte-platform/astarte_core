@@ -95,14 +95,19 @@ defmodule Astarte.Core.CQLUtils do
   @doc """
   Returns interface UUID for a certain `interface_name` with a certain `interface_major`
   """
-  def interface_id(interface_name, interface_major) do
+  def interface_id(interface_name, interface_major)
+      when is_binary(interface_name)
+      and is_integer(interface_major) do
     :crypto.hash(:md5, "iid:#{interface_name}:#{Integer.to_string(interface_major)}")
   end
 
   @doc """
   returns an endpoint UUID for a certain `endpoint` on a certain `interface_name` with a certain `interface_major`.
   """
-  def endpoint_id(interface_name, interface_major, endpoint) do
+  def endpoint_id(interface_name, interface_major, endpoint)
+      when is_binary(interface_name)
+      and is_integer(interface_major)
+      and is_binary(endpoint) do
     stripped_endpoint =
       endpoint
       |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
