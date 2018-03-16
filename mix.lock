@@ -1,5 +1,6 @@
-%{"bson": {:hex, :bson, "0.4.4", "175ad645cc492349a4cefa0bdff612178a0db611adf38dabe2bbfad2aa25627a", [:mix], [], "hexpm"},
+%{
   "certifi": {:hex, :certifi, "2.0.0", "a0c0e475107135f76b8c1d5bc7efb33cd3815cb3cf3dea7aefdd174dabead064", [:rebar3], [], "hexpm"},
+  "cyanide": {:hex, :cyanide, "0.5.0", "b72422623ce84baa19f96498e18f15f46c4dcac8359d484c9a8c0e3836cb629b", [:mix], [], "hexpm"},
   "distillery": {:hex, :distillery, "1.5.1", "7ad7354214959c0f65f57ddd49478c81c3b2733ca2e5ccfb9eb55351108466aa", [:mix], [], "hexpm"},
   "excoveralls": {:hex, :excoveralls, "0.7.3", "6c05cc452e6ebfc347fccc0de7339e9bc1ed8678c52765353303fa0d2c44c70d", [:mix], [{:exjsx, ">= 3.0.0", [hex: :exjsx, repo: "hexpm", optional: false]}, {:hackney, ">= 0.12.0", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm"},
   "exjsx": {:hex, :exjsx, "4.0.0", "60548841e0212df401e38e63c0078ec57b33e7ea49b032c796ccad8cde794b5c", [:mix], [{:jsx, "~> 2.8.0", [hex: :jsx, repo: "hexpm", optional: false]}], "hexpm"},

@@ -37,7 +37,7 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
-      {:bson, "~> 0.4.4"},
+      {:cyanide, "~> 0.5.0"},
       {:exprotobuf, "~> 1.2.7"},
       {:poison, "~> 3.1"},
 
