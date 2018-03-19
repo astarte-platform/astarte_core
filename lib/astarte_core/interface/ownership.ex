@@ -18,29 +18,29 @@
 
 defmodule Astarte.Core.Interface.Ownership do
 
-  @interface_ownership_thing 1
+  @interface_ownership_device 1
   @interface_ownership_server 2
 
   def to_int(ownership) do
     case ownership do
-      :thing -> @interface_ownership_thing
+      :device -> @interface_ownership_device
       :server -> @interface_ownership_server
     end
   end
 
   def from_int(ownership_int) do
     case ownership_int do
-      @interface_ownership_thing -> :thing
+      @interface_ownership_device -> :device
       @interface_ownership_server -> :server
     end
   end
 
   def from_string(ownership) do
     case ownership do
-      "thing" -> :thing
+      "device" -> :device
       "server" -> :server
         # deprecated names
-      "producer" -> :thing
+      "producer" -> :device
       "consumer" -> :server
     end
   end

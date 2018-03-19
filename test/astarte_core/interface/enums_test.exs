@@ -15,8 +15,8 @@ defmodule Astarte.Core.Interface.EnumsTest do
   end
 
   test "Interface.Ownership consistency" do
-    assert Ownership.to_int(:thing) == 1
-    assert Ownership.from_int(1) == :thing
+    assert Ownership.to_int(:device) == 1
+    assert Ownership.from_int(1) == :device
 
     assert Ownership.to_int(:server) == 2
     assert Ownership.from_int(2) == :server

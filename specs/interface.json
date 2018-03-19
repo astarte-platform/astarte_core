@@ -26,8 +26,8 @@
         },
         "ownership": {
             "type": "string",
-            "enum": ["thing", "server"],
-            "description": "Identifies the quality of the interface. Interfaces are meant to be unidirectional, and this property defines who's sending or receiving data. thing means the device/gateway is sending data to Astarte, consumer means the device/gateway is receiving data from Astarte. Bidirectional mode is not supported, you should instantiate another interface for that."
+            "enum": ["device", "server"],
+            "description": "Identifies the ownership of the interface. Interfaces are meant to be unidirectional, and this property defines who's sending or receiving data. device means the device/gateway is sending data to Astarte, server means the device/gateway is receiving data from Astarte. Bidirectional mode is not supported, you should instantiate another interface for that."
         },
         "aggregation": {
             "type": "string",

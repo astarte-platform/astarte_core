@@ -62,7 +62,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
       ((interface_descriptor.type == :properties) or (interface_descriptor.type == :datastream)) == false ->
         {:error, :invalid_interface_type}
 
-      ((interface_descriptor.ownership == :thing) or (interface_descriptor.ownership == :server)) == false ->
+      ((interface_descriptor.ownership == :device) or (interface_descriptor.ownership == :server)) == false ->
         {:error, :invalid_interface_ownership}
 
       ((interface_descriptor.aggregation == :individual) or (interface_descriptor.aggregation == :object)) == false ->

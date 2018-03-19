@@ -85,7 +85,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
 }
   """
 
-  @individual_property_thing_owned_interface """
+  @individual_property_device_owned_interface """
 {
      "interface_name": "com.ispirata.Hemera.DeviceLog.Status",
      "version_major": 2,
@@ -126,7 +126,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
     assert descriptor.major_version == 1
     assert descriptor.minor_version == 2
     assert descriptor.type == :datastream
-    assert descriptor.ownership == :thing
+    assert descriptor.ownership == :device
     assert descriptor.aggregation == :object
 
     last_mapping = List.last(interface_document.mappings)
@@ -167,14 +167,14 @@ defmodule Astarte.Core.InterfaceDocumentTest do
     assert interface_document.source == @individual_property_server_owned_interface
   end
 
-  test "individual property thing owned interface deserialization" do
-    {:ok, interface_document} = Astarte.Core.InterfaceDocument.from_json(@individual_property_thing_owned_interface)
+  test "individual property device owned interface deserialization" do
+    {:ok, interface_document} = Astarte.Core.InterfaceDocument.from_json(@individual_property_device_owned_interface)
     descriptor = interface_document.descriptor
     assert descriptor.name == "com.ispirata.Hemera.DeviceLog.Status"
     assert descriptor.major_version == 2
     assert descriptor.minor_version == 1
     assert descriptor.type == :properties
-    assert descriptor.ownership == :thing
+    assert descriptor.ownership == :device
     assert descriptor.aggregation == :individual
 
     last_mapping = List.last(interface_document.mappings)
@@ -185,7 +185,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
 
     assert Kernel.length(interface_document.mappings) == 1
 
-    assert interface_document.source == @individual_property_thing_owned_interface
+    assert interface_document.source == @individual_property_device_owned_interface
   end
 
   test "invalid mapping document" do
@@ -218,7 +218,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :properties,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :individual
     }
     assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :invalid_interface_name}
@@ -229,7 +229,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :a_typo_here,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :individual
     }
     assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == {:error, :invalid_interface_type}
@@ -240,7 +240,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :datastream,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :object,
         has_metadata: true
     }
@@ -252,7 +252,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :properties,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :object,
         explicit_timestamp: true
     }
@@ -264,7 +264,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :properties,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :individual
     }
     assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == :ok
@@ -275,7 +275,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :properties,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :individual
     }
     assert Astarte.Core.InterfaceDescriptor.validate(descriptor) == :ok
@@ -286,7 +286,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 0,
         type: :datastream,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :individual,
         has_metadata: true,
         explicit_timestamp: true
@@ -302,7 +302,7 @@ defmodule Astarte.Core.InterfaceDocumentTest do
         major_version: 1,
         minor_version: 2,
         type: :datastream,
-        ownership: :thing,
+        ownership: :device,
         aggregation: :object,
       },
       mappings: [_ | _],
