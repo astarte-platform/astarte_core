@@ -49,7 +49,8 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       interface_id: CQLUtils.interface_id(@interface_fixture_name, @interface_fixture_maj)
     ]
 
-    assert InterfaceDescriptor.from_db_result!(descriptor_as_keyword_list) == @interface_descriptor_fixture
+    assert InterfaceDescriptor.from_db_result!(descriptor_as_keyword_list) ==
+             @interface_descriptor_fixture
   end
 
   test "keyword list deserialization fails if keys are missing" do
@@ -87,7 +88,7 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
 
   test "map deserialization fails if keys are missing" do
     descriptor_as_map_no_name = %{
-      #Missing name
+      # Missing name
       major_version: @interface_fixture_maj,
       minor_version: @interface_fixture_min,
       type: @interface_fixture_type_as_int,
