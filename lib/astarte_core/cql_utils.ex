@@ -31,7 +31,8 @@ defmodule Astarte.Core.CQLUtils do
   Returns a generated table name that might be used during table creation."
   """
   def interface_name_to_table_name(interface_name, major_version) do
-    String.replace(String.downcase(interface_name), ".", "_") <> "_v" <> Integer.to_string(major_version)
+    String.replace(String.downcase(interface_name), ".", "_") <>
+      "_v" <> Integer.to_string(major_version)
   end
 
   @doc """
@@ -58,7 +59,7 @@ defmodule Astarte.Core.CQLUtils do
       :boolean -> "boolean"
       :longinteger -> "bigint"
       :string -> "varchar"
-      :binaryblob-> "blob"
+      :binaryblob -> "blob"
       :datetime -> "timestamp"
       :doublearray -> "list<double>"
       :integerarray -> "list<int>"
@@ -80,7 +81,7 @@ defmodule Astarte.Core.CQLUtils do
       :boolean -> "boolean_value"
       :longinteger -> "longinteger_value"
       :string -> "string_value"
-      :binaryblob-> "binaryblob_value"
+      :binaryblob -> "binaryblob_value"
       :datetime -> "datetime_value"
       :doublearray -> "doublearray_value"
       :integerarray -> "integerarray_value"
@@ -96,8 +97,7 @@ defmodule Astarte.Core.CQLUtils do
   Returns interface UUID for a certain `interface_name` with a certain `interface_major`
   """
   def interface_id(interface_name, interface_major)
-      when is_binary(interface_name)
-      and is_integer(interface_major) do
+      when is_binary(interface_name) and is_integer(interface_major) do
     :crypto.hash(:md5, "iid:#{interface_name}:#{Integer.to_string(interface_major)}")
   end
 
@@ -105,14 +105,14 @@ defmodule Astarte.Core.CQLUtils do
   returns an endpoint UUID for a certain `endpoint` on a certain `interface_name` with a certain `interface_major`.
   """
   def endpoint_id(interface_name, interface_major, endpoint)
-      when is_binary(interface_name)
-      and is_integer(interface_major)
-      and is_binary(endpoint) do
+      when is_binary(interface_name) and is_integer(interface_major) and is_binary(endpoint) do
     stripped_endpoint =
       endpoint
       |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
 
-    :crypto.hash(:md5, "eid:#{interface_name}:#{Integer.to_string(interface_major)}:#{stripped_endpoint}:")
+    :crypto.hash(
+      :md5,
+      "eid:#{interface_name}:#{Integer.to_string(interface_major)}:#{stripped_endpoint}:"
+    )
   end
-
 end

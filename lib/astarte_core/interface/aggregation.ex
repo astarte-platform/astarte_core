@@ -17,7 +17,6 @@
 #
 
 defmodule Astarte.Core.Interface.Aggregation do
-
   @interface_aggregation_individual 1
   @interface_aggregation_object 2
 
@@ -41,5 +40,4 @@ defmodule Astarte.Core.Interface.Aggregation do
       "object" -> :object
     end
   end
-
 end
