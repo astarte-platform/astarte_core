@@ -17,7 +17,6 @@
 #
 
 defmodule Astarte.Core.Interface.Type do
-
   @interface_type_properties 1
   @interface_type_datastream 2
 
@@ -41,5 +40,4 @@ defmodule Astarte.Core.Interface.Type do
       "datastream" -> :datastream
     end
   end
-
 end

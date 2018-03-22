@@ -23,19 +23,20 @@ defmodule Astarte.Core.Mapping do
   alias Astarte.Core.Mapping.Retention
 
   defstruct endpoint: "",
-    value_type: nil,
-    reliability: nil,
-    retention: nil,
-    expiry: 0,
-    allow_unset: false,
-    endpoint_id: nil,
-    interface_id: nil
+            value_type: nil,
+            reliability: nil,
+            retention: nil,
+            expiry: 0,
+            allow_unset: false,
+            endpoint_id: nil,
+            interface_id: nil
 
   def is_valid?(mapping) do
-    if ((mapping != nil) and (mapping != "") and (mapping != [])) do
-      String.match?(mapping.endpoint, ~r/^((\/%{[a-zA-Z]+[a-zA-Z0-9]*})*(\/[a-zA-Z]+[a-zA-Z0-9]*)*)+$/)
-        and (mapping.value_type != nil)
-        and is_atom(mapping.value_type)
+    if mapping != nil and mapping != "" and mapping != [] do
+      String.match?(
+        mapping.endpoint,
+        ~r/^((\/%{[a-zA-Z]+[a-zA-Z0-9]*})*(\/[a-zA-Z]+[a-zA-Z0-9]*)*)+$/
+      ) and mapping.value_type != nil and is_atom(mapping.value_type)
     else
       false
     end
@@ -55,7 +56,8 @@ defmodule Astarte.Core.Mapping do
   end
 
   def from_db_result!(db_result) do
-    %{endpoint: endpoint,
+    %{
+      endpoint: endpoint,
       value_type: value_type,
       reliabilty: reliability,
       retention: retention,
@@ -76,5 +78,4 @@ defmodule Astarte.Core.Mapping do
       interface_id: interface_id
     }
   end
-
 end

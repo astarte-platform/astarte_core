@@ -17,7 +17,6 @@
 #
 
 defmodule Astarte.Core.Mapping.Reliability do
-
   @mapping_reliability_unreliable 1
   @mapping_reliability_guaranteed 2
   @mapping_reliability_unique 3
@@ -45,5 +44,4 @@ defmodule Astarte.Core.Mapping.Reliability do
       "unique" -> :unique
     end
   end
-
 end

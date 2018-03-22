@@ -17,7 +17,6 @@
 #
 
 defmodule Astarte.Core.Mapping.ValueType do
-
   @mapping_value_type_double 1
   @mapping_value_type_doublearray 2
   @mapping_value_type_integer 3
@@ -40,15 +39,15 @@ defmodule Astarte.Core.Mapping.ValueType do
       :boolean -> @mapping_value_type_boolean
       :longinteger -> @mapping_value_type_longinteger
       :string -> @mapping_value_type_string
-      :binaryblob-> @mapping_value_type_binaryblob
-      :datetime ->@mapping_value_type_datetime
+      :binaryblob -> @mapping_value_type_binaryblob
+      :datetime -> @mapping_value_type_datetime
       :doublearray -> @mapping_value_type_doublearray
       :integerarray -> @mapping_value_type_integerarray
       :booleanarray -> @mapping_value_type_booleanarray
       :longintegerarray -> @mapping_value_type_longintegerarray
       :stringarray -> @mapping_value_type_stringarray
       :binaryblobarray -> @mapping_value_type_binaryblobarray
-      :datetimearray ->@mapping_value_type_datetimearray
+      :datetimearray -> @mapping_value_type_datetimearray
     end
   end
 
@@ -89,5 +88,4 @@ defmodule Astarte.Core.Mapping.ValueType do
       "datetimearray" -> :datetimearray
     end
   end
-
 end

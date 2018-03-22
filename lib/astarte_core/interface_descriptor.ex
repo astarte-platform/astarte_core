@@ -21,17 +21,17 @@ defmodule Astarte.Core.InterfaceDescriptor do
   alias Astarte.Core.StorageType
 
   defstruct name: "",
-    major_version: 0,
-    minor_version: 0,
-    type: nil,
-    ownership: nil,
-    aggregation: nil,
-    explicit_timestamp: false,
-    has_metadata: false,
-    interface_id: nil,
-    automaton: nil,
-    storage: nil,
-    storage_type: nil
+            major_version: 0,
+            minor_version: 0,
+            type: nil,
+            ownership: nil,
+            aggregation: nil,
+            explicit_timestamp: false,
+            has_metadata: false,
+            interface_id: nil,
+            automaton: nil,
+            storage: nil,
+            storage_type: nil
 
   def validate(interface_descriptor) do
     cond do
@@ -44,7 +44,9 @@ defmodule Astarte.Core.InterfaceDescriptor do
       interface_descriptor == [] ->
         {:error, :not_an_interface_descriptor}
 
-      String.length(interface_descriptor.name <> "_v" <> Integer.to_string(interface_descriptor.major_version)) >= 48 ->
+      String.length(
+        interface_descriptor.name <> "_v" <> Integer.to_string(interface_descriptor.major_version)
+      ) >= 48 ->
         {:error, :too_long_interface_name}
 
       String.match?(interface_descriptor.name, ~r/^[a-zA-Z]+(\.[a-zA-Z0-9]+)*$/) == false ->
@@ -56,22 +58,26 @@ defmodule Astarte.Core.InterfaceDescriptor do
       interface_descriptor.major_version < 0 ->
         {:error, :invalid_minor_version}
 
-      (interface_descriptor.major_version == 0) and (interface_descriptor.minor_version == 0) ->
+      interface_descriptor.major_version == 0 and interface_descriptor.minor_version == 0 ->
         {:error, :invalid_minor_version}
 
-      ((interface_descriptor.type == :properties) or (interface_descriptor.type == :datastream)) == false ->
+      (interface_descriptor.type == :properties or interface_descriptor.type == :datastream) ==
+          false ->
         {:error, :invalid_interface_type}
 
-      ((interface_descriptor.ownership == :device) or (interface_descriptor.ownership == :server)) == false ->
+      (interface_descriptor.ownership == :device or interface_descriptor.ownership == :server) ==
+          false ->
         {:error, :invalid_interface_ownership}
 
-      ((interface_descriptor.aggregation == :individual) or (interface_descriptor.aggregation == :object)) == false ->
+      (interface_descriptor.aggregation == :individual or
+         interface_descriptor.aggregation == :object) == false ->
         {:error, :invalid_interface_aggregation}
 
-      (interface_descriptor.type != :datastream) and interface_descriptor.explicit_timestamp ->
+      interface_descriptor.type != :datastream and interface_descriptor.explicit_timestamp ->
         {:error, :explicit_timestamp_not_allowed}
 
-      ((interface_descriptor.aggregation != :individual) or (interface_descriptor.type != :datastream)) and interface_descriptor.has_metadata ->
+      (interface_descriptor.aggregation != :individual or interface_descriptor.type != :datastream) and
+          interface_descriptor.has_metadata ->
         {:error, :metadata_not_allowed}
 
       true ->
@@ -97,18 +103,18 @@ defmodule Astarte.Core.InterfaceDescriptor do
   end
 
   def from_db_result!(db_result) do
-    %{name: name,
+    %{
+      name: name,
       major_version: major_version,
       minor_version: minor_version,
       type: type,
       quality: ownership,
-
       flags: flags,
       automaton_accepting_states: automaton_accepting_states,
       automaton_transitions: automaton_transitions,
       storage: storage,
       storage_type: storage_type,
-      interface_id: interface_id,
+      interface_id: interface_id
     } = db_result
 
     %InterfaceDescriptor{
@@ -120,7 +126,9 @@ defmodule Astarte.Core.InterfaceDescriptor do
       aggregation: Astarte.Core.Interface.Aggregation.from_int(flags),
       storage: storage,
       storage_type: StorageType.from_int(storage_type),
-      automaton: {:erlang.binary_to_term(automaton_transitions), :erlang.binary_to_term(automaton_accepting_states)},
+      automaton:
+        {:erlang.binary_to_term(automaton_transitions),
+         :erlang.binary_to_term(automaton_accepting_states)},
       interface_id: interface_id
     }
   end

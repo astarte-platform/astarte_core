@@ -17,7 +17,6 @@
 #
 
 defmodule Astarte.Core.StorageType do
-
   @multi_interface_individual_properties_dbtable 1
   @multi_interface_individual_datastream_dbtable 2
   @one_individual_properties_dbtable 3
@@ -29,11 +28,20 @@ defmodule Astarte.Core.StorageType do
   """
   def to_int(storage_type) do
     case storage_type do
-      :multi_interface_individual_properties_dbtable -> @multi_interface_individual_properties_dbtable
-      :multi_interface_individual_datastream_dbtable -> @multi_interface_individual_datastream_dbtable
-      :one_individual_properties_dbtable -> @one_individual_properties_dbtable
-      :one_individual_datastream_dbtable -> @one_individual_datastream_dbtable
-      :one_object_datastream_dbtable -> @one_object_datastream_dbtable
+      :multi_interface_individual_properties_dbtable ->
+        @multi_interface_individual_properties_dbtable
+
+      :multi_interface_individual_datastream_dbtable ->
+        @multi_interface_individual_datastream_dbtable
+
+      :one_individual_properties_dbtable ->
+        @one_individual_properties_dbtable
+
+      :one_individual_datastream_dbtable ->
+        @one_individual_datastream_dbtable
+
+      :one_object_datastream_dbtable ->
+        @one_object_datastream_dbtable
     end
   end
 
@@ -42,12 +50,20 @@ defmodule Astarte.Core.StorageType do
   """
   def from_int(storage_type_int) do
     case storage_type_int do
-      @multi_interface_individual_properties_dbtable -> :multi_interface_individual_properties_dbtable
-      @multi_interface_individual_datastream_dbtable -> :multi_interface_individual_datastream_dbtable
-      @one_individual_properties_dbtable -> :one_individual_properties_dbtable
-      @one_individual_datastream_dbtable -> :one_individual_datastream_dbtable
-      @one_object_datastream_dbtable -> :one_object_datastream_dbtable
+      @multi_interface_individual_properties_dbtable ->
+        :multi_interface_individual_properties_dbtable
+
+      @multi_interface_individual_datastream_dbtable ->
+        :multi_interface_individual_datastream_dbtable
+
+      @one_individual_properties_dbtable ->
+        :one_individual_properties_dbtable
+
+      @one_individual_datastream_dbtable ->
+        :one_individual_datastream_dbtable
+
+      @one_object_datastream_dbtable ->
+        :one_object_datastream_dbtable
     end
   end
-
 end

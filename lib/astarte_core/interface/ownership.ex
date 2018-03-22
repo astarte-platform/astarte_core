@@ -17,7 +17,6 @@
 #
 
 defmodule Astarte.Core.Interface.Ownership do
-
   @interface_ownership_device 1
   @interface_ownership_server 2
 
@@ -37,12 +36,18 @@ defmodule Astarte.Core.Interface.Ownership do
 
   def from_string(ownership) do
     case ownership do
-      "device" -> :device
-      "server" -> :server
-        # deprecated names
-      "producer" -> :device
-      "consumer" -> :server
+      "device" ->
+        :device
+
+      "server" ->
+        :server
+
+      # deprecated names
+      "producer" ->
+        :device
+
+      "consumer" ->
+        :server
     end
   end
-
 end
