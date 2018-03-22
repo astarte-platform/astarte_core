@@ -20,14 +20,21 @@ defmodule Astarte.Core.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :astarte_core,
-     version: "0.1.0",
-     elixir: "~> 1.4",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
-     deps: deps()]
+    [
+      app: :astarte_core,
+      version: "0.1.0",
+      elixir: "~> 1.4",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
+      deps: deps()
+    ]
   end
 
   def application do
@@ -40,7 +47,6 @@ defmodule Astarte.Core.Mixfile do
       {:cyanide, "~> 0.5.0"},
       {:exprotobuf, "~> 1.2.7"},
       {:poison, "~> 3.1"},
-
       {:distillery, "~> 1.4", runtime: false},
       {:excoveralls, "~> 0.6", only: :test}
     ]
