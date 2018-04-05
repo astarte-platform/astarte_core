@@ -36,4 +36,13 @@ defmodule Astarte.Core.Device do
         {:error, :invalid_device_id}
     end
   end
+
+  @doc """
+  Encodes a device id with the standard encoding (Base64 url encoding, no padding). The device id must be exactly 16 bytes (128 bits) long.
+
+  Returns the encoded device id.
+  """
+  def encode_device_id(device_id) when is_binary(device_id) and byte_size(device_id) == 16 do
+    Base.url_encode64(device_id, padding: false)
+  end
 end
