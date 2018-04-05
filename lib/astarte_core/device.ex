@@ -13,13 +13,24 @@ defmodule Astarte.Core.Device do
   """
   def decode_device_id(encoded_device_id, opts \\ []) when is_binary(encoded_device_id) and is_list(opts) do
     allow_extended = Keyword.get(opts, :allow_extended_id, false)
-    with {:ok, decoded} <- Base.url_decode64(encoded_device_id, padding: false),
-         <<device_id::binary-size(16), extended_id::binary>> <- decoded do
+    with {:ok, device_id, extended_id} <- decode_extended_device_id(encoded_device_id) do
       if not allow_extended and byte_size(extended_id) > 0 do
         {:error, :extended_id_not_allowed}
       else
         {:ok, device_id}
       end
+    end
+  end
+
+  @doc """
+  Decodes an extended Base64 url encoded device id.
+
+  Returns `{:ok, device_id, extended_id}` (where `device_id` is a binary with the first 128 bits of the decoded id and `extended_id` the rest of the decoded binary) or `{:error, reason}`.
+  """
+  def decode_extended_device_id(encoded_device_id) when is_binary(encoded_device_id) do
+    with {:ok, decoded} <- Base.url_decode64(encoded_device_id, padding: false),
+         <<device_id::binary-size(16), extended_id::binary>> <- decoded do
+      {:ok, device_id, extended_id}
     else
       _ ->
         {:error, :invalid_device_id}
