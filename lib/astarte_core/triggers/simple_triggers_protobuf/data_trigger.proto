@@ -36,6 +36,8 @@ message DataTrigger {
         GREATER_OR_EQUAL_TO = 5;
         LESS_THAN = 6;
         LESS_OR_EQUAL_TO = 7;
+        CONTAINS = 8;
+        NOT_CONTAINS = 9;
     }
 
     DataTriggerType data_trigger_type = 2;

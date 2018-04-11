@@ -49,7 +49,9 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     ">" => :GREATER_THAN,
     ">=" => :GREATER_OR_EQUAL_TO,
     "<" => :LESS_THAN,
-    "<=" => :LESS_OR_EQUAL_TO
+    "<=" => :LESS_OR_EQUAL_TO,
+    "contains" => :CONTAINS,
+    "not_contains" => :NOT_CONTAINS
   }
   @data_trigger_any_match_operator "*"
 
@@ -77,7 +79,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   - `"interface_name"`: the interface name (string)
   - `"interface_major"`: the interface major (integer)
   - `"on"`: one of `"incoming_data"`, `"value_change"`, `"value_change_applied"`, `"path_created"`, `"path_removed"`, `"value_stored"` (string)
-  - `"value_match_operator"`: one of `"*"`, `"=="`, `"!="`, `">"`, `">="`, `"<"`, `"<="` (string)
+  - `"value_match_operator"`: one of `"*"`, `"=="`, `"!="`, `">"`, `">="`, `"<"`, `"<="`, `"contains"`, `"not contains"`  (string)
   If `"value_match_operator"` is not `"*"`, then the map must also include:
   - `"match_path"`: the interface path to take the trigger value from (string)
   - `"known_value"`: the known value which the trigger value will be matched against with `"value_match_operator"` (any)
