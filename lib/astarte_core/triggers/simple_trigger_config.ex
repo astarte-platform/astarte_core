@@ -25,6 +25,39 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     field :device_id, :string
   end
 
+  defimpl Poison.Encoder, for: SimpleTriggerConfig do
+    def encode(%SimpleTriggerConfig{type: "data_trigger"} = config, options) do
+      config_map =
+        if config.value_match_operator != "*" do
+          %{"type" => config.type,
+            "on" => config.on,
+            "interface_name" => config.interface_name,
+            "interface_major" => config.interface_major,
+            "value_match_operator" => config.value_match_operator,
+            "match_path" => config.match_path,
+            "known_value" => config.known_value
+          }
+        else
+          %{"type" => config.type,
+            "on" => config.on,
+            "interface_name" => config.interface_name,
+            "interface_major" => config.interface_major,
+            "value_match_operator" => config.value_match_operator
+          }
+        end
+
+      Poison.Encoder.Map.encode(config_map, options)
+    end
+
+    def encode(%SimpleTriggerConfig{type: "device_trigger"} = config, options) do
+      %{"type" => config.type,
+        "on" => config.on,
+        "device_id" => config.device_id,
+      }
+      |> Poison.Encoder.Map.encode(options)
+    end
+  end
+
   @data_trigger_permitted_keys [
     :type,
     :interface_name,
