@@ -7,6 +7,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DataTrigger
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.SimpleTriggerContainer
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TaggedSimpleTrigger
   alias Ecto.Changeset
 
   @interface_name "com.Test.Interface"
@@ -37,47 +38,65 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
     "device_id" => Device.encode_device_id(@device_id)
   }
 
-  test "from_map/1 with invalid trigger_type returns an error changeset" do
+  test "changeset with invalid trigger_type returns an error changeset" do
     invalid_type = %{@valid_data_trigger_map | "type" => "invalid"}
 
-    assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(invalid_type)
+    assert {:error, %Changeset{}} =
+             SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_type)
+             |> Ecto.Changeset.apply_action(:insert)
   end
 
   describe "data triggers" do
-    test "from_map/1 with invalid on returns an error changeset" do
+    test "changeset with invalid on returns an error changeset" do
       invalid_on = %{@valid_data_trigger_map | "on" => "invalid"}
 
-      assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(invalid_on)
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_on)
+               |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "from_map/1 with invalid value_match_operator returns an error changeset" do
+    test "changeset with invalid value_match_operator returns an error changeset" do
       invalid_operator = %{@valid_data_trigger_map | "value_match_operator" => "?"}
 
-      assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(invalid_operator)
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_operator)
+               |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "from_map/1 with value_match_operator != * and no match_path or known value returns an error changeset" do
+    test "changeset with value_match_operator != * and no match_path or known value returns an error changeset" do
       no_match_path = Map.delete(@valid_data_trigger_map, "match_path")
-      assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(no_match_path)
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, no_match_path)
+               |> Ecto.Changeset.apply_action(:insert)
 
       no_known_value = Map.delete(@valid_data_trigger_map, "known_value")
-      assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(no_known_value)
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, no_known_value)
+               |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "from_map/1 generates a SimpleTriggerConfig from a valid data trigger map" do
+    test "changeset generates a SimpleTriggerConfig from a valid data trigger map to_tagged_simple_trigger converts it to a TaggedSimpleTrigger" do
       interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
       data_trigger_type = :INCOMING_DATA
       match_operator = :GREATER_THAN
       known_value = Bson.encode(%{v: @int_known_value})
 
       assert {:ok, %SimpleTriggerConfig{} = config} =
-               SimpleTriggerConfig.from_map(@valid_data_trigger_map)
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, @valid_data_trigger_map)
+               |> Ecto.Changeset.apply_action(:insert)
 
-      assert config.object_type == 2
-      assert config.object_id == CQLUtils.interface_id(@interface_name, @interface_major)
+      interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
+
+      assert %TaggedSimpleTrigger{
+               object_id: ^interface_id,
+               object_type: 2,
+               simple_trigger_container: simple_trigger_container
+             } = SimpleTriggerConfig.to_tagged_simple_trigger(config)
 
       assert %SimpleTriggerContainer{simple_trigger: {:data_trigger, data_trigger}} =
-               config.simple_trigger_container
+               simple_trigger_container
 
       assert %DataTrigger{
                data_trigger_type: ^data_trigger_type,
@@ -88,52 +107,68 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
              } = data_trigger
     end
 
-    test "from_map/1 generates a SimpleTriggerConfig from a valid data trigger map with any operator" do
+    test "changeset generates a SimpleTriggerConfig from a valid data trigger map with any operator" do
       interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
       data_trigger_type = :VALUE_CHANGE
       match_operator = :ANY
 
       assert {:ok, %SimpleTriggerConfig{} = config} =
-               SimpleTriggerConfig.from_map(@valid_data_trigger_any_map)
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, @valid_data_trigger_any_map)
+               |> Ecto.Changeset.apply_action(:insert)
 
-      assert config.object_type == 2
-      assert config.object_id == CQLUtils.interface_id(@interface_name, @interface_major)
+      interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
+
+      assert %TaggedSimpleTrigger{
+               object_id: ^interface_id,
+               object_type: 2,
+               simple_trigger_container: simple_trigger_container
+             } = SimpleTriggerConfig.to_tagged_simple_trigger(config)
 
       assert %SimpleTriggerContainer{simple_trigger: {:data_trigger, data_trigger}} =
-               config.simple_trigger_container
+               simple_trigger_container
 
       assert %DataTrigger{
                data_trigger_type: ^data_trigger_type,
                interface_id: ^interface_id,
                value_match_operator: ^match_operator,
+               match_path: nil,
+               known_value: nil
              } = data_trigger
     end
   end
 
   describe "device triggers" do
-    test "from_map/1 with invalid on returns an error changeset" do
+    test "changeset with invalid on returns an error changeset" do
       invalid_on = %{@valid_device_trigger_map | "on" => "invalid"}
 
-      assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(invalid_on)
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_on)
+               |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "from_map/1 with invalid device id returns an error changeset" do
+    test "changeset with invalid device id returns an error changeset" do
       invalid_operator = %{@valid_device_trigger_map | "device_id" => "invalidid"}
 
-      assert {:error, %Changeset{}} = SimpleTriggerConfig.from_map(invalid_operator)
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_operator)
+               |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "from_map/1 generates a SimpleTriggerConfig from a valid device trigger map" do
+    test "changeset generates a SimpleTriggerConfig from a valid device trigger map" do
       device_event_type = :DEVICE_CONNECTED
 
       assert {:ok, %SimpleTriggerConfig{} = config} =
-               SimpleTriggerConfig.from_map(@valid_device_trigger_map)
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, @valid_device_trigger_map)
+               |> Ecto.Changeset.apply_action(:insert)
 
-      assert config.object_type == 1
-      assert config.object_id == @device_id
+      assert %TaggedSimpleTrigger{
+               object_id: @device_id,
+               object_type: 1,
+               simple_trigger_container: simple_trigger_container
+             } = SimpleTriggerConfig.to_tagged_simple_trigger(config)
 
       assert %SimpleTriggerContainer{simple_trigger: {:device_trigger, device_trigger}} =
-               config.simple_trigger_container
+               simple_trigger_container
 
       assert %DeviceTrigger{
                device_event_type: ^device_event_type
