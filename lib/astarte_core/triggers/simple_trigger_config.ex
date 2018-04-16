@@ -1,34 +1,41 @@
 defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   @moduledoc """
-  This module handles the functions for creating a SimpleTriggerConfig (and its relative struct).
-
-  The struct contains the `simple_trigger_container` wrapping the simple trigger and the `object_id` and `object_type`
-  on which the trigger is or will be installed
+  This module handles the functions for creating a `SimpleTriggerConfig` and converting it to a `TaggedSimpleTrigger`.
   """
-  # TODO: clarify/refactor the naming around SimpleTrigger{,Config,Container}
-
-  defstruct [
-    :object_type,
-    :object_id,
-    :simple_trigger_container
-  ]
-
   use Astarte.Core.Triggers.SimpleTriggersProtobuf
+  use Ecto.Schema
 
   import Ecto.Changeset
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
   alias Astarte.Core.Triggers.SimpleTriggerConfig
 
-  @data_trigger_types %{
-    interface_name: :string,
-    interface_major: :integer,
-    on: :string,
-    value_match_operator: :string,
-    match_path: :string,
-    known_value: :any
-  }
+  @primary_key false
+  embedded_schema do
+    # Common
+    field :type, :string
+    field :on, :string
+    # Data Trigger specific
+    field :interface_name, :string
+    field :interface_major, :integer
+    field :value_match_operator, :string
+    field :match_path, :string
+    field :known_value, :any, virtual: true
+    # Device trigger specific
+    field :device_id, :string
+  end
+
+  @data_trigger_permitted_keys [
+    :type,
+    :interface_name,
+    :interface_major,
+    :on,
+    :value_match_operator,
+    :match_path,
+    :known_value
+  ]
   @data_trigger_required_keys [
+    :type,
     :interface_name,
     :interface_major,
     :on,
@@ -55,10 +62,11 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   }
   @data_trigger_any_match_operator "*"
 
-  @device_trigger_types %{
-    on: :string,
-    device_id: :string
-  }
+  @device_trigger_keys [
+    :type,
+    :on,
+    :device_id
+  ]
   @device_trigger_condition_to_atom %{
     "device_connected" => :DEVICE_CONNECTED,
     "device_disconnected" => :DEVICE_DISCONNECTED,
@@ -71,73 +79,39 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     "device_trigger"
   ]
 
-  @doc """
-  Creates a `SimpleTriggerConfig` from a params map.
-
-  The map for a data trigger must include:
-  - `"type"`: `"data_trigger"`
-  - `"interface_name"`: the interface name (string)
-  - `"interface_major"`: the interface major (integer)
-  - `"on"`: one of `"incoming_data"`, `"value_change"`, `"value_change_applied"`, `"path_created"`, `"path_removed"`, `"value_stored"` (string)
-  - `"value_match_operator"`: one of `"*"`, `"=="`, `"!="`, `">"`, `">="`, `"<"`, `"<="`, `"contains"`, `"not contains"`  (string)
-  If `"value_match_operator"` is not `"*"`, then the map must also include:
-  - `"match_path"`: the interface path to take the trigger value from (string)
-  - `"known_value"`: the known value which the trigger value will be matched against with `"value_match_operator"` (any)
-
-  The map for a device trigger must include:
-  - `"type"`: `"device_trigger"`
-  - `"device_id"`: the 128 bits base64 url encoded device id
-  - `"on"`: one of `"device_connected"`, `"device_disconnected"`, `"device_empty_cache_received"`, `"device_error"`
-
-  Returns `{:ok, %SimpleTriggerConfig{}}` or `{:error, %Ecto.Changeset{}}`
-  """
-  def from_map(%{"type" => "data_trigger"} = params) do
-    changeset =
-      {%{}, @data_trigger_types}
-      |> cast(params, Map.keys(@data_trigger_types))
-      |> validate_required(@data_trigger_required_keys)
-      |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
-      |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
-      |> validate_match_parameters()
+  @doc false
+  def changeset(
+        %SimpleTriggerConfig{} = simple_trigger_config,
+        %{"type" => "data_trigger"} = params
+      ) do
+    simple_trigger_config
+    |> cast(params, @data_trigger_permitted_keys)
+    |> validate_required(@data_trigger_required_keys)
+    |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
+    |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
+    |> validate_match_parameters()
 
     # TODO: add further validation (e.g. interface name and mapping regex validation)
-
-    with {:ok, validated_params} <- apply_action(changeset, :insert) do
-      data_trigger_config =
-        validated_params
-        |> put_data_trigger_atoms()
-        |> create_data_trigger_config()
-
-      {:ok, data_trigger_config}
-    end
   end
 
-  def from_map(%{"type" => "device_trigger"} = params) do
-    changeset =
-      {%{}, @device_trigger_types}
-      |> cast(params, Map.keys(@device_trigger_types))
-      |> validate_required(Map.keys(@device_trigger_types))
-      |> validate_inclusion(:on, Map.keys(@device_trigger_condition_to_atom))
-      |> validate_and_decode_device_id(:device_id)
-
-    with {:ok, validated_params} <- apply_action(changeset, :insert) do
-      device_trigger_config =
-        validated_params
-        |> put_device_trigger_atoms()
-        |> create_device_trigger_config()
-
-      {:ok, device_trigger_config}
-    end
+  def changeset(
+        %SimpleTriggerConfig{} = simple_trigger_config,
+        %{"type" => "device_trigger"} = params
+      ) do
+    simple_trigger_config
+    |> cast(params, @device_trigger_keys)
+    |> validate_required(@device_trigger_keys)
+    |> validate_inclusion(:on, Map.keys(@device_trigger_condition_to_atom))
+    |> validate_and_decode_device_id(:device_id)
   end
 
-  def from_map(params) when is_map(params) do
+  def changeset(%SimpleTriggerConfig{} = simple_trigger_config, params) when is_map(params) do
     # If we're here, "type" is either missing or invalid
     # This will return an error changeset with the appropriate message
-    {%{}, %{type: :string}}
+    simple_trigger_config
     |> cast(params, [:type])
     |> validate_required([:type])
     |> validate_inclusion(:type, @allowed_trigger_types)
-    |> apply_action(:insert)
   end
 
   defp validate_match_parameters(%Ecto.Changeset{} = changeset) do
