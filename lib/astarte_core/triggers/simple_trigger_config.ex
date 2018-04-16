@@ -114,6 +114,27 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> validate_inclusion(:type, @allowed_trigger_types)
   end
 
+  @doc """
+  Creates a `TaggedSimpleTrigger` from a `SimpleTriggerConfig`.
+
+  It is assumed that the `SimpleTriggerConfig` is valid and constructed using `SimpleTriggerConfig.changeset`
+
+  Returns a `%TaggedSimpleTrigger{}`
+  """
+  def to_tagged_simple_trigger(%SimpleTriggerConfig{type: "data_trigger"} = simple_trigger_config) do
+    simple_trigger_config
+    |> put_data_trigger_atoms()
+    |> create_tagged_data_trigger()
+  end
+
+  def to_tagged_simple_trigger(
+        %SimpleTriggerConfig{type: "device_trigger"} = simple_trigger_config
+      ) do
+    simple_trigger_config
+    |> put_device_trigger_atoms()
+    |> create_tagged_device_trigger()
+  end
+
   defp validate_match_parameters(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :value_match_operator) == @data_trigger_any_match_operator do
       changeset
@@ -155,18 +176,27 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     %{params | on: condition_atom}
   end
 
-  defp create_data_trigger_config(params) do
-    interface_id = CQLUtils.interface_id(params[:interface_name], params[:interface_major])
+  defp create_tagged_data_trigger(%SimpleTriggerConfig{} = config) do
+    %SimpleTriggerConfig{
+      interface_name: interface_name,
+      interface_major: interface_major,
+      match_path: match_path,
+      known_value: known_value,
+      on: trigger_type,
+      value_match_operator: value_match_operator
+    } = config
+
+    interface_id = CQLUtils.interface_id(interface_name, interface_major)
 
     data_trigger = %DataTrigger{
       interface_id: interface_id,
-      known_value: params[:known_value] && Bson.encode(%{v: params[:known_value]}),
-      match_path: params[:match_path],
-      data_trigger_type: params[:on],
-      value_match_operator: params[:value_match_operator]
+      known_value: known_value && Bson.encode(%{v: known_value}),
+      match_path: match_path,
+      data_trigger_type: trigger_type,
+      value_match_operator: value_match_operator
     }
 
-    %SimpleTriggerConfig{
+    %TaggedSimpleTrigger{
       # TODO: object_type 2 is interface, it should be a constant
       object_type: 2,
       object_id: interface_id,
@@ -176,15 +206,20 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     }
   end
 
-  defp create_device_trigger_config(params) do
+  defp create_tagged_device_trigger(%SimpleTriggerConfig{} = config) do
+    %SimpleTriggerConfig{
+      on: event_type,
+      device_id: device_id
+    } = config
+
     device_trigger = %DeviceTrigger{
-      device_event_type: params[:on]
+      device_event_type: event_type
     }
 
-    %SimpleTriggerConfig{
+    %TaggedSimpleTrigger{
       # TODO: object_type 1 is device, it should be a constant
       object_type: 1,
-      object_id: params[:device_id],
+      object_id: device_id,
       simple_trigger_container: %SimpleTriggerContainer{
         simple_trigger: {:device_trigger, device_trigger}
       }
