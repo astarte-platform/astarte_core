@@ -209,7 +209,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   end
 
   defp validate_match_parameters(%Ecto.Changeset{} = changeset) do
-    if get_field(changeset, :value_match_operator) == @data_trigger_any_match_operator do
+    if get_field(changeset, :value_match_operator, "*") == @data_trigger_any_match_operator do
       changeset
       |> delete_change(:match_path)
       |> delete_change(:known_value)
