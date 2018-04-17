@@ -282,8 +282,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   defp create_tagged_device_trigger(%SimpleTriggerConfig{} = config) do
     %SimpleTriggerConfig{
       on: event_type,
-      device_id: device_id
+      device_id: encoded_device_id
     } = config
+
+    {:ok, device_id} = Device.decode_device_id(encoded_device_id)
 
     device_trigger = %DeviceTrigger{
       device_event_type: event_type
