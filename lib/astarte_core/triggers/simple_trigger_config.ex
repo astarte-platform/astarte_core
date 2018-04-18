@@ -160,7 +160,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> cast(params, @device_trigger_keys)
     |> validate_required(@device_trigger_keys)
     |> validate_inclusion(:on, Map.keys(@device_trigger_condition_to_atom))
-    |> validate_and_decode_device_id(:device_id)
+    |> validate_device_id(:device_id)
   end
 
   def changeset(%SimpleTriggerConfig{} = simple_trigger_config, params) when is_map(params) do
@@ -219,10 +219,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     end
   end
 
-  defp validate_and_decode_device_id(%Ecto.Changeset{} = changeset, field) do
+  defp validate_device_id(%Ecto.Changeset{} = changeset, field) do
     with {:ok, encoded_id} <- fetch_change(changeset, field),
-         {:ok, decoded_id} <- Device.decode_device_id(encoded_id) do
-      put_change(changeset, field, decoded_id)
+         {:ok, _decoded_id} <- Device.decode_device_id(encoded_id) do
+      changeset
     else
       :error ->
         # fetch_change failes, so the changeset is already invalid
@@ -282,8 +282,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   defp create_tagged_device_trigger(%SimpleTriggerConfig{} = config) do
     %SimpleTriggerConfig{
       on: event_type,
-      device_id: device_id
+      device_id: encoded_device_id
     } = config
+
+    {:ok, device_id} = Device.decode_device_id(encoded_device_id)
 
     device_trigger = %DeviceTrigger{
       device_event_type: event_type
