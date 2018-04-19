@@ -238,7 +238,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
   defp validate_device_id(%Ecto.Changeset{} = changeset, field) do
     with {:ok, encoded_id} <- fetch_change(changeset, field),
-         {:ok, _decoded_id} <- Device.decode_device_id(encoded_id) do
+         :ok <- validate_device_id_or_any(encoded_id) do
       changeset
     else
       :error ->
@@ -252,6 +252,14 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       {:error, :extended_id_not_allowed} ->
         # extended id
         add_error(changeset, field, "is too long, device id must be 128 bits")
+    end
+  end
+
+  defp validate_device_id_or_any("*"), do: :ok
+
+  defp validate_device_id_or_any(encoded_id) do
+    with {:ok, _decoded_id} <- Device.decode_device_id(encoded_id) do
+      :ok
     end
   end
 
