@@ -284,10 +284,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       value_match_operator: value_match_operator
     } = config
 
-    interface_id = CQLUtils.interface_id(interface_name, interface_major)
 
     data_trigger = %DataTrigger{
-      interface_id: interface_id,
+      interface_name: interface_name,
+      interface_major: interface_major,
       known_value: known_value && Bson.encode(%{v: known_value}),
       match_path: match_path,
       data_trigger_type: trigger_type,
@@ -329,7 +329,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   defp from_data_trigger(%DataTrigger{} = data_trigger) do
     %DataTrigger{
       data_trigger_type: data_trigger_type,
-      interface_id: _interface_id,
+      interface_name: interface_name,
+      interface_major: interface_major,
       value_match_operator: value_match_operator,
       match_path: match_path,
       known_value: known_value
@@ -350,8 +351,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     %SimpleTriggerConfig{
       type: "data_trigger",
       on: condition,
-      interface_name: nil,
-      interface_major: nil,
+      interface_name: interface_name,
+      interface_major: interface_major,
       value_match_operator: value_match_operator_string,
       match_path: match_path,
       known_value: decoded_known_value
