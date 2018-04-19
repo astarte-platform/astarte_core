@@ -9,6 +9,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
   alias Astarte.Core.Triggers.SimpleTriggerConfig
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
 
   @primary_key false
   embedded_schema do
@@ -284,6 +285,12 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       value_match_operator: value_match_operator
     } = config
 
+    interface_id =
+      if interface_name == "*" do
+        SimpleTriggersUtils.any_interface_object_id()
+      else
+        CQLUtils.interface_id(interface_name, interface_major)
+      end
 
     data_trigger = %DataTrigger{
       interface_name: interface_name,
@@ -310,7 +317,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_id: encoded_device_id
     } = config
 
-    {:ok, device_id} = Device.decode_device_id(encoded_device_id)
+    device_id =
+      if encoded_device_id == "*" do
+        SimpleTriggersUtils.any_device_object_id()
+      else
+        {:ok, decoded_device_id} = Device.decode_device_id(encoded_device_id)
+        decoded_device_id
+      end
 
     device_trigger = %DeviceTrigger{
       device_event_type: event_type
@@ -364,7 +377,12 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_event_type: device_event_type
     } = device_trigger
 
-    encoded_device_id = Device.encode_device_id(device_id)
+    encoded_device_id =
+      if device_id == SimpleTriggersUtils.any_device_object_id() do
+        "*"
+      else
+        Device.encode_device_id(device_id)
+      end
 
     condition = Map.fetch!(@device_trigger_condition_to_string, device_event_type)
 
