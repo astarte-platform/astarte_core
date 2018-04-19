@@ -17,6 +17,7 @@
 #
 
 defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
+  alias Astarte.Core.CQLUtils
   alias Astarte.Core.Triggers.DataTrigger
 
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DataTrigger,
@@ -57,7 +58,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
 
   def simple_trigger_to_data_trigger(protobuf_data_trigger) do
     %SimpleTriggersProtobufDataTrigger{
-      interface_id: interface_id,
+      interface_name: interface_name,
+      interface_major: interface_major,
       match_path: match_path,
       value_match_operator: value_match_operator,
       known_value: encoded_known_value
@@ -79,13 +81,11 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
         :any_endpoint
       end
 
-    # TODO: it doesn't seem a good idea to accept both @any_interface_object_id and nil
-    # FIXME: chose just one of them
     interface_id_or_any =
-      if interface_id == @any_interface_object_id || interface_id == nil do
+      if interface_name == "*" do
         :any_interface
       else
-        interface_id
+        CQLUtils.interface_id(interface_name, interface_major)
       end
 
     %DataTrigger{

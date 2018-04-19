@@ -9,6 +9,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
   alias Astarte.Core.Triggers.SimpleTriggerConfig
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
 
   @primary_key false
   embedded_schema do
@@ -29,7 +30,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     def encode(%SimpleTriggerConfig{type: "data_trigger"} = config, options) do
       config_map =
         if config.value_match_operator != "*" do
-          %{"type" => config.type,
+          %{
+            "type" => config.type,
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
@@ -38,7 +40,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
             "known_value" => config.known_value
           }
         else
-          %{"type" => config.type,
+          %{
+            "type" => config.type,
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
@@ -46,14 +49,18 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
           }
         end
 
+      config_map =
+        if config.interface_name == "*" do
+          Map.delete(config_map, "interface_major")
+        else
+          config_map
+        end
+
       Poison.Encoder.Map.encode(config_map, options)
     end
 
     def encode(%SimpleTriggerConfig{type: "device_trigger"} = config, options) do
-      %{"type" => config.type,
-        "on" => config.on,
-        "device_id" => config.device_id,
-      }
+      %{"type" => config.type, "on" => config.on, "device_id" => config.device_id}
       |> Poison.Encoder.Map.encode(options)
     end
   end
@@ -70,7 +77,6 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   @data_trigger_required_keys [
     :type,
     :interface_name,
-    :interface_major,
     :on,
     :value_match_operator
   ]
@@ -145,6 +151,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     simple_trigger_config
     |> cast(params, @data_trigger_permitted_keys)
     |> validate_required(@data_trigger_required_keys)
+    |> validate_interface()
     |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
     |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
     |> validate_match_parameters()
@@ -208,6 +215,16 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     end
   end
 
+  defp validate_interface(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :interface_name) == "*" do
+      changeset
+      |> delete_change(:interface_major)
+    else
+      changeset
+      |> validate_required([:interface_major])
+    end
+  end
+
   defp validate_match_parameters(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :value_match_operator, "*") == @data_trigger_any_match_operator do
       changeset
@@ -221,7 +238,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
   defp validate_device_id(%Ecto.Changeset{} = changeset, field) do
     with {:ok, encoded_id} <- fetch_change(changeset, field),
-         {:ok, _decoded_id} <- Device.decode_device_id(encoded_id) do
+         :ok <- validate_device_id_or_any(encoded_id) do
       changeset
     else
       :error ->
@@ -235,6 +252,14 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       {:error, :extended_id_not_allowed} ->
         # extended id
         add_error(changeset, field, "is too long, device id must be 128 bits")
+    end
+  end
+
+  defp validate_device_id_or_any("*"), do: :ok
+
+  defp validate_device_id_or_any(encoded_id) do
+    with {:ok, _decoded_id} <- Device.decode_device_id(encoded_id) do
+      :ok
     end
   end
 
@@ -259,10 +284,16 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       value_match_operator: value_match_operator
     } = config
 
-    interface_id = CQLUtils.interface_id(interface_name, interface_major)
+    interface_id =
+      if interface_name == "*" do
+        SimpleTriggersUtils.any_interface_object_id()
+      else
+        CQLUtils.interface_id(interface_name, interface_major)
+      end
 
     data_trigger = %DataTrigger{
-      interface_id: interface_id,
+      interface_name: interface_name,
+      interface_major: interface_major,
       known_value: known_value && Bson.encode(%{v: known_value}),
       match_path: match_path,
       data_trigger_type: trigger_type,
@@ -285,7 +316,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_id: encoded_device_id
     } = config
 
-    {:ok, device_id} = Device.decode_device_id(encoded_device_id)
+    device_id =
+      if encoded_device_id == "*" do
+        SimpleTriggersUtils.any_device_object_id()
+      else
+        {:ok, decoded_device_id} = Device.decode_device_id(encoded_device_id)
+        decoded_device_id
+      end
 
     device_trigger = %DeviceTrigger{
       device_event_type: event_type
@@ -304,14 +341,18 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   defp from_data_trigger(%DataTrigger{} = data_trigger) do
     %DataTrigger{
       data_trigger_type: data_trigger_type,
-      interface_id: _interface_id,
+      interface_name: interface_name,
+      interface_major: interface_major,
       value_match_operator: value_match_operator,
       match_path: match_path,
       known_value: known_value
     } = data_trigger
 
     condition = Map.fetch!(@data_trigger_condition_to_string, data_trigger_type)
-    value_match_operator_string = Map.fetch!(@data_trigger_operator_to_string, value_match_operator)
+
+    value_match_operator_string =
+      Map.fetch!(@data_trigger_operator_to_string, value_match_operator)
+
     decoded_known_value =
       if known_value do
         Bson.decode(known_value)
@@ -325,8 +366,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     %SimpleTriggerConfig{
       type: "data_trigger",
       on: condition,
-      interface_name: nil,
-      interface_major: nil,
+      interface_name: interface_name,
+      interface_major: interface_major,
       value_match_operator: value_match_operator_string,
       match_path: match_path,
       known_value: decoded_known_value
@@ -338,7 +379,12 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_event_type: device_event_type
     } = device_trigger
 
-    encoded_device_id = Device.encode_device_id(device_id)
+    encoded_device_id =
+      if device_id == SimpleTriggersUtils.any_device_object_id() do
+        "*"
+      else
+        Device.encode_device_id(device_id)
+      end
 
     condition = Map.fetch!(@device_trigger_condition_to_string, device_event_type)
 

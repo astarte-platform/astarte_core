@@ -41,8 +41,9 @@ message DataTrigger {
     }
 
     DataTriggerType data_trigger_type = 2;
-    bytes interface_id = 3;
-    string match_path = 4;
-    MatchOperator value_match_operator = 5 [default = ANY];
-    bytes known_value = 6;
+    string interface_name = 3;
+    int32 interface_major = 4;
+    string match_path = 5;
+    MatchOperator value_match_operator = 6 [default = ANY];
+    bytes known_value = 7;
 }
