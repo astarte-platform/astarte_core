@@ -46,6 +46,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
           }
         end
 
+      config_map =
+        if config.interface_name == "*" do
+          Map.delete(config_map, "interface_major")
+        else
+          config_map
+        end
+
       Poison.Encoder.Map.encode(config_map, options)
     end
 
