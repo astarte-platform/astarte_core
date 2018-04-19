@@ -30,7 +30,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     def encode(%SimpleTriggerConfig{type: "data_trigger"} = config, options) do
       config_map =
         if config.value_match_operator != "*" do
-          %{"type" => config.type,
+          %{
+            "type" => config.type,
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
@@ -39,7 +40,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
             "known_value" => config.known_value
           }
         else
-          %{"type" => config.type,
+          %{
+            "type" => config.type,
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
@@ -58,10 +60,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     end
 
     def encode(%SimpleTriggerConfig{type: "device_trigger"} = config, options) do
-      %{"type" => config.type,
-        "on" => config.on,
-        "device_id" => config.device_id,
-      }
+      %{"type" => config.type, "on" => config.on, "device_id" => config.device_id}
       |> Poison.Encoder.Map.encode(options)
     end
   end
@@ -350,7 +349,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     } = data_trigger
 
     condition = Map.fetch!(@data_trigger_condition_to_string, data_trigger_type)
-    value_match_operator_string = Map.fetch!(@data_trigger_operator_to_string, value_match_operator)
+
+    value_match_operator_string =
+      Map.fetch!(@data_trigger_operator_to_string, value_match_operator)
+
     decoded_known_value =
       if known_value do
         Bson.decode(known_value)
