@@ -70,7 +70,6 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   @data_trigger_required_keys [
     :type,
     :interface_name,
-    :interface_major,
     :on,
     :value_match_operator
   ]
@@ -145,6 +144,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     simple_trigger_config
     |> cast(params, @data_trigger_permitted_keys)
     |> validate_required(@data_trigger_required_keys)
+    |> validate_interface()
     |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
     |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
     |> validate_match_parameters()
@@ -205,6 +205,16 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
       {:device_trigger, %DeviceTrigger{} = device_trigger} ->
         from_device_trigger(device_trigger, object_id)
+    end
+  end
+
+  defp validate_interface(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :interface_name) == "*" do
+      changeset
+      |> delete_change(:interface_major)
+    else
+      changeset
+      |> validate_required([:interface_major])
     end
   end
 
