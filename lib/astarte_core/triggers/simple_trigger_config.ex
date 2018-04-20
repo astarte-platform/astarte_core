@@ -45,6 +45,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
+            "match_path" => config.match_path,
             "value_match_operator" => config.value_match_operator
           }
         end
@@ -78,7 +79,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     :type,
     :interface_name,
     :on,
-    :value_match_operator
+    :value_match_operator,
+    :match_path
   ]
   @data_trigger_condition_to_atom %{
     "incoming_data" => :INCOMING_DATA,
@@ -228,11 +230,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   defp validate_match_parameters(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :value_match_operator, "*") == @data_trigger_any_match_operator do
       changeset
-      |> delete_change(:match_path)
       |> delete_change(:known_value)
     else
       changeset
-      |> validate_required([:match_path, :known_value])
+      |> validate_required([:known_value])
     end
   end
 
