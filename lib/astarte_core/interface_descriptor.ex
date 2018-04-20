@@ -49,7 +49,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
       ) >= 48 ->
         {:error, :too_long_interface_name}
 
-      String.match?(interface_descriptor.name, ~r/^[a-zA-Z]+(\.[a-zA-Z0-9]+)*$/) == false ->
+      String.match?(interface_descriptor.name, interface_name_regex()) == false ->
         {:error, :invalid_interface_name}
 
       interface_descriptor.major_version < 0 ->
@@ -87,6 +87,10 @@ defmodule Astarte.Core.InterfaceDescriptor do
 
   def is_valid?(interface_descriptor) do
     validate(interface_descriptor) == :ok
+  end
+
+  def interface_name_regex do
+    ~r/^[a-zA-Z]+(\.[a-zA-Z0-9]+)*$/
   end
 
   @doc """
