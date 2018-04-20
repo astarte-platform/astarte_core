@@ -19,8 +19,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     # Data Trigger specific
     field :interface_name, :string
     field :interface_major, :integer
-    field :value_match_operator, :string
     field :match_path, :string
+    field :value_match_operator, :string
     field :known_value, :any, virtual: true
     # Device trigger specific
     field :device_id, :string
@@ -35,8 +35,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
-            "value_match_operator" => config.value_match_operator,
             "match_path" => config.match_path,
+            "value_match_operator" => config.value_match_operator,
             "known_value" => config.known_value
           }
         else
