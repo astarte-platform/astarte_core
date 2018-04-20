@@ -9,6 +9,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
   alias Astarte.Core.Mapping
+  alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.Triggers.SimpleTriggerConfig
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
 
@@ -159,8 +160,6 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
     |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
     |> validate_match_parameters()
-
-    # TODO: add further validation (e.g. interface name and mapping regex validation)
   end
 
   def changeset(
@@ -221,10 +220,14 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
   defp validate_interface(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :interface_name) == "*" do
-      changeset
-      |> delete_change(:interface_major)
+      if get_field(changeset, :match_path) != "*" do
+        add_error(changeset, :match_path, "must be * when interface_name is *")
+      else
+        delete_change(changeset, :interface_major)
+      end
     else
       changeset
+      |> validate_format(:interface_name, InterfaceDescriptor.interface_name_regex())
       |> validate_required([:interface_major])
     end
   end
