@@ -8,6 +8,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   import Ecto.Changeset
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
+  alias Astarte.Core.Mapping
   alias Astarte.Core.Triggers.SimpleTriggerConfig
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
 
@@ -154,6 +155,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> cast(params, @data_trigger_permitted_keys)
     |> validate_required(@data_trigger_required_keys)
     |> validate_interface()
+    |> validate_match_path()
     |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
     |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
     |> validate_match_parameters()
@@ -224,6 +226,15 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     else
       changeset
       |> validate_required([:interface_major])
+    end
+  end
+
+  defp validate_match_path(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :match_path) == "*" and
+         get_field(changeset, :value_match_operator) != "*" do
+      add_error(changeset, :value_match_operator, "must be * when match_path is *")
+    else
+      validate_format(changeset, :match_path, Mapping.mapping_regex())
     end
   end
 
