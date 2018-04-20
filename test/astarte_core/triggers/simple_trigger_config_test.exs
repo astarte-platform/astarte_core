@@ -74,6 +74,22 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                |> Ecto.Changeset.apply_action(:insert)
     end
 
+    test "changeset with interface_name == * and match_path != * returns an error changeset" do
+      any_interface = Map.put(@valid_data_trigger_map, "interface_name", "*")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, any_interface)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset with match_path == * and value_match_operator != * returns an error changeset" do
+      any_path = Map.put(@valid_data_trigger_map, "match_path", "*")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, any_path)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
     test "changeset generates a SimpleTriggerConfig from a valid data trigger map to_tagged_simple_trigger converts it to a TaggedSimpleTrigger" do
       interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
       data_trigger_type = :INCOMING_DATA
