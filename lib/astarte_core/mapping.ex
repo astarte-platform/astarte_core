@@ -35,11 +35,15 @@ defmodule Astarte.Core.Mapping do
     if mapping != nil and mapping != "" and mapping != [] do
       String.match?(
         mapping.endpoint,
-        ~r/^((\/%{[a-zA-Z]+[a-zA-Z0-9]*})*(\/[a-zA-Z]+[a-zA-Z0-9]*)*)+$/
+        mapping_regex()
       ) and mapping.value_type != nil and is_atom(mapping.value_type)
     else
       false
     end
+  end
+
+  def mapping_regex do
+    ~r/^((\/%{[a-zA-Z]+[a-zA-Z0-9]*})*(\/[a-zA-Z]+[a-zA-Z0-9]*)*)+$/
   end
 
   @doc """
