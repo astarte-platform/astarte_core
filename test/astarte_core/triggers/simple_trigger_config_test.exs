@@ -74,7 +74,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "changeset with interface_name == * and match_path != * returns an error changeset" do
+    test "changeset with interface_name == * and match_path != /* returns an error changeset" do
       any_interface = Map.put(@valid_data_trigger_map, "interface_name", "*")
 
       assert {:error, %Changeset{}} =
@@ -82,8 +82,8 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "changeset with match_path == * and value_match_operator != * returns an error changeset" do
-      any_path = Map.put(@valid_data_trigger_map, "match_path", "*")
+    test "changeset with match_path == /* and value_match_operator != * returns an error changeset" do
+      any_path = Map.put(@valid_data_trigger_map, "match_path", "/*")
 
       assert {:error, %Changeset{}} =
                SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, any_path)
