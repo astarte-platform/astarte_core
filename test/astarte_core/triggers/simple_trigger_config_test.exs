@@ -30,6 +30,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
     "interface_name" => @interface_name,
     "interface_major" => @interface_major,
     "on" => "value_change",
+    "match_path" => @match_path,
     "value_match_operator" => "*"
   }
 
@@ -65,17 +66,27 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                |> Ecto.Changeset.apply_action(:insert)
     end
 
-    test "changeset with value_match_operator != * and no match_path or known value returns an error changeset" do
-      no_match_path = Map.delete(@valid_data_trigger_map, "match_path")
-
-      assert {:error, %Changeset{}} =
-               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, no_match_path)
-               |> Ecto.Changeset.apply_action(:insert)
-
+    test "changeset with value_match_operator != * and no known value returns an error changeset" do
       no_known_value = Map.delete(@valid_data_trigger_map, "known_value")
 
       assert {:error, %Changeset{}} =
                SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, no_known_value)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset with interface_name == * and match_path != /* returns an error changeset" do
+      any_interface = Map.put(@valid_data_trigger_map, "interface_name", "*")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, any_interface)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset with match_path == /* and value_match_operator != * returns an error changeset" do
+      any_path = Map.put(@valid_data_trigger_map, "match_path", "/*")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, any_path)
                |> Ecto.Changeset.apply_action(:insert)
     end
 
@@ -129,7 +140,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                interface_major: @interface_major,
                on: "value_change",
                value_match_operator: "*",
-               match_path: nil,
+               match_path: @match_path,
                known_value: nil
              } = config
     end
@@ -367,6 +378,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                  "interface_name" => @interface_name,
                  "interface_major" => @interface_major,
                  "on" => "value_change_applied",
+                 "match_path" => @match_path,
                  "value_match_operator" => "*"
                })
     end

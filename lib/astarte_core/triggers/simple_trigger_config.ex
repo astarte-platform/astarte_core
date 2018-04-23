@@ -8,6 +8,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   import Ecto.Changeset
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
+  alias Astarte.Core.Mapping
+  alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.Triggers.SimpleTriggerConfig
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
 
@@ -19,8 +21,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     # Data Trigger specific
     field :interface_name, :string
     field :interface_major, :integer
-    field :value_match_operator, :string
     field :match_path, :string
+    field :value_match_operator, :string
     field :known_value, :any, virtual: true
     # Device trigger specific
     field :device_id, :string
@@ -35,8 +37,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
-            "value_match_operator" => config.value_match_operator,
             "match_path" => config.match_path,
+            "value_match_operator" => config.value_match_operator,
             "known_value" => config.known_value
           }
         else
@@ -45,6 +47,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
             "on" => config.on,
             "interface_name" => config.interface_name,
             "interface_major" => config.interface_major,
+            "match_path" => config.match_path,
             "value_match_operator" => config.value_match_operator
           }
         end
@@ -78,7 +81,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     :type,
     :interface_name,
     :on,
-    :value_match_operator
+    :value_match_operator,
+    :match_path
   ]
   @data_trigger_condition_to_atom %{
     "incoming_data" => :INCOMING_DATA,
@@ -152,11 +156,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> cast(params, @data_trigger_permitted_keys)
     |> validate_required(@data_trigger_required_keys)
     |> validate_interface()
+    |> validate_match_path()
     |> validate_inclusion(:on, Map.keys(@data_trigger_condition_to_atom))
     |> validate_inclusion(:value_match_operator, Map.keys(@data_trigger_operator_to_atom))
     |> validate_match_parameters()
-
-    # TODO: add further validation (e.g. interface name and mapping regex validation)
   end
 
   def changeset(
@@ -217,22 +220,34 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
   defp validate_interface(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :interface_name) == "*" do
-      changeset
-      |> delete_change(:interface_major)
+      if get_field(changeset, :match_path) != "/*" do
+        add_error(changeset, :match_path, "must be /* when interface_name is *")
+      else
+        delete_change(changeset, :interface_major)
+      end
     else
       changeset
+      |> validate_format(:interface_name, InterfaceDescriptor.interface_name_regex())
       |> validate_required([:interface_major])
+    end
+  end
+
+  defp validate_match_path(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :match_path) == "/*" and
+         get_field(changeset, :value_match_operator) != "*" do
+      add_error(changeset, :value_match_operator, "must be * when match_path is /*")
+    else
+      validate_format(changeset, :match_path, Mapping.mapping_regex())
     end
   end
 
   defp validate_match_parameters(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :value_match_operator, "*") == @data_trigger_any_match_operator do
       changeset
-      |> delete_change(:match_path)
       |> delete_change(:known_value)
     else
       changeset
-      |> validate_required([:match_path, :known_value])
+      |> validate_required([:known_value])
     end
   end
 
