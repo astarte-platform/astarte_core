@@ -63,7 +63,7 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       # Missing aggregation
     ]
 
-    assert_raise MatchError, fn ->
+    assert_raise ArgumentError, fn ->
       InterfaceDescriptor.from_db_result!(descriptor_as_keyword_list_no_aggr)
     end
   end
@@ -96,7 +96,7 @@ defmodule Astarte.Core.InterfaceDescriptorTest do
       aggregation: @interface_fixture_aggregation_as_int
     }
 
-    assert_raise MatchError, fn ->
+    assert_raise ArgumentError, fn ->
       InterfaceDescriptor.from_db_result!(descriptor_as_map_no_name)
     end
   end
