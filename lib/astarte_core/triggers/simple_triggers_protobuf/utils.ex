@@ -56,6 +56,14 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
     {simple_trigger_type, simple_trigger}
   end
 
+  def get_interface_id_or_any(interface_name, interface_major) do
+    if interface_name == "*" do
+      :any_interface
+    else
+      CQLUtils.interface_id(interface_name, interface_major)
+    end
+  end
+
   def simple_trigger_to_data_trigger(protobuf_data_trigger) do
     %SimpleTriggersProtobufDataTrigger{
       interface_name: interface_name,
@@ -81,12 +89,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
         |> String.split("/")
       end
 
-    interface_id_or_any =
-      if interface_name == "*" do
-        :any_interface
-      else
-        CQLUtils.interface_id(interface_name, interface_major)
-      end
+    interface_id_or_any = get_interface_id_or_any(interface_name, interface_major)
 
     %DataTrigger{
       interface_id: interface_id_or_any,
