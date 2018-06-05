@@ -31,8 +31,27 @@ defmodule Astarte.Core.CQLUtils do
   Returns a generated table name that might be used during table creation."
   """
   def interface_name_to_table_name(interface_name, major_version) do
-    String.replace(String.downcase(interface_name), ".", "_") <>
-      "_v" <> Integer.to_string(major_version)
+    safe_interface_name =
+      interface_name
+      |> String.downcase()
+      |> String.replace(".", "_")
+
+    long_table_name = "#{safe_interface_name}_v" <> Integer.to_string(major_version)
+    long_name_len = String.length(long_table_name)
+
+    if long_name_len >= 45 do
+      <<prefix::binary-size(6), _discard::binary>> =
+        :crypto.hash(:sha256, long_table_name)
+        |> Base.encode64()
+        |> String.replace("+", "_")
+        |> String.replace("/", "_")
+
+      {_, shorter_name} = String.split_at(long_table_name, long_name_len - 39)
+
+      "a#{prefix}_#{shorter_name}"
+    else
+      long_table_name
+    end
   end
 
   @doc """
