@@ -26,7 +26,8 @@ defmodule Astarte.Core.DeviceTest do
   end
 
   test "extended device id decoding succeeds with long id" do
-    assert {:ok, _device_id, _extended_device_id} = Device.decode_extended_device_id(@long_device_id)
+    assert {:ok, _device_id, _extended_device_id} =
+             Device.decode_extended_device_id(@long_device_id)
   end
 
   test "extended device id decoding gives an empty extended id on regular id" do
@@ -36,6 +37,7 @@ defmodule Astarte.Core.DeviceTest do
   test "encoding fails with device id not 128 bit long" do
     assert {:ok, device_id, extended_id} = Device.decode_extended_device_id(@long_device_id)
     long_id = device_id <> extended_id
+
     assert_raise FunctionClauseError, fn ->
       Device.encode_device_id(long_id)
     end
