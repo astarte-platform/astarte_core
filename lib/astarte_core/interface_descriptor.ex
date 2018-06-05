@@ -44,9 +44,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
       interface_descriptor == [] ->
         {:error, :not_an_interface_descriptor}
 
-      String.length(
-        interface_descriptor.name <> "_v" <> Integer.to_string(interface_descriptor.major_version)
-      ) >= 48 ->
+      String.length(interface_descriptor.name) > 128 ->
         {:error, :too_long_interface_name}
 
       String.match?(interface_descriptor.name, interface_name_regex()) == false ->
