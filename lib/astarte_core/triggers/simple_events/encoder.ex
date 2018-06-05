@@ -41,7 +41,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
 
     def encode(%DeviceDisconnectedEvent{}, opts) do
       %{
-        "type" => "device_disconnected",
+        "type" => "device_disconnected"
       }
       |> Poison.Encoder.encode(opts)
     end
@@ -72,7 +72,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
 
     def encode(%IncomingIntrospectionEvent{} = event, opts) do
       %IncomingIntrospectionEvent{
-        introspection: introspection,
+        introspection: introspection
       } = event
 
       %{
@@ -131,7 +131,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     def encode(%InterfaceRemovedEvent{} = event, opts) do
       %InterfaceRemovedEvent{
         interface: interface,
-        major_version: major_version,
+        major_version: major_version
       } = event
 
       %{
@@ -150,7 +150,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
       %PathCreatedEvent{
         interface: interface,
         path: path,
-        bson_value: bson_value,
+        bson_value: bson_value
       } = event
 
       %{
@@ -189,7 +189,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
         interface: interface,
         path: path,
         old_bson_value: old_bson_value,
-        new_bson_value: new_bson_value,
+        new_bson_value: new_bson_value
       } = event
 
       %{
@@ -211,7 +211,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
         interface: interface,
         path: path,
         old_bson_value: old_bson_value,
-        new_bson_value: new_bson_value,
+        new_bson_value: new_bson_value
       } = event
 
       %{
@@ -232,7 +232,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
       %ValueStoredEvent{
         interface: interface,
         path: path,
-        bson_value: bson_value,
+        bson_value: bson_value
       } = event
 
       %{

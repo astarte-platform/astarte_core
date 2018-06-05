@@ -15,8 +15,10 @@ defmodule Astarte.Core.Device do
   Returns `{:ok, device_id}` or `{:error, reason}`.
   """
   @spec decode_device_id(String.t(), keyword) :: {:ok, device_id} | {:error, atom}
-  def decode_device_id(encoded_device_id, opts \\ []) when is_binary(encoded_device_id) and is_list(opts) do
+  def decode_device_id(encoded_device_id, opts \\ [])
+      when is_binary(encoded_device_id) and is_list(opts) do
     allow_extended = Keyword.get(opts, :allow_extended_id, false)
+
     with {:ok, device_id, extended_id} <- decode_extended_device_id(encoded_device_id) do
       if not allow_extended and byte_size(extended_id) > 0 do
         {:error, :extended_id_not_allowed}
