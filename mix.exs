@@ -45,6 +45,7 @@ defmodule Astarte.Core.Mixfile do
   defp deps do
     [
       {:cyanide, "~> 0.5.0"},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ecto, "~> 2.1"},
       {:exprotobuf, "~> 1.2.7"},
       {:poison, "~> 3.1"},
