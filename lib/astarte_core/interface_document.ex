@@ -17,6 +17,8 @@
 #
 
 defmodule Astarte.Core.InterfaceDocument do
+  alias Astarte.Core.CQLUtils
+
   defstruct descriptor: %Astarte.Core.InterfaceDescriptor{},
             mappings: [],
             source: ""
@@ -28,6 +30,9 @@ defmodule Astarte.Core.InterfaceDocument do
   """
   def from_json(json_doc) do
     case Poison.decode(json_doc) do
+      {:error, :invalid, _} ->
+        {:error, :invalid_json_document}
+
       {:error, _} ->
         :error
 
@@ -39,10 +44,13 @@ defmodule Astarte.Core.InterfaceDocument do
           "type" => type
         } = interface_object
 
+        interface_id = CQLUtils.interface_id(name, major_version)
+
         descriptor = %Astarte.Core.InterfaceDescriptor{
           name: name,
           major_version: major_version,
           minor_version: minor_version,
+          interface_id: interface_id,
           type: Astarte.Core.Interface.Type.from_string(type),
           ownership:
             Astarte.Core.Interface.Ownership.from_string(
@@ -59,8 +67,12 @@ defmodule Astarte.Core.InterfaceDocument do
 
         maps =
           for mapping <- interface_object["mappings"] do
+            endpoint_or_legacy = mapping["endpoint"] || mapping["path"]
+
             %Astarte.Core.Mapping{
-              endpoint: mapping["endpoint"] || mapping["path"],
+              endpoint: endpoint_or_legacy,
+              endpoint_id: CQLUtils.endpoint_id(name, major_version, endpoint_or_legacy),
+              interface_id: interface_id,
               value_type: Astarte.Core.Mapping.ValueType.from_string(mapping["type"]),
               reliability:
                 Astarte.Core.Mapping.Reliability.from_string(
