@@ -68,13 +68,31 @@ defmodule CQLUtilsTest do
     assert CQLUtils.interface_id("com.test1", 0) != CQLUtils.interface_id("com.test", 10)
     assert CQLUtils.interface_id("a", 1) != CQLUtils.interface_id("b", 1)
 
+    assert CQLUtils.interface_id("org.astarte-platform.MyInterface", 1) !=
+             CQLUtils.interface_id("org.astarte-platform.myinterface", 1)
+
+    assert CQLUtils.interface_id("This.Is.A.Test", 1) !=
+             CQLUtils.interface_id("this.is.a.test", 1)
+
+    assert CQLUtils.interface_id("org.astarte-platform.MyInterface", 1) !=
+             CQLUtils.interface_id("org.astarte-platform.MyInterface", 0)
+
     assert CQLUtils.interface_id("astarte.is.cool", 10) ==
-             <<130, 183, 0, 172, 236, 95, 170, 50, 48, 172, 31, 81, 226, 57, 154, 178>>
+             <<209, 245, 26, 90, 177, 111, 236, 137, 134, 53, 237, 97, 134, 247, 21, 254>>
   end
 
   test "endpoint id generation" do
     assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo") ==
              Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/Foo") !=
+             Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("org.astarte-platform.MyInterface", 0, "/test/foo") !=
+             Astarte.Core.CQLUtils.endpoint_id("org.astarte-platform.myinterface", 0, "/test/foo")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("Test", 10, "/test") !=
+             Astarte.Core.CQLUtils.endpoint_id("test", 10, "/test")
 
     assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/test/foo") !=
              Astarte.Core.CQLUtils.endpoint_id("com.foo", 3, "/test/foo")
@@ -83,6 +101,23 @@ defmodule CQLUtilsTest do
              Astarte.Core.CQLUtils.endpoint_id("com.bar", 1, "/test/foo")
 
     assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 1, "/test/foo") ==
-             <<70, 183, 225, 18, 23, 42, 133, 243, 125, 50, 212, 187, 67, 186, 155, 223>>
+             <<47, 163, 1, 227, 139, 231, 222, 201, 41, 57, 24, 82, 234, 76, 61, 4>>
+  end
+
+  test "endpoint id generation with normalization" do
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}") ==
+             Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{different}")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}") ==
+             Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{SomeThing}")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}") !=
+             Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/b/%{SomeThing}")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 10, "/a/%{something}/foo") ==
+             Astarte.Core.CQLUtils.endpoint_id("com.foo", 10, "/a//foo")
+
+    assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/foo") !=
+             Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/bar")
   end
 end
