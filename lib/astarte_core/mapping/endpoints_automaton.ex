@@ -17,6 +17,8 @@
 #
 
 defmodule Astarte.Core.Mapping.EndpointsAutomaton do
+  alias Astarte.Core.Mapping
+
   @doc """
   returns `:ok` and an endpoint for a given `path` using a previously built automata (`{transitions, accepting_states}`).
   if path is not complete one or more endpoints will be guessed and `:guessed` followed by a list of endpoints is returned.
@@ -155,7 +157,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   def parse_endpoint(mapping, {transitions, states, accepting_states}) do
     ["" | path_tokens] =
       mapping.endpoint
-      |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
+      |> Mapping.normalize_endpoint()
       |> String.split("/")
 
     {states, _, _, transitions} =
