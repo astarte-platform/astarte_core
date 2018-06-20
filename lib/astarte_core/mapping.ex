@@ -47,6 +47,14 @@ defmodule Astarte.Core.Mapping do
   end
 
   @doc """
+  Removes all placeholders from an endpoint.
+  """
+  @spec normalize_endpoint(String.t()) :: String.t()
+  def normalize_endpoint(endpoint) when is_binary(endpoint) do
+    String.replace(endpoint, ~r/%{[a-zA-Z0-9]*}/, "")
+  end
+
+  @doc """
   Deserializes a `%Mapping{}` from `db_result`.
   `db_result` can be a keyword list or a map.
 
