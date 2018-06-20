@@ -18,6 +18,7 @@
 
 defmodule Astarte.Core.InterfaceDocument do
   alias Astarte.Core.CQLUtils
+  alias Astarte.Core.Mapping
 
   defstruct descriptor: %Astarte.Core.InterfaceDescriptor{},
             mappings: [],
@@ -101,7 +102,17 @@ defmodule Astarte.Core.InterfaceDocument do
     end
   end
 
+  @spec check_mappings(list(%Mapping{})) :: boolean
   defp check_mappings(mappings) do
-    Enum.all?(mappings, &Astarte.Core.Mapping.is_valid?/1)
+    with true <- Enum.all?(mappings, &Astarte.Core.Mapping.is_valid?/1) do
+      unique_count =
+        Enum.uniq_by(mappings, fn mapping ->
+          Mapping.normalize_endpoint(mapping.endpoint)
+          |> String.downcase()
+        end)
+        |> Enum.count()
+
+      Enum.count(mappings) == unique_count
+    end
   end
 end
