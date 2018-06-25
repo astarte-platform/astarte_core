@@ -117,7 +117,11 @@ defmodule Astarte.Core.CQLUtils do
   """
   def interface_id(interface_name, interface_major)
       when is_binary(interface_name) and is_integer(interface_major) do
-    :crypto.hash(:md5, "iid:#{interface_name}:#{Integer.to_string(interface_major)}")
+    iid_string = "iid:#{interface_name}:#{Integer.to_string(interface_major)}"
+
+    <<iid::binary-size(16), _discard::binary>> = :crypto.hash(:sha256, iid_string)
+
+    iid
   end
 
   @doc """
@@ -129,9 +133,11 @@ defmodule Astarte.Core.CQLUtils do
       endpoint
       |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
 
-    :crypto.hash(
-      :md5,
+    eid_string =
       "eid:#{interface_name}:#{Integer.to_string(interface_major)}:#{stripped_endpoint}:"
-    )
+
+    <<eid::binary-size(16), _discard::binary>> = :crypto.hash(:sha256, eid_string)
+
+    eid
   end
 end
