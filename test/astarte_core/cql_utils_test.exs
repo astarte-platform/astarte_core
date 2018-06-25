@@ -10,8 +10,36 @@ defmodule CQLUtilsTest do
   end
 
   test "endpoint name to object interface column name" do
-    assert CQLUtils.endpoint_to_db_column_name("/testEndpoint") == "testendpoint"
-    assert CQLUtils.endpoint_to_db_column_name("%{p0}/%{p1}/testEndpoint2") == "testendpoint2"
+    assert CQLUtils.endpoint_to_db_column_name("/testEndpoint") == "v_testendpoint"
+    assert CQLUtils.endpoint_to_db_column_name("%{p0}/%{p1}/testEndpoint2") == "v_testendpoint2"
+
+    assert CQLUtils.endpoint_to_db_column_name("/this_is_a_quite_long_endpoint_name_thatis43") ==
+             "v_this_is_a_quite_long_endpoint_name_thatis43"
+
+    assert CQLUtils.endpoint_to_db_column_name("/this_is_a_quite_long_endpoint_name_that_is44") ==
+             "v_1XOzAu_s_a_quite_long_endpoint_name_that_is44"
+
+    assert CQLUtils.endpoint_to_db_column_name(
+             "/this_is_a_quite_long_endpoint_name_that_is_more_than_characters_48"
+           ) == "v_o82S8J_t_name_that_is_more_than_characters_48"
+  end
+
+  test "is valid CQL name" do
+    assert CQLUtils.is_valid_cql_name?("0I_II_II_L") == false
+    assert CQLUtils.is_valid_cql_name?("I_II_II_L_0") == true
+    assert CQLUtils.is_valid_cql_name?("I_II_II_L_ù") == false
+    assert CQLUtils.is_valid_cql_name?("ù_I_II_II_L") == false
+    assert CQLUtils.is_valid_cql_name?("_I_II_II_L_ù") == false
+    assert CQLUtils.is_valid_cql_name?("") == false
+    assert CQLUtils.is_valid_cql_name?("v_testendpoint") == true
+    assert CQLUtils.is_valid_cql_name?("v_testendpoint2") == true
+    assert CQLUtils.is_valid_cql_name?("v_this_is_a_quite_long_endpoint_name_thatis43") == true
+    assert CQLUtils.is_valid_cql_name?("v_1XOzAu_s_a_quite_long_endpoint_name_that_is44") == true
+    assert CQLUtils.is_valid_cql_name?("v_o82S8J_t_name_that_is_more_than_characters_48") == true
+    assert CQLUtils.is_valid_cql_name?("v_o82S8J_t_name_that_is_more_than_characters_48a") == true
+
+    assert CQLUtils.is_valid_cql_name?("v_o82S8J_t_name_that_is_more_than_characters_48ab") ==
+             false
   end
 
   test "mapping value type to db column type" do

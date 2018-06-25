@@ -57,8 +57,34 @@ defmodule Astarte.Core.CQLUtils do
   @doc """
   Returns the column name for a certain endpoint that will be used for object interface tables.
   """
-  def endpoint_to_db_column_name(endpoint_name) do
-    List.last(String.split(String.downcase(endpoint_name), "/"))
+  def endpoint_to_db_column_name(endpoint_name) when is_binary(endpoint_name) do
+    long_column_name_suffix =
+      endpoint_name
+      |> String.split("/")
+      |> List.last()
+      |> String.downcase()
+
+    long_name_len = String.length(long_column_name_suffix)
+
+    if long_name_len >= 44 do
+      <<prefix::binary-size(6), _discard::binary>> =
+        :crypto.hash(:sha256, long_column_name_suffix)
+        |> Base.encode64()
+        |> String.replace(~r/[+\/]/, "_")
+
+      {_, shorter_name} = String.split_at(long_column_name_suffix, long_name_len - 38)
+
+      "v_#{prefix}_#{shorter_name}"
+    else
+      "v_#{long_column_name_suffix}"
+    end
+  end
+
+  @doc """
+  Returns true if a given CQL name can be safely used for a table or a column name
+  """
+  def is_valid_cql_name?(cql_name) when is_binary(cql_name) do
+    String.match?(cql_name, ~r/^[a-zA-Z]+[a-zA-Z0-9_]*$/) and String.length(cql_name) <= 48
   end
 
   @doc """
