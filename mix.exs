@@ -44,13 +44,13 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
-      {:cyanide, "~> 0.5.0"},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:ecto, "~> 2.1"},
-      {:exprotobuf, "~> 1.2.7"},
-      {:poison, "~> 3.1"},
-      {:distillery, "~> 1.4", runtime: false},
-      {:excoveralls, "~> 0.6", only: :test}
+      {:cyanide, "== 0.5.0"},
+      {:dialyxir, "== 0.5.1", only: [:dev], runtime: false},
+      {:ecto, "== 2.2.10"},
+      {:exprotobuf, "== 1.2.9"},
+      {:poison, "== 3.1.0"},
+      {:distillery, "== 1.5.2", runtime: false},
+      {:excoveralls, "== 0.8.2", only: :test}
     ]
   end
 end
