@@ -233,9 +233,12 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   end
 
   defp validate_match_path(%Ecto.Changeset{} = changeset) do
-    if get_field(changeset, :match_path) == "/*" and
-         get_field(changeset, :value_match_operator) != "*" do
-      add_error(changeset, :value_match_operator, "must be * when match_path is /*")
+    if get_field(changeset, :match_path) == "/*" do
+      if get_field(changeset, :value_match_operator) != "*" do
+        add_error(changeset, :value_match_operator, "must be * when match_path is /*")
+      else
+        changeset
+      end
     else
       validate_format(changeset, :match_path, Mapping.mapping_regex())
     end
