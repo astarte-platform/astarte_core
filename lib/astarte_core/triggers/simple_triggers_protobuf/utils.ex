@@ -18,6 +18,7 @@
 
 defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
   alias Astarte.Core.CQLUtils
+  alias Astarte.Core.Mapping
   alias Astarte.Core.Triggers.DataTrigger
 
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DataTrigger,
@@ -85,7 +86,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
         :any_endpoint
       else
         match_path
-        |> String.replace(~r/%{[a-zA-Z0-9]*}/, "")
+        |> Mapping.normalize_endpoint()
         |> String.split("/")
       end
 
