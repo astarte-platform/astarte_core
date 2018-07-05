@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 Ispirata Srl
+# Copyright (C) 2017-2018 Ispirata Srl
 #
 # This file is part of Astarte.
 # Astarte is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 #
 
 defmodule Astarte.Core.Mapping.ValueType do
+  @behaviour Ecto.Type
+
   @mapping_value_type_double 1
   @mapping_value_type_doublearray 2
   @mapping_value_type_integer 3
@@ -31,61 +33,116 @@ defmodule Astarte.Core.Mapping.ValueType do
   @mapping_value_type_binaryblobarray 12
   @mapping_value_type_datetime 13
   @mapping_value_type_datetimearray 14
+  @valid_atoms [
+    :double,
+    :integer,
+    :boolean,
+    :longinteger,
+    :string,
+    :binaryblob,
+    :datetime,
+    :doublearray,
+    :integerarray,
+    :booleanarray,
+    :longintegerarray,
+    :stringarray,
+    :binaryblobarray,
+    :datetimearray
+  ]
 
-  def to_int(value_type) do
-    case value_type do
-      :double -> @mapping_value_type_double
-      :integer -> @mapping_value_type_integer
-      :boolean -> @mapping_value_type_boolean
-      :longinteger -> @mapping_value_type_longinteger
-      :string -> @mapping_value_type_string
-      :binaryblob -> @mapping_value_type_binaryblob
-      :datetime -> @mapping_value_type_datetime
-      :doublearray -> @mapping_value_type_doublearray
-      :integerarray -> @mapping_value_type_integerarray
-      :booleanarray -> @mapping_value_type_booleanarray
-      :longintegerarray -> @mapping_value_type_longintegerarray
-      :stringarray -> @mapping_value_type_stringarray
-      :binaryblobarray -> @mapping_value_type_binaryblobarray
-      :datetimearray -> @mapping_value_type_datetimearray
+  @impl true
+  def type, do: :integer
+
+  @impl true
+  def cast(nil), do: {:ok, nil}
+
+  def cast(atom) when is_atom(atom) do
+    if Enum.member?(@valid_atoms, atom) do
+      {:ok, atom}
+    else
+      :error
     end
   end
 
-  def from_int(value_type_int) do
+  def cast(string) when is_binary(string) do
+    case string do
+      "double" -> {:ok, :double}
+      "integer" -> {:ok, :integer}
+      "boolean" -> {:ok, :boolean}
+      "longinteger" -> {:ok, :longinteger}
+      "string" -> {:ok, :string}
+      "binaryblob" -> {:ok, :binaryblob}
+      "datetime" -> {:ok, :datetime}
+      "doublearray" -> {:ok, :doublearray}
+      "integerarray" -> {:ok, :integerarray}
+      "booleanarray" -> {:ok, :booleanarray}
+      "longintegerarray" -> {:ok, :longintegerarray}
+      "stringarray" -> {:ok, :stringarray}
+      "binaryblobarray" -> {:ok, :binaryblobarray}
+      "datetimearray" -> {:ok, :datetimearray}
+      _ -> :error
+    end
+  end
+
+  def cast(_), do: :error
+
+  @impl true
+  def dump(value_type) when is_atom(value_type) do
+    case value_type do
+      :double -> {:ok, @mapping_value_type_double}
+      :integer -> {:ok, @mapping_value_type_integer}
+      :boolean -> {:ok, @mapping_value_type_boolean}
+      :longinteger -> {:ok, @mapping_value_type_longinteger}
+      :string -> {:ok, @mapping_value_type_string}
+      :binaryblob -> {:ok, @mapping_value_type_binaryblob}
+      :datetime -> {:ok, @mapping_value_type_datetime}
+      :doublearray -> {:ok, @mapping_value_type_doublearray}
+      :integerarray -> {:ok, @mapping_value_type_integerarray}
+      :booleanarray -> {:ok, @mapping_value_type_booleanarray}
+      :longintegerarray -> {:ok, @mapping_value_type_longintegerarray}
+      :stringarray -> {:ok, @mapping_value_type_stringarray}
+      :binaryblobarray -> {:ok, @mapping_value_type_binaryblobarray}
+      :datetimearray -> {:ok, @mapping_value_type_datetimearray}
+      _ -> :error
+    end
+  end
+
+  def to_int(value_type) when is_atom(value_type) do
+    case dump(value_type) do
+      {:ok, int} -> int
+      :error -> raise ArgumentError, message: "#{inspect(value_type)} is not a valid value type"
+    end
+  end
+
+  @impl true
+  def load(value_type_int) when is_integer(value_type_int) do
     case value_type_int do
-      @mapping_value_type_double -> :double
-      @mapping_value_type_integer -> :integer
-      @mapping_value_type_boolean -> :boolean
-      @mapping_value_type_longinteger -> :longinteger
-      @mapping_value_type_string -> :string
-      @mapping_value_type_binaryblob -> :binaryblob
-      @mapping_value_type_datetime -> :datetime
-      @mapping_value_type_doublearray -> :doublearray
-      @mapping_value_type_integerarray -> :integerarray
-      @mapping_value_type_booleanarray -> :booleanarray
-      @mapping_value_type_longintegerarray -> :longintegerarray
-      @mapping_value_type_stringarray -> :stringarray
-      @mapping_value_type_binaryblobarray -> :binaryblobarray
-      @mapping_value_type_datetimearray -> :datetimearray
+      @mapping_value_type_double -> {:ok, :double}
+      @mapping_value_type_integer -> {:ok, :integer}
+      @mapping_value_type_boolean -> {:ok, :boolean}
+      @mapping_value_type_longinteger -> {:ok, :longinteger}
+      @mapping_value_type_string -> {:ok, :string}
+      @mapping_value_type_binaryblob -> {:ok, :binaryblob}
+      @mapping_value_type_datetime -> {:ok, :datetime}
+      @mapping_value_type_doublearray -> {:ok, :doublearray}
+      @mapping_value_type_integerarray -> {:ok, :integerarray}
+      @mapping_value_type_booleanarray -> {:ok, :booleanarray}
+      @mapping_value_type_longintegerarray -> {:ok, :longintegerarray}
+      @mapping_value_type_stringarray -> {:ok, :stringarray}
+      @mapping_value_type_binaryblobarray -> {:ok, :binaryblobarray}
+      @mapping_value_type_datetimearray -> {:ok, :datetimearray}
+      _ -> :error
     end
   end
 
-  def from_string(value_type) do
-    case value_type do
-      "double" -> :double
-      "integer" -> :integer
-      "boolean" -> :boolean
-      "longinteger" -> :longinteger
-      "string" -> :string
-      "binaryblob" -> :binaryblob
-      "datetime" -> :datetime
-      "doublearray" -> :doublearray
-      "integerarray" -> :integerarray
-      "booleanarray" -> :booleanarray
-      "longintegerarray" -> :longintegerarray
-      "stringarray" -> :stringarray
-      "binaryblobarray" -> :binaryblobarray
-      "datetimearray" -> :datetimearray
+  def from_int(value_type_int) when is_integer(value_type_int) do
+    case load(value_type_int) do
+      {:ok, value_type} ->
+        value_type
+
+      :error ->
+        raise ArgumentError,
+          message: "#{value_type_int} is not a valid value type int representation"
     end
   end
 end
