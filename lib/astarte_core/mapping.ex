@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 Ispirata Srl
+# Copyright (C) 2017-2018 Ispirata Srl
 #
 # This file is part of Astarte.
 # Astarte is free software: you can redistribute it and/or modify
@@ -17,19 +17,60 @@
 #
 
 defmodule Astarte.Core.Mapping do
+  @moduledoc """
+  This module handles Interface Mappings using Ecto Changesets
+  """
+  use Ecto.Schema
+  import Ecto.Changeset
   alias Astarte.Core.Mapping
   alias Astarte.Core.Mapping.ValueType
   alias Astarte.Core.Mapping.Reliability
   alias Astarte.Core.Mapping.Retention
 
-  defstruct endpoint: "",
-            value_type: nil,
-            reliability: nil,
-            retention: nil,
-            expiry: 0,
-            allow_unset: false,
-            endpoint_id: nil,
-            interface_id: nil
+  @required_fields [
+    :endpoint,
+    :value_type
+  ]
+  @permitted_fields [
+    :reliability,
+    :retention,
+    :expiry,
+    :allow_unset,
+    :path
+    | @required_fields
+  ]
+
+  @primary_key false
+  embedded_schema do
+    field :endpoint
+    field :value_type, ValueType
+    field :reliability, Reliability, default: :unreliable
+    field :retention, Retention, default: :discard
+    field :expiry, :integer, default: 0
+    field :allow_unset, :boolean, default: false
+    field :endpoint_id, :binary
+    field :interface_id, :binary
+    # Legacy support
+    field :path, :string, virtual: true
+  end
+
+  def changeset(%Mapping{} = mapping, params \\ %{}) do
+    mapping
+    |> cast(params, @permitted_fields)
+    |> handle_legacy_endpoint()
+    |> validate_required(@required_fields)
+    |> validate_format(:endpoint, mapping_regex())
+    |> validate_number(:expiry, greater_than_or_equal_to: 0)
+  end
+
+  defp handle_legacy_endpoint(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :endpoint) do
+      changeset
+    else
+      path = get_change(changeset, :path)
+      put_change(changeset, :endpoint, path)
+    end
+  end
 
   def is_valid?(mapping) do
     if mapping != nil and mapping != "" and mapping != [] do
