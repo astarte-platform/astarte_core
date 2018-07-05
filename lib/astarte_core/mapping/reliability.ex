@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 Ispirata Srl
+# Copyright (C) 2017-2018 Ispirata Srl
 #
 # This file is part of Astarte.
 # Astarte is free software: you can redistribute it and/or modify
@@ -17,31 +17,77 @@
 #
 
 defmodule Astarte.Core.Mapping.Reliability do
+  @behaviour Ecto.Type
+
   @mapping_reliability_unreliable 1
   @mapping_reliability_guaranteed 2
   @mapping_reliability_unique 3
+  @valid_atoms [
+    :unreliable,
+    :guaranteed,
+    :unique
+  ]
 
-  def to_int(reliability) do
-    case reliability do
-      :unreliable -> @mapping_reliability_unreliable
-      :guaranteed -> @mapping_reliability_guaranteed
-      :unique -> @mapping_reliability_unique
+  @impl true
+  def type, do: :integer
+
+  @impl true
+  def cast(nil), do: {:ok, nil}
+
+  def cast(atom) when is_atom(atom) do
+    if Enum.member?(@valid_atoms, atom) do
+      {:ok, atom}
+    else
+      :error
     end
   end
 
-  def from_int(reliability_int) do
+  def cast(string) when is_binary(string) do
+    case string do
+      "unreliable" -> {:ok, :unreliable}
+      "guaranteed" -> {:ok, :guaranteed}
+      "unique" -> {:ok, :unique}
+      _ -> :error
+    end
+  end
+
+  def cast(_), do: :error
+
+  @impl true
+  def dump(reliability) when is_atom(reliability) do
+    case reliability do
+      :unreliable -> {:ok, @mapping_reliability_unreliable}
+      :guaranteed -> {:ok, @mapping_reliability_guaranteed}
+      :unique -> {:ok, @mapping_reliability_unique}
+      _ -> :error
+    end
+  end
+
+  def to_int(reliability) when is_atom(reliability) do
+    case dump(reliability) do
+      {:ok, int} -> int
+      :error -> raise ArgumentError, message: "#{inspect(reliability)} is not a valid reliability"
+    end
+  end
+
+  @impl true
+  def load(reliability_int) when is_integer(reliability_int) do
     case reliability_int do
-      @mapping_reliability_unreliable -> :unreliable
-      @mapping_reliability_guaranteed -> :guaranteed
-      @mapping_reliability_unique -> :unique
+      @mapping_reliability_unreliable -> {:ok, :unreliable}
+      @mapping_reliability_guaranteed -> {:ok, :guaranteed}
+      @mapping_reliability_unique -> {:ok, :unique}
+      _ -> :error
     end
   end
 
-  def from_string(reliability) do
-    case reliability do
-      "unreliable" -> :unreliable
-      "guaranteed" -> :guaranteed
-      "unique" -> :unique
+  def from_int(reliability_int) when is_integer(reliability_int) do
+    case load(reliability_int) do
+      {:ok, reliability} ->
+        reliability
+
+      :error ->
+        raise ArgumentError,
+          message: "#{reliability_int} is not a valid reliability int representation"
     end
   end
 end
