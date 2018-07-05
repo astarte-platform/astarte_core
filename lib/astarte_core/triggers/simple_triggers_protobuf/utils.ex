@@ -82,7 +82,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
       end
 
     path_match_tokens =
-      if match_path == "/*" do
+      if match_path == "*" do
         :any_endpoint
       else
         match_path
