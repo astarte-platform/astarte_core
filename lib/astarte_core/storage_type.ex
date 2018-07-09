@@ -28,8 +28,8 @@ defmodule Astarte.Core.StorageType do
     :multi_interface_individual_properties_dbtable,
     :multi_interface_individual_datastream_dbtable,
     :one_individual_properties_dbtable,
-    :one_individual_datastream_dbtable
-    :one_object_datastream_dbtable,
+    :one_individual_datastream_dbtable,
+    :one_object_datastream_dbtable
   ]
 
   @impl true
@@ -76,14 +76,17 @@ defmodule Astarte.Core.StorageType do
   """
   def to_int(storage_type) when is_atom(storage_type) do
     case dump(storage_type) do
-      {:ok, storage_type_int} -> storage_type_int
-      :error -> raise ArgumentError, message: "#{inspect(storage_type)} is not a valid storage type"
+      {:ok, storage_type_int} ->
+        storage_type_int
+
+      :error ->
+        raise ArgumentError, message: "#{inspect(storage_type)} is not a valid storage type"
     end
   end
 
   @impl true
   def load(storage_type_int) when is_integer(storage_type_int) do
-     case storage_type_int do
+    case storage_type_int do
       @multi_interface_individual_properties_dbtable ->
         {:ok, :multi_interface_individual_properties_dbtable}
 
@@ -109,8 +112,12 @@ defmodule Astarte.Core.StorageType do
   """
   def from_int(storage_type_int) when is_integer(storage_type_int) do
     case load(storage_type_int) do
-      {:ok, storage_type} -> storage_type
-      :error -> raise ArgumentError, message: "#{storage_type_int} is not a valid storage type int representation"
+      {:ok, storage_type} ->
+        storage_type
+
+      :error ->
+        raise ArgumentError,
+          message: "#{storage_type_int} is not a valid storage type int representation"
     end
   end
 end
