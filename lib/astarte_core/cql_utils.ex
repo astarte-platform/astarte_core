@@ -22,7 +22,7 @@ defmodule Astarte.Core.CQLUtils do
   """
 
   @interface_descriptor_statement """
-    SELECT name, major_version, minor_version, type, ownership, flags
+    SELECT name, major_version, minor_version, type, ownership, aggregation
     FROM interfaces
     WHERE name=:name AND major_version=:major_version
   """

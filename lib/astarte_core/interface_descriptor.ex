@@ -111,7 +111,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
            minor_version: minor_version,
            type: type,
            ownership: ownership,
-           flags: flags,
+           aggregation: aggregation,
            automaton_accepting_states: automaton_accepting_states,
            automaton_transitions: automaton_transitions,
            storage: storage,
@@ -124,7 +124,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
         minor_version: minor_version,
         type: Astarte.Core.Interface.Type.from_int(type),
         ownership: Astarte.Core.Interface.Ownership.from_int(ownership),
-        aggregation: Astarte.Core.Interface.Aggregation.from_int(flags),
+        aggregation: Astarte.Core.Interface.Aggregation.from_int(aggregation),
         storage: storage,
         storage_type: StorageType.from_int(storage_type),
         automaton:
