@@ -29,7 +29,7 @@ defmodule Astarte.Core.Mapping do
 
   @required_fields [
     :endpoint,
-    :value_type
+    :type
   ]
   @permitted_fields [
     :reliability,
@@ -52,15 +52,19 @@ defmodule Astarte.Core.Mapping do
     field :interface_id, :binary
     # Legacy support
     field :path, :string, virtual: true
+    # Different input naming
+    field :type, ValueType, virtual: true
   end
 
   def changeset(%Mapping{} = mapping, params \\ %{}) do
+
     mapping
     |> cast(params, @permitted_fields)
     |> handle_legacy_endpoint()
     |> validate_required(@required_fields)
     |> validate_format(:endpoint, mapping_regex())
     |> validate_number(:expiry, greater_than_or_equal_to: 0)
+    |> normalize_fields()
   end
 
   defp handle_legacy_endpoint(%Ecto.Changeset{} = changeset) do
@@ -70,6 +74,14 @@ defmodule Astarte.Core.Mapping do
       path = get_change(changeset, :path)
       put_change(changeset, :endpoint, path)
     end
+  end
+
+  defp normalize_fields(changeset) do
+    type_change = get_change(changeset, :type)
+
+    changeset
+    |> delete_change(:type)
+    |> put_change(:value_type, type_change)
   end
 
   def is_valid?(mapping) do
