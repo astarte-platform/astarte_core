@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 Ispirata Srl
+# Copyright (C) 2017-2018 Ispirata Srl
 #
 # This file is part of Astarte.
 # Astarte is free software: you can redistribute it and/or modify
@@ -17,37 +17,84 @@
 #
 
 defmodule Astarte.Core.Interface.Ownership do
+  @behaviour Ecto.Type
+
   @interface_ownership_device 1
   @interface_ownership_server 2
+  @valid_atoms [
+    :device,
+    :server
+  ]
 
-  def to_int(ownership) do
-    case ownership do
-      :device -> @interface_ownership_device
-      :server -> @interface_ownership_server
+  @impl true
+  def type, do: :integer
+
+  @impl true
+  def cast(nil), do: {:ok, nil}
+
+  def cast(atom) when is_atom(atom) do
+    if Enum.member?(@valid_atoms, atom) do
+      {:ok, atom}
+    else
+      :error
     end
   end
 
-  def from_int(ownership_int) do
-    case ownership_int do
-      @interface_ownership_device -> :device
-      @interface_ownership_server -> :server
-    end
-  end
-
-  def from_string(ownership) do
-    case ownership do
+  def cast(string) when is_binary(string) do
+    case string do
       "device" ->
-        :device
+        {:ok, :device}
 
       "server" ->
-        :server
+        {:ok, :server}
 
       # deprecated names
       "producer" ->
-        :device
+        {:ok, :device}
 
       "consumer" ->
-        :server
+        {:ok, :server}
+
+      _ ->
+        :error
+    end
+  end
+
+  def cast(_), do: :error
+
+  @impl true
+  def dump(ownership) when is_atom(ownership) do
+    case ownership do
+      :device -> {:ok, @interface_ownership_device}
+      :server -> {:ok, @interface_ownership_server}
+      _ -> :error
+    end
+  end
+
+  def to_int(ownership) when is_atom(ownership) do
+    case dump(ownership) do
+      {:ok, ownership_int} -> ownership_int
+      :error -> raise ArgumentError, message: "#{inspect(ownership)} is not a valid ownership"
+    end
+  end
+
+  @impl true
+  def load(ownership_int) when is_integer(ownership_int) do
+    case ownership_int do
+      @interface_ownership_device -> {:ok, :device}
+      @interface_ownership_server -> {:ok, :server}
+      _ -> :error
+    end
+  end
+
+  def from_int(ownership_int) when is_integer(ownership_int) do
+    case load(ownership_int) do
+      {:ok, ownership} ->
+        ownership
+
+      :error ->
+        raise ArgumentError,
+          message: "#{ownership_int} is not a valid ownership int representation"
     end
   end
 end
