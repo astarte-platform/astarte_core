@@ -110,7 +110,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
            major_version: major_version,
            minor_version: minor_version,
            type: type,
-           quality: ownership,
+           ownership: ownership,
            flags: flags,
            automaton_accepting_states: automaton_accepting_states,
            automaton_transitions: automaton_transitions,
