@@ -22,6 +22,7 @@ defmodule Astarte.Core.Mapping do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias Astarte.Core.CQLUtils
   alias Astarte.Core.Mapping
   alias Astarte.Core.Mapping.ValueType
   alias Astarte.Core.Mapping.Reliability
@@ -56,7 +57,13 @@ defmodule Astarte.Core.Mapping do
     field :type, ValueType, virtual: true
   end
 
-  def changeset(%Mapping{} = mapping, params \\ %{}) do
+  def changeset(%Mapping{} = mapping, %{} = params, opts) do
+    # We need those, so we raise if they're not there
+    # Note that they can be there but be nil,
+    # but this would be handled from the parent changeset
+    interface_name = Keyword.fetch!(opts, :interface_name)
+    interface_major = Keyword.fetch!(opts, :interface_major)
+    interface_id = Keyword.fetch!(opts, :interface_id)
 
     mapping
     |> cast(params, @permitted_fields)
@@ -65,6 +72,8 @@ defmodule Astarte.Core.Mapping do
     |> validate_format(:endpoint, mapping_regex())
     |> validate_number(:expiry, greater_than_or_equal_to: 0)
     |> normalize_fields()
+    |> put_change(:interface_id, interface_id)
+    |> put_endpoint_id(interface_name, interface_major)
   end
 
   defp handle_legacy_endpoint(%Ecto.Changeset{} = changeset) do
@@ -82,6 +91,22 @@ defmodule Astarte.Core.Mapping do
     changeset
     |> delete_change(:type)
     |> put_change(:value_type, type_change)
+  end
+
+  defp put_endpoint_id(changeset, interface_name, interface_major)
+       when is_binary(interface_name) and is_integer(interface_major) do
+
+    if endpoint_name = get_field(changeset, :endpoint) do
+      endpoint_id = CQLUtils.endpoint_id(interface_name, interface_major, endpoint_name)
+      put_change(changeset, :endpoint_id, endpoint_id)
+    else
+      changeset
+    end
+  end
+
+  # Interface errors will be handled by the parent changeset, just force it to invalid
+  defp put_endpoint_id(changeset, _interface_name, _interface_major) do
+    %{changeset | valid?: false}
   end
 
   def is_valid?(mapping) do
