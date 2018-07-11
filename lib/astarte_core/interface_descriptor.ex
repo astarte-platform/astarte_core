@@ -18,6 +18,9 @@
 
 defmodule Astarte.Core.InterfaceDescriptor do
   alias Astarte.Core.Interface
+  alias Astarte.Core.Interface.Aggregation
+  alias Astarte.Core.Interface.Ownership
+  alias Astarte.Core.Interface.Type
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.StorageType
 
@@ -65,9 +68,9 @@ defmodule Astarte.Core.InterfaceDescriptor do
         name: name,
         major_version: major_version,
         minor_version: minor_version,
-        type: Astarte.Core.Interface.Type.from_int(type),
-        ownership: Astarte.Core.Interface.Ownership.from_int(ownership),
-        aggregation: Astarte.Core.Interface.Aggregation.from_int(aggregation),
+        type: Type.from_int(type),
+        ownership: Ownership.from_int(ownership),
+        aggregation: Aggregation.from_int(aggregation),
         storage: storage,
         storage_type: StorageType.from_int(storage_type),
         automaton:
