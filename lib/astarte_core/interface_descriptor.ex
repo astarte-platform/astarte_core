@@ -17,6 +17,7 @@
 #
 
 defmodule Astarte.Core.InterfaceDescriptor do
+  alias Astarte.Core.Interface
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.StorageType
 
@@ -96,5 +97,36 @@ defmodule Astarte.Core.InterfaceDescriptor do
       _ ->
         raise ArgumentError
     end
+  end
+
+  @doc """
+  Builds an `%InterfaceDescriptor{}` starting from an `%Interface{}`
+
+  Returns the `%InterfaceDescriptor{}`
+  """
+  def from_interface(%Interface{} = interface) do
+    %Interface{
+      interface_id: interface_id,
+      name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: type,
+      ownership: ownership,
+      aggregation: aggregation,
+      explicit_timestamp: explicit_timestamp,
+      has_metadata: has_metadata
+    } = interface
+
+    %InterfaceDescriptor{
+      interface_id: interface_id,
+      name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: type,
+      ownership: ownership,
+      aggregation: aggregation,
+      explicit_timestamp: explicit_timestamp,
+      has_metadata: has_metadata
+    }
   end
 end
