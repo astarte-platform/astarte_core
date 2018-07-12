@@ -109,17 +109,6 @@ defmodule Astarte.Core.Mapping do
     %{changeset | valid?: false}
   end
 
-  def is_valid?(mapping) do
-    if mapping != nil and mapping != "" and mapping != [] do
-      String.match?(
-        mapping.endpoint,
-        mapping_regex()
-      ) and mapping.value_type != nil and is_atom(mapping.value_type)
-    else
-      false
-    end
-  end
-
   def mapping_regex do
     ~r/^((\/%{[a-zA-Z]+[a-zA-Z0-9]*})*(\/[a-zA-Z]+[a-zA-Z0-9]*)*)+$/
   end
