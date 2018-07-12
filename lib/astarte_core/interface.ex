@@ -222,4 +222,49 @@ defmodule Astarte.Core.Interface do
       changeset
     end
   end
+
+  defimpl Poison.Encoder, for: Interface do
+    def encode(%Interface{} = interface, options) do
+      %Interface{
+        name: name,
+        major_version: major_version,
+        minor_version: minor_version,
+        type: type,
+        ownership: ownership,
+        aggregation: aggregation,
+        explicit_timestamp: explicit_timestamp,
+        has_metadata: has_metadata,
+        description: description,
+        doc: doc,
+        mappings: mappings
+      } = interface
+
+      %{
+        interface_name: name,
+        version_major: major_version,
+        version_minor: minor_version,
+        type: type,
+        ownership: ownership,
+        mappings: mappings
+      }
+      |> add_key_if_not_default(:aggregation, aggregation, :individual)
+      |> add_key_if_not_default(:explicit_timestamp, explicit_timestamp, false)
+      |> add_key_if_not_default(:has_metadata, has_metadata, false)
+      |> add_key_if_not_nil(:description, description)
+      |> add_key_if_not_nil(:doc, doc)
+      |> Poison.Encoder.Map.encode(options)
+    end
+
+    defp add_key_if_not_default(encode_map, _key, default, default), do: encode_map
+
+    defp add_key_if_not_default(encode_map, key, value, _default) do
+      Map.put(encode_map, key, value)
+    end
+
+    defp add_key_if_not_nil(encode_map, _key, nil), do: encode_map
+
+    defp add_key_if_not_nil(encode_map, key, value) do
+      Map.put(encode_map, key, value)
+    end
+  end
 end
