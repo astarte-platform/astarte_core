@@ -161,4 +161,43 @@ defmodule Astarte.Core.Mapping do
       interface_id: interface_id
     }
   end
+
+  defimpl Poison.Encoder, for: Mapping do
+    def encode(%Mapping{} = mapping, options) do
+      %Mapping{
+        endpoint: endpoint,
+        value_type: value_type,
+        reliability: reliability,
+        retention: retention,
+        expiry: expiry,
+        allow_unset: allow_unset,
+        description: description,
+        doc: doc
+      } = mapping
+
+      %{
+        endpoint: endpoint,
+        type: value_type
+      }
+      |> add_key_if_not_default(:reliability, reliability, :unreliable)
+      |> add_key_if_not_default(:retention, retention, :discard)
+      |> add_key_if_not_default(:expiry, expiry, 0)
+      |> add_key_if_not_default(:allow_unset, allow_unset, false)
+      |> add_key_if_not_nil(:description, description)
+      |> add_key_if_not_nil(:doc, doc)
+      |> Poison.Encoder.Map.encode(options)
+    end
+
+    defp add_key_if_not_default(encode_map, _key, default, default), do: encode_map
+
+    defp add_key_if_not_default(encode_map, key, value, _default) do
+      Map.put(encode_map, key, value)
+    end
+
+    defp add_key_if_not_nil(encode_map, _key, nil), do: encode_map
+
+    defp add_key_if_not_nil(encode_map, key, value) do
+      Map.put(encode_map, key, value)
+    end
+  end
 end
