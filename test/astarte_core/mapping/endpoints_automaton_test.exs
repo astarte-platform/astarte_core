@@ -1,6 +1,7 @@
 defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   use ExUnit.Case
   alias Astarte.Core.Mapping.EndpointsAutomaton
+  alias Astarte.Core.Interface
 
   @valid_interface """
   {
@@ -157,7 +158,11 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   """
 
   test "build endpoints automaton" do
-    {:ok, document} = Astarte.Core.InterfaceDocument.from_json(@test_draft_interface_a_0)
+    {:ok, params} = Poison.decode(@test_draft_interface_a_0)
+
+    {:ok, document} =
+      Interface.changeset(%Interface{}, params)
+      |> Ecto.Changeset.apply_action(:insert)
 
     assert {status, automaton} = EndpointsAutomaton.build(document.mappings)
     assert EndpointsAutomaton.lint(document.mappings) == []
@@ -169,7 +174,11 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   end
 
   test "build endpoints automaton and resolve some endpoints" do
-    {:ok, document} = Astarte.Core.InterfaceDocument.from_json(@valid_interface)
+    {:ok, params} = Poison.decode(@valid_interface)
+
+    {:ok, document} =
+      Interface.changeset(%Interface{}, params)
+      |> Ecto.Changeset.apply_action(:insert)
 
     assert {:ok, automaton} = EndpointsAutomaton.build(document.mappings)
     assert EndpointsAutomaton.is_valid?(automaton, document.mappings) == true
@@ -227,7 +236,12 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   end
 
   test "build endpoints automaton and test resolve failure" do
-    {:ok, document} = Astarte.Core.InterfaceDocument.from_json(@valid_interface)
+    {:ok, params} = Poison.decode(@valid_interface)
+
+    {:ok, document} =
+      Interface.changeset(%Interface{}, params)
+      |> Ecto.Changeset.apply_action(:insert)
+
 
     assert {:ok, automaton} = EndpointsAutomaton.build(document.mappings)
 
@@ -242,7 +256,11 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   end
 
   test "build endpoints automaton and fail due to invalid interface" do
-    {:ok, document} = Astarte.Core.InterfaceDocument.from_json(@invalid_interface)
+    {:ok, params} = Poison.decode(@invalid_interface)
+
+    {:ok, document} =
+      Interface.changeset(%Interface{}, params)
+      |> Ecto.Changeset.apply_action(:insert)
 
     assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(document.mappings)
     assert ["/test/pluto/v"] = EndpointsAutomaton.lint(document.mappings)
