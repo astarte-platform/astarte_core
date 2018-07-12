@@ -40,7 +40,9 @@ defmodule Astarte.Core.Interface do
     :explicit_timestamp,
     :has_metadata,
     :quality,
-    :aggregate
+    :aggregate,
+    :description,
+    :doc
     | @required_fields
   ]
 
@@ -55,6 +57,8 @@ defmodule Astarte.Core.Interface do
     field :aggregation, Aggregation, default: :individual
     field :explicit_timestamp, :boolean, default: false
     field :has_metadata, :boolean, default: false
+    field :description
+    field :doc
     embeds_many :mappings, Mapping
     # Legacy
     field :quality, Ownership, virtual: true
