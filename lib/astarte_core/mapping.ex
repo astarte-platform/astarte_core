@@ -37,6 +37,8 @@ defmodule Astarte.Core.Mapping do
     :retention,
     :expiry,
     :allow_unset,
+    :description,
+    :doc,
     :path
     | @required_fields
   ]
@@ -49,6 +51,8 @@ defmodule Astarte.Core.Mapping do
     field :retention, Retention, default: :discard
     field :expiry, :integer, default: 0
     field :allow_unset, :boolean, default: false
+    field :description
+    field :doc
     field :endpoint_id, :binary
     field :interface_id, :binary
     # Legacy support
