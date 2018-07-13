@@ -17,6 +17,10 @@
 #
 
 defmodule Astarte.Core.InterfaceDescriptor do
+  alias Astarte.Core.Interface
+  alias Astarte.Core.Interface.Aggregation
+  alias Astarte.Core.Interface.Ownership
+  alias Astarte.Core.Interface.Type
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.StorageType
 
@@ -32,64 +36,6 @@ defmodule Astarte.Core.InterfaceDescriptor do
             automaton: nil,
             storage: nil,
             storage_type: nil
-
-  def validate(interface_descriptor) do
-    cond do
-      interface_descriptor == nil ->
-        {:error, :null_interface_descriptor}
-
-      interface_descriptor == "" ->
-        {:error, :not_an_interface_descriptor}
-
-      interface_descriptor == [] ->
-        {:error, :not_an_interface_descriptor}
-
-      String.length(interface_descriptor.name) > 128 ->
-        {:error, :too_long_interface_name}
-
-      String.match?(interface_descriptor.name, interface_name_regex()) == false ->
-        {:error, :invalid_interface_name}
-
-      interface_descriptor.major_version < 0 ->
-        {:error, :invalid_major_version}
-
-      interface_descriptor.major_version < 0 ->
-        {:error, :invalid_minor_version}
-
-      interface_descriptor.major_version == 0 and interface_descriptor.minor_version == 0 ->
-        {:error, :invalid_minor_version}
-
-      (interface_descriptor.type == :properties or interface_descriptor.type == :datastream) ==
-          false ->
-        {:error, :invalid_interface_type}
-
-      (interface_descriptor.ownership == :device or interface_descriptor.ownership == :server) ==
-          false ->
-        {:error, :invalid_interface_ownership}
-
-      (interface_descriptor.aggregation == :individual or
-         interface_descriptor.aggregation == :object) == false ->
-        {:error, :invalid_interface_aggregation}
-
-      interface_descriptor.type != :datastream and interface_descriptor.explicit_timestamp ->
-        {:error, :explicit_timestamp_not_allowed}
-
-      (interface_descriptor.aggregation != :individual or interface_descriptor.type != :datastream) and
-          interface_descriptor.has_metadata ->
-        {:error, :metadata_not_allowed}
-
-      true ->
-        :ok
-    end
-  end
-
-  def is_valid?(interface_descriptor) do
-    validate(interface_descriptor) == :ok
-  end
-
-  def interface_name_regex do
-    ~r/^[a-zA-Z]+(\.[a-zA-Z0-9]+)*$/
-  end
 
   @doc """
   Deserializes an `%InterfaceDescriptor{}` from `db_result`.
@@ -122,9 +68,9 @@ defmodule Astarte.Core.InterfaceDescriptor do
         name: name,
         major_version: major_version,
         minor_version: minor_version,
-        type: Astarte.Core.Interface.Type.from_int(type),
-        ownership: Astarte.Core.Interface.Ownership.from_int(ownership),
-        aggregation: Astarte.Core.Interface.Aggregation.from_int(aggregation),
+        type: Type.from_int(type),
+        ownership: Ownership.from_int(ownership),
+        aggregation: Aggregation.from_int(aggregation),
         storage: storage,
         storage_type: StorageType.from_int(storage_type),
         automaton:
@@ -154,5 +100,36 @@ defmodule Astarte.Core.InterfaceDescriptor do
       _ ->
         raise ArgumentError
     end
+  end
+
+  @doc """
+  Builds an `%InterfaceDescriptor{}` starting from an `%Interface{}`
+
+  Returns the `%InterfaceDescriptor{}`
+  """
+  def from_interface(%Interface{} = interface) do
+    %Interface{
+      interface_id: interface_id,
+      name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: type,
+      ownership: ownership,
+      aggregation: aggregation,
+      explicit_timestamp: explicit_timestamp,
+      has_metadata: has_metadata
+    } = interface
+
+    %InterfaceDescriptor{
+      interface_id: interface_id,
+      name: name,
+      major_version: major_version,
+      minor_version: minor_version,
+      type: type,
+      ownership: ownership,
+      aggregation: aggregation,
+      explicit_timestamp: explicit_timestamp,
+      has_metadata: has_metadata
+    }
   end
 end

@@ -9,7 +9,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Device
   alias Astarte.Core.Mapping
-  alias Astarte.Core.InterfaceDescriptor
+  alias Astarte.Core.Interface
   alias Astarte.Core.Triggers.SimpleTriggerConfig
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
 
@@ -227,7 +227,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       end
     else
       changeset
-      |> validate_format(:interface_name, InterfaceDescriptor.interface_name_regex())
+      |> validate_format(:interface_name, Interface.interface_name_regex())
       |> validate_required([:interface_major])
     end
   end
