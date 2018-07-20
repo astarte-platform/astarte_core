@@ -37,6 +37,7 @@ defmodule Astarte.Core.Mapping do
     :retention,
     :expiry,
     :allow_unset,
+    :explicit_timestamp,
     :description,
     :doc,
     :path
@@ -51,6 +52,7 @@ defmodule Astarte.Core.Mapping do
     field :retention, Retention, default: :discard
     field :expiry, :integer, default: 0
     field :allow_unset, :boolean, default: false
+    field :explicit_timestamp, :boolean, default: false
     field :description
     field :doc
     field :endpoint_id, :binary
@@ -171,6 +173,7 @@ defmodule Astarte.Core.Mapping do
         retention: retention,
         expiry: expiry,
         allow_unset: allow_unset,
+        explicit_timestamp: explicit_timestamp,
         description: description,
         doc: doc
       } = mapping
@@ -183,6 +186,7 @@ defmodule Astarte.Core.Mapping do
       |> add_key_if_not_default(:retention, retention, :discard)
       |> add_key_if_not_default(:expiry, expiry, 0)
       |> add_key_if_not_default(:allow_unset, allow_unset, false)
+      |> add_key_if_not_default(:explicit_timestamp, explicit_timestamp, false)
       |> add_key_if_not_nil(:description, description)
       |> add_key_if_not_nil(:doc, doc)
       |> Poison.Encoder.Map.encode(options)

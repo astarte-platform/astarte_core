@@ -250,21 +250,6 @@ defmodule Astarte.Core.InterfaceTest do
     assert %Ecto.Changeset{valid?: false, errors: [has_metadata: _]} = Interface.changeset(%Interface{}, params)
   end
 
-  test "explicit_timestamp fails with properties type" do
-    params = %{
-      "interface_name" => "valid",
-      "version_major" => 1,
-      "version_minor" => 0,
-      "type" => "properties",
-      "ownership" => "device",
-      "aggregation" => "individual",
-      "explicit_timestamp" => true,
-      "mappings" => mappings_fixture()
-    }
-
-    assert %Ecto.Changeset{valid?: false, errors: [explicit_timestamp: _]} = Interface.changeset(%Interface{}, params)
-  end
-
   test "long interface_name fails" do
     params = %{
       "interface_name" => Stream.cycle(["a"]) |> Enum.take(129), # aaaaa...

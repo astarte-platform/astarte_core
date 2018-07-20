@@ -37,7 +37,6 @@ defmodule Astarte.Core.Interface do
 
   @permitted_fields [
     :aggregation,
-    :explicit_timestamp,
     :has_metadata,
     :quality,
     :aggregate,
@@ -55,7 +54,6 @@ defmodule Astarte.Core.Interface do
     field :type, Type
     field :ownership, Ownership
     field :aggregation, Aggregation, default: :individual
-    field :explicit_timestamp, :boolean, default: false
     field :has_metadata, :boolean, default: false
     field :description
     field :doc
@@ -81,7 +79,6 @@ defmodule Astarte.Core.Interface do
       |> validate_number(:version_major, greater_than_or_equal_to: 0)
       |> validate_number(:version_minor, greater_than_or_equal_to: 0)
       |> validate_non_null_version()
-      |> validate_explicit_timestamp()
       |> validate_has_metadata()
       |> put_interface_id()
       |> normalize_fields()
@@ -171,20 +168,6 @@ defmodule Astarte.Core.Interface do
     end
   end
 
-  defp validate_explicit_timestamp(changeset) do
-    if get_field(changeset, :explicit_timestamp) do
-      validate_change(changeset, :type, fn
-        :type, :datastream ->
-          []
-
-        :type, _ ->
-          [explicit_timestamp: "is allowed only in datastream interfaces"]
-      end)
-    else
-      changeset
-    end
-  end
-
   defp validate_has_metadata(changeset) do
     if get_field(changeset, :has_metadata) do
       changeset
@@ -232,7 +215,6 @@ defmodule Astarte.Core.Interface do
         type: type,
         ownership: ownership,
         aggregation: aggregation,
-        explicit_timestamp: explicit_timestamp,
         has_metadata: has_metadata,
         description: description,
         doc: doc,
@@ -248,7 +230,6 @@ defmodule Astarte.Core.Interface do
         mappings: mappings
       }
       |> add_key_if_not_default(:aggregation, aggregation, :individual)
-      |> add_key_if_not_default(:explicit_timestamp, explicit_timestamp, false)
       |> add_key_if_not_default(:has_metadata, has_metadata, false)
       |> add_key_if_not_nil(:description, description)
       |> add_key_if_not_nil(:doc, doc)
