@@ -142,7 +142,7 @@ defmodule Astarte.Core.Mapping do
     %{
       endpoint: endpoint,
       value_type: value_type,
-      reliabilty: reliability,
+      reliability: reliability,
       retention: retention,
       expiry: expiry,
       allow_unset: allow_unset,
