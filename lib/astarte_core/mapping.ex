@@ -148,6 +148,7 @@ defmodule Astarte.Core.Mapping do
       retention: retention,
       expiry: expiry,
       allow_unset: allow_unset,
+      explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
       interface_id: interface_id
     } = db_result
@@ -159,6 +160,7 @@ defmodule Astarte.Core.Mapping do
       retention: Retention.from_int(retention),
       expiry: expiry,
       allow_unset: allow_unset,
+      explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
       interface_id: interface_id
     }
