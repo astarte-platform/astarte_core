@@ -10,7 +10,6 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
    "version_minor": 0,
    "type": "datastream",
    "quality": "producer",
-   "aggregate": true,
    "mappings": [
        {
            "path": "/message",
@@ -76,7 +75,6 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
    "version_minor": 0,
    "type": "datastream",
    "quality": "producer",
-   "aggregate": true,
    "mappings": [
        {
            "path": "/message",
