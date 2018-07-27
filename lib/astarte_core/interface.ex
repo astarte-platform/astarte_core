@@ -88,6 +88,7 @@ defmodule Astarte.Core.Interface do
     |> cast_embed(:mappings, required: true, with: mapping_changeset(changeset))
     |> validate_mapping_uniqueness()
     |> validate_all_mappings_have_same_attributes()
+    |> validate_all_mappings_have_same_prefix()
   end
 
   def interface_name_regex do
@@ -237,6 +238,39 @@ defmodule Astarte.Core.Interface do
 
       unless all_same_attributes do
         add_error(changeset, :mappings, "contain conflicting attributes")
+      else
+        changeset
+      end
+    else
+      changeset
+    end
+  end
+
+  defp validate_all_mappings_have_same_prefix(changeset) do
+    mappings = get_field(changeset, :mappings, [])
+    aggregation = get_field(changeset, :aggregation, [])
+
+    if aggregation == :object and mappings != [] do
+      common_prefix =
+        mappings
+        |> List.first()
+        |> Map.get(:endpoint)
+        |> String.split("/")
+        |> List.delete_at(-1)
+
+      all_same_prefix =
+        Enum.all?(mappings, fn mapping ->
+          current_prefix =
+            mapping
+            |> Map.get(:endpoint)
+            |> String.split("/")
+            |> List.delete_at(-1)
+
+          current_prefix == common_prefix
+        end)
+
+      unless all_same_prefix do
+        add_error(changeset, :mappings, "must have the same prefix in endpoints")
       else
         changeset
       end
