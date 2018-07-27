@@ -87,6 +87,7 @@ defmodule Astarte.Core.Interface do
     changeset
     |> cast_embed(:mappings, required: true, with: mapping_changeset(changeset))
     |> validate_mapping_uniqueness()
+    |> validate_all_mappings_have_same_attributes()
   end
 
   def interface_name_regex do
@@ -201,6 +202,44 @@ defmodule Astarte.Core.Interface do
 
     if Enum.count(mappings) != unique_count do
       add_error(changeset, :mappings, "contain conflicting endpoints")
+    else
+      changeset
+    end
+  end
+
+  defp validate_all_mappings_have_same_attributes(changeset) do
+    mappings = get_field(changeset, :mappings, [])
+    aggregation = get_field(changeset, :aggregation, [])
+
+    if aggregation == :object and mappings != [] do
+      %Mapping{
+        retention: retention,
+        reliability: reliability,
+        expiry: expiry,
+        allow_unset: allow_unset,
+        explicit_timestamp: explicit_timestamp
+      } = List.first(mappings)
+
+      all_same_attributes =
+        Enum.all?(mappings, fn mapping ->
+          %Mapping{
+            retention: mapping_retention,
+            reliability: mapping_reliability,
+            expiry: mapping_expiry,
+            allow_unset: mapping_allow_unset,
+            explicit_timestamp: mapping_explicit_timestamp
+          } = mapping
+
+          retention == mapping_retention and reliability == mapping_reliability and
+            expiry == mapping_expiry and allow_unset == mapping_allow_unset and
+            explicit_timestamp == mapping_explicit_timestamp
+        end)
+
+      unless all_same_attributes do
+        add_error(changeset, :mappings, "contain conflicting attributes")
+      else
+        changeset
+      end
     else
       changeset
     end
