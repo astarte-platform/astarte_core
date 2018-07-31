@@ -235,21 +235,6 @@ defmodule Astarte.Core.InterfaceTest do
     assert %Ecto.Changeset{valid?: false, errors: [type: _]} = Interface.changeset(%Interface{}, params)
   end
 
-  test "has_metadata fails with object aggregation" do
-    params = %{
-      "interface_name" => "valid",
-      "version_major" => 1,
-      "version_minor" => 0,
-      "type" => "datastream",
-      "ownership" => "device",
-      "aggregation" => "object",
-      "has_metadata" => true,
-      "mappings" => mappings_fixture()
-    }
-
-    assert %Ecto.Changeset{valid?: false, errors: [has_metadata: _]} = Interface.changeset(%Interface{}, params)
-  end
-
   test "long interface_name fails" do
     params = %{
       "interface_name" => Stream.cycle(["a"]) |> Enum.take(129), # aaaaa...
@@ -335,7 +320,6 @@ defmodule Astarte.Core.InterfaceTest do
       "type" => "datastream",
       "ownership" => "device",
       "aggregation" => "individual",
-      "has_metadata" => true,
       "mappings" => mappings_fixture()
     }
 
@@ -348,7 +332,6 @@ defmodule Astarte.Core.InterfaceTest do
       type: :datastream,
       ownership: :device,
       aggregation: :individual,
-      has_metadata: true,
       mappings: [%Mapping{}]
     } = interface
   end

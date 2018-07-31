@@ -37,7 +37,6 @@ defmodule Astarte.Core.Interface do
 
   @permitted_fields [
     :aggregation,
-    :has_metadata,
     :quality,
     :aggregate,
     :description,
@@ -54,7 +53,6 @@ defmodule Astarte.Core.Interface do
     field :type, Type
     field :ownership, Ownership
     field :aggregation, Aggregation, default: :individual
-    field :has_metadata, :boolean, default: false
     field :description
     field :doc
     embeds_many :mappings, Mapping
@@ -79,7 +77,6 @@ defmodule Astarte.Core.Interface do
       |> validate_number(:version_major, greater_than_or_equal_to: 0)
       |> validate_number(:version_minor, greater_than_or_equal_to: 0)
       |> validate_non_null_version()
-      |> validate_has_metadata()
       |> put_interface_id()
       |> normalize_fields()
 
@@ -169,28 +166,6 @@ defmodule Astarte.Core.Interface do
     end
   end
 
-  defp validate_has_metadata(changeset) do
-    if get_field(changeset, :has_metadata) do
-      changeset
-      |> validate_change(:type, fn
-        :type, :datastream ->
-          []
-
-        :type, _ ->
-          [has_metadata: "is allowed only in datastream interfaces"]
-      end)
-      |> validate_change(:aggregation, fn
-        :aggregation, :individual ->
-          []
-
-        :aggregation, _ ->
-          [has_metadata: "is allowed only in individual interfaces"]
-      end)
-    else
-      changeset
-    end
-  end
-
   defp validate_mapping_uniqueness(changeset) do
     mappings = get_field(changeset, :mappings, [])
     unique_count =
@@ -254,7 +229,6 @@ defmodule Astarte.Core.Interface do
         type: type,
         ownership: ownership,
         aggregation: aggregation,
-        has_metadata: has_metadata,
         description: description,
         doc: doc,
         mappings: mappings
@@ -269,7 +243,6 @@ defmodule Astarte.Core.Interface do
         mappings: mappings
       }
       |> add_key_if_not_default(:aggregation, aggregation, :individual)
-      |> add_key_if_not_default(:has_metadata, has_metadata, false)
       |> add_key_if_not_nil(:description, description)
       |> add_key_if_not_nil(:doc, doc)
       |> Poison.Encoder.Map.encode(options)
