@@ -30,7 +30,6 @@ defmodule Astarte.Core.InterfaceDescriptor do
             type: nil,
             ownership: nil,
             aggregation: nil,
-            has_metadata: false,
             interface_id: nil,
             automaton: nil,
             storage: nil,
@@ -115,7 +114,6 @@ defmodule Astarte.Core.InterfaceDescriptor do
       type: type,
       ownership: ownership,
       aggregation: aggregation,
-      has_metadata: has_metadata
     } = interface
 
     %InterfaceDescriptor{
@@ -126,7 +124,6 @@ defmodule Astarte.Core.InterfaceDescriptor do
       type: type,
       ownership: ownership,
       aggregation: aggregation,
-      has_metadata: has_metadata
     }
   end
 end
