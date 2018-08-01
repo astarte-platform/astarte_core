@@ -83,6 +83,7 @@ defmodule Astarte.Core.Interface do
     # We break the pipe because we need the changeset as argument to mapping_changeset
     changeset
     |> cast_embed(:mappings, required: true, with: mapping_changeset(changeset))
+    |> validate_length(:mappings, min: 1, max: 1024)
     |> validate_mapping_uniqueness()
     |> validate_all_mappings_have_same_attributes()
     |> validate_all_mappings_have_same_prefix()
