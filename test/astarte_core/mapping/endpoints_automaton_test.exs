@@ -49,8 +49,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
        },
        {
            "path": "/filterRules/%{ruleId}/%{filterKey}/value",
-           "type": "string",
-           "allow_unset": true
+           "type": "string"
        },
        {
            "path": "/test/%{ind}/v",
@@ -114,8 +113,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
        },
        {
            "path": "/filterRules/%{ruleId}/%{filterKey}/value",
-           "type": "string",
-           "allow_unset": true
+           "type": "string"
        },
        {
            "path": "/test/%{ind}/v",

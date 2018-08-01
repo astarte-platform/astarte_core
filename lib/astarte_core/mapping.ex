@@ -70,6 +70,7 @@ defmodule Astarte.Core.Mapping do
     interface_name = Keyword.fetch!(opts, :interface_name)
     interface_major = Keyword.fetch!(opts, :interface_major)
     interface_id = Keyword.fetch!(opts, :interface_id)
+    interface_type = Keyword.get(opts, :interface_type)
 
     mapping
     |> cast(params, @permitted_fields)
@@ -77,6 +78,11 @@ defmodule Astarte.Core.Mapping do
     |> validate_required(@required_fields)
     |> validate_format(:endpoint, mapping_regex())
     |> validate_number(:expiry, greater_than_or_equal_to: 0)
+    |> validate_not_set_unless(:allow_unset, interface_type, [:properties, nil])
+    |> validate_not_set_unless(:expiry, interface_type, [:datastream, nil])
+    |> validate_not_set_unless(:retention, interface_type, [:datastream, nil])
+    |> validate_not_set_unless(:reliability, interface_type, [:datastream, nil])
+    |> validate_not_set_unless(:explicit_timestamp, interface_type, [:datastream, nil])
     |> normalize_fields()
     |> put_change(:interface_id, interface_id)
     |> put_endpoint_id(interface_name, interface_major)
@@ -164,6 +170,20 @@ defmodule Astarte.Core.Mapping do
       endpoint_id: endpoint_id,
       interface_id: interface_id
     }
+  end
+
+  defp validate_not_set_unless(changeset, field, param, values) do
+    unless Enum.member?(values, param) do
+      validate_change(changeset, field, fn field, value ->
+        if value != nil do
+          [{field, "must be blank"}]
+        else
+          []
+        end
+      end)
+    else
+      changeset
+    end
   end
 
   defimpl Poison.Encoder, for: Mapping do

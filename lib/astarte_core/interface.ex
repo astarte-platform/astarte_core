@@ -125,7 +125,15 @@ defmodule Astarte.Core.Interface do
     major = get_field(changeset, :major_version)
     minor = get_field(changeset, :minor_version)
     interface_id = get_field(changeset, :interface_id)
-    opts = [interface_name: name, interface_major: major, interface_minor: minor, interface_id: interface_id]
+    type = get_field(changeset, :type)
+
+    opts = [
+      interface_name: name,
+      interface_major: major,
+      interface_minor: minor,
+      interface_id: interface_id,
+      interface_type: type
+    ]
 
     fn type, params ->
       Mapping.changeset(type, params, opts)
