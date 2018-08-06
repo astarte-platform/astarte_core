@@ -77,8 +77,12 @@ defmodule Astarte.Core.Interface.Type do
 
   def from_int(type_int) when is_integer(type_int) do
     case load(type_int) do
-      {:ok, type} -> type
-      :error -> raise ArgumentError, message: "#{type_int} is not a valid interface type int representation"
+      {:ok, type} ->
+        type
+
+      :error ->
+        raise ArgumentError,
+          message: "#{type_int} is not a valid interface type int representation"
     end
   end
 end

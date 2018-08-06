@@ -32,7 +32,7 @@ defmodule Astarte.Core.Interface do
     :version_major,
     :version_minor,
     :type,
-    :ownership,
+    :ownership
   ]
 
   @permitted_fields [
@@ -78,7 +78,7 @@ defmodule Astarte.Core.Interface do
       |> validate_number(:version_minor, greater_than_or_equal_to: 0)
       |> validate_non_null_version()
       |> validate_length(:description, max: 1000)
-      |> validate_length(:doc, min: 100000)
+      |> validate_length(:doc, min: 100_000)
       |> put_interface_id()
       |> normalize_fields()
 
@@ -180,6 +180,7 @@ defmodule Astarte.Core.Interface do
 
   defp validate_mapping_uniqueness(changeset) do
     mappings = get_field(changeset, :mappings, [])
+
     unique_count =
       Enum.uniq_by(mappings, fn mapping ->
         Mapping.normalize_endpoint(mapping.endpoint)

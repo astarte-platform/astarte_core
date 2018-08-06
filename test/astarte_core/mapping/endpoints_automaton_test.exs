@@ -238,7 +238,6 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
       Interface.changeset(%Interface{}, params)
       |> Ecto.Changeset.apply_action(:insert)
 
-
     assert {:ok, automaton} = EndpointsAutomaton.build(document.mappings)
 
     assert EndpointsAutomaton.resolve_path("/notFound/hello/world/value", automaton) ==
