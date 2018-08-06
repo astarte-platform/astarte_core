@@ -76,6 +76,7 @@ defmodule Astarte.Core.Mapping do
     |> cast(params, @permitted_fields)
     |> handle_legacy_endpoint()
     |> validate_required(@required_fields)
+    |> validate_length(:endpoint, min: 2, max: 256)
     |> validate_format(:endpoint, mapping_regex())
     |> validate_number(:expiry, greater_than_or_equal_to: 0)
     |> validate_not_set_unless(:allow_unset, interface_type, [:properties, nil])
