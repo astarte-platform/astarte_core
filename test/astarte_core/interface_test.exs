@@ -1,7 +1,6 @@
 defmodule Astarte.Core.InterfaceTest do
   use ExUnit.Case
 
-  alias Astarte.Core.CQLUtils
   alias Astarte.Core.Interface
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.Mapping
