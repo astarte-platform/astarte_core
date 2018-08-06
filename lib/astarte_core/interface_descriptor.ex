@@ -113,7 +113,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
       minor_version: minor_version,
       type: type,
       ownership: ownership,
-      aggregation: aggregation,
+      aggregation: aggregation
     } = interface
 
     %InterfaceDescriptor{
@@ -123,7 +123,7 @@ defmodule Astarte.Core.InterfaceDescriptor do
       minor_version: minor_version,
       type: type,
       ownership: ownership,
-      aggregation: aggregation,
+      aggregation: aggregation
     }
   end
 end

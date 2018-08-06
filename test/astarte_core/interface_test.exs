@@ -1,7 +1,6 @@
 defmodule Astarte.Core.InterfaceTest do
   use ExUnit.Case
 
-  alias Astarte.Core.CQLUtils
   alias Astarte.Core.Interface
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.Mapping
@@ -126,6 +125,7 @@ defmodule Astarte.Core.InterfaceTest do
 
   test "aggregated datastream interface deserialization" do
     {:ok, params} = Poison.decode(@aggregated_datastream_interface_json)
+
     {:ok, interface} =
       Interface.changeset(%Interface{}, params)
       |> Ecto.Changeset.apply_action(:insert)
@@ -155,6 +155,7 @@ defmodule Astarte.Core.InterfaceTest do
 
   test "individual property server owned interface deserialization" do
     {:ok, params} = Poison.decode(@individual_property_server_owned_interface)
+
     {:ok, interface} =
       Interface.changeset(%Interface{}, params)
       |> Ecto.Changeset.apply_action(:insert)
@@ -179,6 +180,7 @@ defmodule Astarte.Core.InterfaceTest do
 
   test "individual property device owned interface deserialization" do
     {:ok, params} = Poison.decode(@individual_property_device_owned_interface)
+
     {:ok, interface} =
       Interface.changeset(%Interface{}, params)
       |> Ecto.Changeset.apply_action(:insert)
@@ -203,7 +205,10 @@ defmodule Astarte.Core.InterfaceTest do
 
   test "invalid mapping document" do
     {:ok, params} = Poison.decode(@invalid_mapping_document)
-    assert %Ecto.Changeset{valid?: false, changes: %{mappings: [mapping_changeset]}} = Interface.changeset(%Interface{}, params)
+
+    assert %Ecto.Changeset{valid?: false, changes: %{mappings: [mapping_changeset]}} =
+             Interface.changeset(%Interface{}, params)
+
     assert %Ecto.Changeset{valid?: false, errors: [endpoint: _]} = mapping_changeset
   end
 
@@ -218,7 +223,8 @@ defmodule Astarte.Core.InterfaceTest do
       "mappings" => mappings_fixture()
     }
 
-    assert %Ecto.Changeset{valid?: false, errors: [interface_name: _]} = Interface.changeset(%Interface{}, params)
+    assert %Ecto.Changeset{valid?: false, errors: [interface_name: _]} =
+             Interface.changeset(%Interface{}, params)
   end
 
   test "invalid interface type" do
@@ -232,12 +238,14 @@ defmodule Astarte.Core.InterfaceTest do
       "mappings" => mappings_fixture()
     }
 
-    assert %Ecto.Changeset{valid?: false, errors: [type: _]} = Interface.changeset(%Interface{}, params)
+    assert %Ecto.Changeset{valid?: false, errors: [type: _]} =
+             Interface.changeset(%Interface{}, params)
   end
 
   test "long interface_name fails" do
     params = %{
-      "interface_name" => Stream.cycle(["a"]) |> Enum.take(129), # aaaaa...
+      # aaaaa...
+      "interface_name" => Stream.cycle(["a"]) |> Enum.take(129),
       "version_major" => 1,
       "version_minor" => 0,
       "type" => "properties",
@@ -246,7 +254,8 @@ defmodule Astarte.Core.InterfaceTest do
       "mappings" => mappings_fixture()
     }
 
-    assert %Ecto.Changeset{valid?: false, errors: [interface_name: _]} = Interface.changeset(%Interface{}, params)
+    assert %Ecto.Changeset{valid?: false, errors: [interface_name: _]} =
+             Interface.changeset(%Interface{}, params)
   end
 
   test "major 0 and minor 0 fails" do
@@ -260,7 +269,8 @@ defmodule Astarte.Core.InterfaceTest do
       "mappings" => mappings_fixture()
     }
 
-    assert %Ecto.Changeset{valid?: false, errors: [version_minor: _]} = Interface.changeset(%Interface{}, params)
+    assert %Ecto.Changeset{valid?: false, errors: [version_minor: _]} =
+             Interface.changeset(%Interface{}, params)
   end
 
   test "interface with conflicting mappings fail" do
@@ -285,7 +295,8 @@ defmodule Astarte.Core.InterfaceTest do
       "mappings" => mappings
     }
 
-    assert %Ecto.Changeset{valid?: false, errors: [mappings: _]} = Interface.changeset(%Interface{}, params)
+    assert %Ecto.Changeset{valid?: false, errors: [mappings: _]} =
+             Interface.changeset(%Interface{}, params)
   end
 
   test "valid properties interface" do
@@ -301,15 +312,16 @@ defmodule Astarte.Core.InterfaceTest do
 
     assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
     assert {:ok, interface} = Ecto.Changeset.apply_action(changeset, :insert)
+
     assert %Interface{
-      name: "valid",
-      major_version: 1,
-      minor_version: 0,
-      type: :properties,
-      ownership: :device,
-      aggregation: :individual,
-      mappings: [%Mapping{}]
-    } = interface
+             name: "valid",
+             major_version: 1,
+             minor_version: 0,
+             type: :properties,
+             ownership: :device,
+             aggregation: :individual,
+             mappings: [%Mapping{}]
+           } = interface
   end
 
   test "valid datastream interface" do
@@ -325,15 +337,16 @@ defmodule Astarte.Core.InterfaceTest do
 
     assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
     assert {:ok, interface} = Ecto.Changeset.apply_action(changeset, :insert)
+
     assert %Interface{
-      name: "valid",
-      major_version: 1,
-      minor_version: 0,
-      type: :datastream,
-      ownership: :device,
-      aggregation: :individual,
-      mappings: [%Mapping{}]
-    } = interface
+             name: "valid",
+             major_version: 1,
+             minor_version: 0,
+             type: :datastream,
+             ownership: :device,
+             aggregation: :individual,
+             mappings: [%Mapping{}]
+           } = interface
   end
 
   test "legacy interface" do
@@ -349,15 +362,16 @@ defmodule Astarte.Core.InterfaceTest do
 
     assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
     assert {:ok, interface} = Ecto.Changeset.apply_action(changeset, :insert)
+
     assert %Interface{
-      name: "valid",
-      major_version: 1,
-      minor_version: 0,
-      type: :datastream,
-      ownership: :device,
-      aggregation: :object,
-      mappings: [%Mapping{}]
-    } = interface
+             name: "valid",
+             major_version: 1,
+             minor_version: 0,
+             type: :datastream,
+             ownership: :device,
+             aggregation: :object,
+             mappings: [%Mapping{}]
+           } = interface
   end
 
   defp mappings_fixture do
