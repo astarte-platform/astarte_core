@@ -77,12 +77,15 @@ defmodule Astarte.Core.Interface do
       |> validate_number(:version_major, greater_than_or_equal_to: 0)
       |> validate_number(:version_minor, greater_than_or_equal_to: 0)
       |> validate_non_null_version()
+      |> validate_length(:description, max: 1000)
+      |> validate_length(:doc, min: 100000)
       |> put_interface_id()
       |> normalize_fields()
 
     # We break the pipe because we need the changeset as argument to mapping_changeset
     changeset
     |> cast_embed(:mappings, required: true, with: mapping_changeset(changeset))
+    |> validate_length(:mappings, min: 1, max: 1024)
     |> validate_mapping_uniqueness()
     |> validate_all_mappings_have_same_attributes()
     |> validate_all_mappings_have_same_prefix()
@@ -124,7 +127,15 @@ defmodule Astarte.Core.Interface do
     major = get_field(changeset, :major_version)
     minor = get_field(changeset, :minor_version)
     interface_id = get_field(changeset, :interface_id)
-    opts = [interface_name: name, interface_major: major, interface_minor: minor, interface_id: interface_id]
+    type = get_field(changeset, :type)
+
+    opts = [
+      interface_name: name,
+      interface_major: major,
+      interface_minor: minor,
+      interface_id: interface_id,
+      interface_type: type
+    ]
 
     fn type, params ->
       Mapping.changeset(type, params, opts)
