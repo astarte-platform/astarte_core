@@ -84,6 +84,8 @@ defmodule Astarte.Core.Mapping do
     |> validate_not_set_unless(:retention, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:reliability, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:explicit_timestamp, interface_type, [:datastream, nil])
+    |> validate_length(:description, max: 1000)
+    |> validate_length(:doc, min: 100000)
     |> normalize_fields()
     |> put_change(:interface_id, interface_id)
     |> put_endpoint_id(interface_name, interface_major)
