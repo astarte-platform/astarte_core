@@ -78,7 +78,7 @@ defmodule Astarte.Core.Interface do
       |> validate_number(:version_minor, greater_than_or_equal_to: 0)
       |> validate_non_null_version()
       |> validate_length(:description, max: 1000)
-      |> validate_length(:doc, min: 100_000)
+      |> validate_length(:doc, max: 100_000)
       |> put_interface_id()
       |> normalize_fields()
 
