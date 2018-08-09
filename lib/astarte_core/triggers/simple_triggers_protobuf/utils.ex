@@ -88,6 +88,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
         match_path
         |> Mapping.normalize_endpoint()
         |> String.split("/")
+        |> tl()
       end
 
     interface_id_or_any = get_interface_id_or_any(interface_name, interface_major)
