@@ -45,11 +45,12 @@ mix:release-build:
     image: elixir:1.6.5
     stage: build
     script:
-        - export MIX_ENV=prod
+        - export MIX_ENV=test
         - mix deps.get
         - mix deps.compile
         - mix compile
-        - mix test
+        - mix coveralls
+        - export MIX_ENV=prod
         - mix release
     cache:
         paths:
