@@ -33,7 +33,11 @@ defmodule Astarte.Core.Mixfile do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
-      deps: deps()
+      description: description(),
+      package: package(),
+      deps: deps(),
+      source_url: "https://github.com/astarte-platform/astarte_core",
+      homepage_url: "https://astarte-platform.org/"
     ]
   end
 
@@ -51,6 +55,24 @@ defmodule Astarte.Core.Mixfile do
       {:poison, "== 3.1.0"},
       {:distillery, "== 1.5.2", runtime: false},
       {:excoveralls, "== 0.9.1", only: :test}
+    ]
+  end
+
+  defp description do
+    """
+    Astarte Core library.
+    """
+  end
+
+  defp package do
+    [
+      maintainers: ["Davide Bettio", "Riccardo Binetti"],
+      licenses: ["LGPL-3.0-or-later"],
+      links: %{
+        "Astarte" => "https://astarte-platform.org",
+        "Ispirata" => "https://ispirata.com",
+        "GitHub" => "https://github.com/astarte-platform/astarte_core"
+      }
     ]
   end
 end
