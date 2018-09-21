@@ -74,6 +74,7 @@ defmodule Astarte.Core.Interface do
       |> validate_required(@required_fields)
       |> validate_length(:interface_name, max: 128)
       |> validate_format(:interface_name, interface_name_regex())
+      |> validate_exclusion(:interface_name, ["astarte", "control"])
       |> validate_number(:version_major, greater_than_or_equal_to: 0)
       |> validate_number(:version_minor, greater_than_or_equal_to: 0)
       |> validate_non_null_version()
