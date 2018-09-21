@@ -124,7 +124,7 @@ defmodule Astarte.Core.Mapping do
   end
 
   def mapping_regex do
-    ~r/^(\/(%{([a-zA-Z]+[a-zA-Z0-9]*)}|[a-zA-Z]+[a-zA-Z0-9]*)){1,64}$/
+    ~r/^(\/(%{([a-zA-Z]+[a-zA-Z0-9_]*)}|[a-zA-Z]+[a-zA-Z0-9_]*)){1,64}$/
   end
 
   @doc """
