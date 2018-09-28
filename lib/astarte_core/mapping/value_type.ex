@@ -176,8 +176,37 @@ defmodule Astarte.Core.Mapping.ValueType do
       {v, :datetime} when is_integer(v) ->
         :ok
 
+      {v, :doublearray} when is_list(v) ->
+        validate_array_value(:double, v)
+
+      {v, :integerarray} when is_list(v) ->
+        validate_array_value(:integer, v)
+
+      {v, :booleanarray} when is_list(v) ->
+        validate_array_value(:boolean, v)
+
+      {v, :longintegerarray} when is_list(v) ->
+        validate_array_value(:longinteger, v)
+
+      {v, :stringarray} when is_list(v) ->
+        validate_array_value(:string, v)
+
+      {v, :binaryblobarray} when is_list(v) ->
+        validate_array_value(:binaryblob, v)
+
+      {v, :datetimearray} when is_list(v) ->
+        validate_array_value(:datetime, v)
+
       _ ->
         {:error, :unexpected_value_type}
+    end
+  end
+
+  defp validate_array_value(type, values) do
+    if Enum.all?(values, fn item -> validate_value(type, item) == :ok end) do
+      :ok
+    else
+      {:error, :unexpected_value_type}
     end
   end
 end
