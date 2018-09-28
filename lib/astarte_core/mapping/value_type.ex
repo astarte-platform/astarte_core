@@ -145,4 +145,39 @@ defmodule Astarte.Core.Mapping.ValueType do
           message: "#{value_type_int} is not a valid value type int representation"
     end
   end
+
+  def validate_value(expected_type, value) do
+    case {value, expected_type} do
+      {v, :double} when is_number(v) ->
+        :ok
+
+      {v, :integer} when is_integer(v) and abs(v) <= 0x7FFFFFFF ->
+        :ok
+
+      {v, :boolean} when is_boolean(v) ->
+        :ok
+
+      {v, :longinteger} when is_integer(v) and abs(v) <= 0x7FFFFFFFFFFFFFFF ->
+        :ok
+
+      {v, :string} when is_binary(v) ->
+        if String.valid?(v) do
+          :ok
+        else
+          {:error, :unexpected_value_type}
+        end
+
+      {v, :binaryblob} when is_binary(v) ->
+        :ok
+
+      {%Bson.UTC{ms: _ms} = _v, :datetime} ->
+        :ok
+
+      {v, :datetime} when is_integer(v) ->
+        :ok
+
+      _ ->
+        {:error, :unexpected_value_type}
+    end
+  end
 end
