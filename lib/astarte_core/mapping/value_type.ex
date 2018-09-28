@@ -145,4 +145,68 @@ defmodule Astarte.Core.Mapping.ValueType do
           message: "#{value_type_int} is not a valid value type int representation"
     end
   end
+
+  def validate_value(expected_type, value) do
+    case {value, expected_type} do
+      {v, :double} when is_number(v) ->
+        :ok
+
+      {v, :integer} when is_integer(v) and abs(v) <= 0x7FFFFFFF ->
+        :ok
+
+      {v, :boolean} when is_boolean(v) ->
+        :ok
+
+      {v, :longinteger} when is_integer(v) and abs(v) <= 0x7FFFFFFFFFFFFFFF ->
+        :ok
+
+      {v, :string} when is_binary(v) ->
+        if String.valid?(v) do
+          :ok
+        else
+          {:error, :unexpected_value_type}
+        end
+
+      {v, :binaryblob} when is_binary(v) ->
+        :ok
+
+      {%Bson.UTC{ms: _ms} = _v, :datetime} ->
+        :ok
+
+      {v, :datetime} when is_integer(v) ->
+        :ok
+
+      {v, :doublearray} when is_list(v) ->
+        validate_array_value(:double, v)
+
+      {v, :integerarray} when is_list(v) ->
+        validate_array_value(:integer, v)
+
+      {v, :booleanarray} when is_list(v) ->
+        validate_array_value(:boolean, v)
+
+      {v, :longintegerarray} when is_list(v) ->
+        validate_array_value(:longinteger, v)
+
+      {v, :stringarray} when is_list(v) ->
+        validate_array_value(:string, v)
+
+      {v, :binaryblobarray} when is_list(v) ->
+        validate_array_value(:binaryblob, v)
+
+      {v, :datetimearray} when is_list(v) ->
+        validate_array_value(:datetime, v)
+
+      _ ->
+        {:error, :unexpected_value_type}
+    end
+  end
+
+  defp validate_array_value(type, values) do
+    if Enum.all?(values, fn item -> validate_value(type, item) == :ok end) do
+      :ok
+    else
+      {:error, :unexpected_value_type}
+    end
+  end
 end
