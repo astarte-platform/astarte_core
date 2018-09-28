@@ -22,6 +22,15 @@ defmodule Astarte.Core.Mapping.ValueTypeTest do
 
     assert ValueType.validate_value(:datetime, 1_538_131_554_304) == :ok
     assert ValueType.validate_value(:datetime, %Bson.UTC{ms: 1_538_131_554_304}) == :ok
+
+    assert ValueType.validate_value(:doublearray, [1.0, 1.1, 1.2, 2]) == :ok
+    assert ValueType.validate_value(:integerarray, [0, 1, 2, 3, 4, 5]) == :ok
+    assert ValueType.validate_value(:longintegerarray, [0, 1, 2, 3, 4, 5]) == :ok
+    assert ValueType.validate_value(:stringarray, ["Hello", "World"]) == :ok
+    assert ValueType.validate_value(:booleanarray, [true, false]) == :ok
+    assert ValueType.validate_value(:binaryblobarray, ["Hello", <<0, 1, 2>>]) == :ok
+
+    assert ValueType.validate_value(:datetimearray, [1_538_131_554_304, 1_538_131_554_305]) == :ok
   end
 
   test "invalid values are not accepted" do
@@ -51,7 +60,27 @@ defmodule Astarte.Core.Mapping.ValueTypeTest do
     assert ValueType.validate_value(:binaryblob, 9) == {:error, :unexpected_value_type}
 
     assert ValueType.validate_value(:datetime, 22.3) == {:error, :unexpected_value_type}
-
     assert ValueType.validate_value(:datetime, :not_a_date) == {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:doublearray, [1.0, :a, 1.2, 2]) ==
+             {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:integerarray, [0, 1, 2.1, 3, 4, 5]) ==
+             {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:longintegerarray, [0, 1, 2.4, 3, 4, 5]) ==
+             {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:stringarray, ["Hello", 5]) ==
+             {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:booleanarray, [true, nil]) ==
+             {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:binaryblobarray, ["Hello", 4]) ==
+             {:error, :unexpected_value_type}
+
+    assert ValueType.validate_value(:datetimearray, [1_538_131_554_304, false]) ==
+             {:error, :unexpected_value_type}
   end
 end
