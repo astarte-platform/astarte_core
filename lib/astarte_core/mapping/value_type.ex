@@ -50,6 +50,12 @@ defmodule Astarte.Core.Mapping.ValueType do
     :datetimearray
   ]
 
+  # The following limits are really conservative,
+  # it is always easier to increase them in future releases
+  @blob_size 65536
+  @list_len 1024
+  @string_size 65536
+
   @impl true
   def type, do: :integer
 
@@ -161,14 +167,23 @@ defmodule Astarte.Core.Mapping.ValueType do
         :ok
 
       {v, :string} when is_binary(v) ->
-        if String.valid?(v) do
-          :ok
-        else
-          {:error, :unexpected_value_type}
+        cond do
+          String.valid?(v) == false ->
+            {:error, :unexpected_value_type}
+
+          byte_size(v) > @string_size ->
+            {:error, :value_size_exceeded}
+
+          true ->
+            :ok
         end
 
       {v, :binaryblob} when is_binary(v) ->
-        :ok
+        if byte_size(v) > @blob_size do
+          {:error, :value_size_exceeded}
+        else
+          :ok
+        end
 
       {%Bson.UTC{ms: _ms} = _v, :datetime} ->
         :ok
@@ -203,10 +218,15 @@ defmodule Astarte.Core.Mapping.ValueType do
   end
 
   defp validate_array_value(type, values) do
-    if Enum.all?(values, fn item -> validate_value(type, item) == :ok end) do
-      :ok
-    else
-      {:error, :unexpected_value_type}
+    cond do
+      length(values) > @list_len ->
+        {:error, :value_size_exceeded}
+
+      Enum.all?(values, fn item -> validate_value(type, item) == :ok end) == false ->
+        {:error, :unexpected_value_type}
+
+      true ->
+        :ok
     end
   end
 end

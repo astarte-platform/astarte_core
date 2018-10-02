@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.10.0-beta.2] - Unreleased
 ### Added
+- Add limit to 64K for string and blobs, 1024 items for arrays.
 - Add value validation code for any Astarte type.
 
 ## [0.10.0-beta.1] - 2018-08-10
