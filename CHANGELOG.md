@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.10.0-beta.3] - Unreleased
+
 ## [0.10.0-beta.2] - 2018-10-19
 ### Added
 - Add limit to 64K for string and blobs, 1024 items for arrays.
