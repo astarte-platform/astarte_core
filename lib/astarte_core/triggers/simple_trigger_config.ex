@@ -335,12 +335,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_id: encoded_device_id
     } = config
 
-    device_id =
+    {device_id, object_type} =
       if encoded_device_id == "*" do
-        SimpleTriggersUtils.any_device_object_id()
+        {SimpleTriggersUtils.any_device_object_id(),
+         SimpleTriggersUtils.object_type_to_int!(:any_device)}
       else
         {:ok, decoded_device_id} = Device.decode_device_id(encoded_device_id)
-        decoded_device_id
+        {decoded_device_id, SimpleTriggersUtils.object_type_to_int!(:device)}
       end
 
     device_trigger = %DeviceTrigger{
@@ -348,8 +349,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     }
 
     %TaggedSimpleTrigger{
-      # TODO: object_type 1 is device, it should be a constant
-      object_type: 1,
+      object_type: object_type,
       object_id: device_id,
       simple_trigger_container: %SimpleTriggerContainer{
         simple_trigger: {:device_trigger, device_trigger}
