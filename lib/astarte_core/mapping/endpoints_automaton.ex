@@ -32,18 +32,29 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
       states == [] ->
         {:error, :not_found}
 
-      length(states) == 1 and accepting_states[hd(states)] != nil ->
+      length(states) == 1 and Map.has_key?(accepting_states, hd(states)) ->
         {:ok, accepting_states[hd(states)]}
 
       true ->
-        states = force_transitions(states, transitions, accepting_states)
-
-        guessed_endpoints =
-          for state <- states do
-            accepting_states[state]
+        accepted_states =
+          for state <- states, Map.has_key?(accepting_states, state) do
+            Map.fetch!(accepting_states, state)
           end
 
-        {:guessed, guessed_endpoints}
+        case accepted_states do
+          [accepted_state] ->
+            {:ok, accepted_state}
+
+          _ ->
+            forced_states = force_transitions(states, transitions, accepting_states)
+
+            guessed_endpoints =
+              for state <- forced_states do
+                accepting_states[state]
+              end
+
+            {:guessed, guessed_endpoints}
+        end
     end
   end
 
