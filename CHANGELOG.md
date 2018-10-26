@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [0.10.0-beta.3] - Unreleased
+### Changed
+- Interface name `device` is reserved now.
+
+### Fixed
+- False positive overlapping endpoints were detected, EndpointsAutomaton now handles them as valid.
+- Correctly serialize triggers on the special "*" interface and device.
 
 ## [0.10.0-beta.2] - 2018-10-19
 ### Added

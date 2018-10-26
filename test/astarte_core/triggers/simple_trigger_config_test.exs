@@ -249,6 +249,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
 
     test "data SimpleTriggerConfig roundtrips with any interface" do
       any_interface_object_id = SimpleTriggersUtils.any_interface_object_id()
+      any_interface_object_type_int = SimpleTriggersUtils.object_type_to_int!(:any_interface)
       data_trigger_type = :VALUE_CHANGE
       match_operator = :CONTAINS
       known_value = Bson.encode(%{v: @string_known_value})
@@ -266,7 +267,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
 
       assert %TaggedSimpleTrigger{
                object_id: ^any_interface_object_id,
-               object_type: 2,
+               object_type: ^any_interface_object_type_int,
                simple_trigger_container: simple_trigger_container
              } = tagged_simple_trigger
 
@@ -318,11 +319,12 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
       }
 
       any_device_object_id = SimpleTriggersUtils.any_device_object_id()
+      any_device_object_type_int = SimpleTriggersUtils.object_type_to_int!(:any_device)
       tagged_simple_trigger = SimpleTriggerConfig.to_tagged_simple_trigger(config)
 
       assert %TaggedSimpleTrigger{
                object_id: ^any_device_object_id,
-               object_type: 1,
+               object_type: ^any_device_object_type_int,
                simple_trigger_container: simple_trigger_container
              } = tagged_simple_trigger
 
