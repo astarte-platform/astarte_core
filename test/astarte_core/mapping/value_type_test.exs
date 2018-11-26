@@ -19,6 +19,7 @@ defmodule Astarte.Core.Mapping.ValueTypeTest do
     assert ValueType.validate_value(:boolean, false) == :ok
 
     assert ValueType.validate_value(:binaryblob, <<0, 1, 2, 3, 4>>) == :ok
+    assert ValueType.validate_value(:binaryblob, Bson.Bin.new(<<0, 1, 2, 3, 4>>, 0)) == :ok
 
     assert ValueType.validate_value(:datetime, 1_538_131_554_304) == :ok
     assert ValueType.validate_value(:datetime, %Bson.UTC{ms: 1_538_131_554_304}) == :ok
@@ -58,6 +59,14 @@ defmodule Astarte.Core.Mapping.ValueTypeTest do
     assert ValueType.validate_value(:boolean, "true") == {:error, :unexpected_value_type}
 
     assert ValueType.validate_value(:binaryblob, 9) == {:error, :unexpected_value_type}
+
+    longbin =
+      Stream.cycle([<<42>>])
+      |> Enum.take(65537)
+      |> IO.iodata_to_binary()
+
+    assert ValueType.validate_value(:binaryblob, Bson.Bin.new(longbin, 0)) ==
+             {:error, :value_size_exceeded}
 
     assert ValueType.validate_value(:datetime, 22.3) == {:error, :unexpected_value_type}
     assert ValueType.validate_value(:datetime, :not_a_date) == {:error, :unexpected_value_type}
