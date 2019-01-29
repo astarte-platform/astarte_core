@@ -67,7 +67,7 @@ defmodule Astarte.Core.Mixfile do
   defp package do
     [
       maintainers: ["Davide Bettio", "Riccardo Binetti"],
-      licenses: ["LGPL-3.0-or-later"],
+      licenses: ["Apache-2.0"],
       links: %{
         "Astarte" => "https://astarte-platform.org",
         "Ispirata" => "https://ispirata.com",
