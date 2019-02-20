@@ -154,7 +154,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     }
   """
 
-  @false_positive_overlaps [
+  @parametric_overlaps [
     %Mapping{
       allow_unset: false,
       description: nil,
@@ -203,20 +203,8 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     assert Enum.count(elem(automaton, 1)) == 2
   end
 
-  test "false positive overlaps" do
-    {status, automaton} = EndpointsAutomaton.build(@false_positive_overlaps)
-    assert status == :ok
-
-    assert EndpointsAutomaton.is_valid?(automaton, @false_positive_overlaps) == true
-
-    {status, endpoints} = EndpointsAutomaton.resolve_path("/some", automaton)
-    assert status == :guessed
-    assert Enum.sort(endpoints) == ["/some/%{param}/here", "/some/thing"]
-
-    assert EndpointsAutomaton.resolve_path("/some/thing/here", automaton) ==
-             {:ok, "/some/%{param}/here"}
-
-    assert EndpointsAutomaton.resolve_path("/some/thing", automaton) == {:ok, "/some/thing"}
+  test "parametric endpoints that can overlap for a given parameter choice are marked as overlapping" do
+    assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(@parametric_overlaps)
   end
 
   test "build endpoints automaton and resolve some endpoints" do
