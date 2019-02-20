@@ -154,7 +154,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     }
   """
 
-  @false_positive_overlaps [
+  @parametric_overlaps [
     %Mapping{
       allow_unset: false,
       description: nil,
@@ -187,6 +187,39 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     }
   ]
 
+  @inverted_parametric_overlaps [
+    %Mapping{
+      allow_unset: false,
+      description: nil,
+      doc: nil,
+      endpoint: "/some/%{param}",
+      endpoint_id: <<229, 20, 231, 215, 188, 179, 148, 95, 139, 75, 126, 37, 180, 103, 211, 14>>,
+      expiry: 0,
+      explicit_timestamp: false,
+      interface_id: <<139, 163, 99, 132, 204, 35, 51, 240, 194, 202, 102, 233, 32, 47, 86, 78>>,
+      path: nil,
+      reliability: :unreliable,
+      retention: :discard,
+      type: nil,
+      value_type: :double
+    },
+    %Mapping{
+      allow_unset: false,
+      description: nil,
+      doc: nil,
+      endpoint: "/some/thing/here",
+      endpoint_id: <<172, 209, 44, 141, 3, 42, 31, 121, 211, 86, 97, 253, 135, 225, 57, 129>>,
+      expiry: 0,
+      explicit_timestamp: false,
+      interface_id: <<139, 163, 99, 132, 204, 35, 51, 240, 194, 202, 102, 233, 32, 47, 86, 78>>,
+      path: nil,
+      reliability: :unreliable,
+      retention: :discard,
+      type: nil,
+      value_type: :double
+    }
+  ]
+
   test "build endpoints automaton" do
     {:ok, params} = Poison.decode(@test_draft_interface_a_0)
 
@@ -203,21 +236,15 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     assert Enum.count(elem(automaton, 1)) == 2
   end
 
-  test "false positive overlaps" do
-    {status, automaton} = EndpointsAutomaton.build(@false_positive_overlaps)
-    assert status == :ok
-
-    assert EndpointsAutomaton.is_valid?(automaton, @false_positive_overlaps) == true
-
-    {status, endpoints} = EndpointsAutomaton.resolve_path("/some", automaton)
-    assert status == :guessed
-    assert Enum.sort(endpoints) == ["/some/%{param}/here", "/some/thing"]
-
-    assert EndpointsAutomaton.resolve_path("/some/thing/here", automaton) ==
-             {:ok, "/some/%{param}/here"}
-
-    assert EndpointsAutomaton.resolve_path("/some/thing", automaton) == {:ok, "/some/thing"}
+  test "parametric endpoints that can overlap for a given parameter choice are marked as overlapping" do
+    assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(@parametric_overlaps)
   end
+
+  # TODO: this fails right now
+  # test "parametric endpoints that can overlap for a given parameter choice are marked as overlapping even if the parametric endpoint is the prefix" do
+  #  assert {:error, :overlapping_mappings} =
+  #           EndpointsAutomaton.build(@inverted_parametric_overlaps)
+  # end
 
   test "build endpoints automaton and resolve some endpoints" do
     {:ok, params} = Poison.decode(@valid_interface)
