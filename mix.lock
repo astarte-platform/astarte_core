@@ -1,6 +1,6 @@
 %{
   "certifi": {:hex, :certifi, "2.3.1", "d0f424232390bf47d82da8478022301c561cf6445b5b5fb6a84d49a9e76d2639", [:rebar3], [{:parse_trans, "3.2.0", [hex: :parse_trans, repo: "hexpm", optional: false]}], "hexpm"},
-  "cyanide": {:hex, :cyanide, "0.5.0", "b72422623ce84baa19f96498e18f15f46c4dcac8359d484c9a8c0e3836cb629b", [:mix], [], "hexpm"},
+  "cyanide": {:hex, :cyanide, "0.5.1", "4de918474f1f5309ec87d47dff4ecb180d8fa38166d933fc76c83209f32404f6", [:mix], [], "hexpm"},
   "decimal": {:hex, :decimal, "1.5.0", "b0433a36d0e2430e3d50291b1c65f53c37d56f83665b43d79963684865beab68", [:mix], [], "hexpm"},
   "dialyxir": {:hex, :dialyxir, "0.5.1", "b331b091720fd93e878137add264bac4f644e1ddae07a70bf7062c7862c4b952", [:mix], [], "hexpm"},
   "distillery": {:hex, :distillery, "1.5.2", "eec18b2d37b55b0bcb670cf2bcf64228ed38ce8b046bb30a9b636a6f5a4c0080", [:mix], [], "hexpm"},
