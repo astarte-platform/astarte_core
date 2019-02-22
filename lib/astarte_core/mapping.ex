@@ -28,6 +28,8 @@ defmodule Astarte.Core.Mapping do
   alias Astarte.Core.Mapping.Reliability
   alias Astarte.Core.Mapping.Retention
 
+  @placeholder_regex ~r/%{[a-zA-Z]+[a-zA-Z0-9_]*}/
+
   @required_fields [
     :endpoint,
     :type
@@ -132,7 +134,7 @@ defmodule Astarte.Core.Mapping do
   """
   @spec normalize_endpoint(String.t()) :: String.t()
   def normalize_endpoint(endpoint) when is_binary(endpoint) do
-    String.replace(endpoint, ~r/%{[a-zA-Z0-9]*}/, "")
+    String.replace(endpoint, @placeholder_regex, "")
   end
 
   @doc """
