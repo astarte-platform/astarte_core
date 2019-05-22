@@ -80,6 +80,7 @@ defmodule Astarte.Core.Interface do
       |> validate_non_null_version()
       |> validate_length(:description, max: 1000)
       |> validate_length(:doc, max: 100_000)
+      |> validate_interface_attributes_combinations()
       |> put_interface_id()
       |> normalize_fields()
 
@@ -177,6 +178,29 @@ defmodule Astarte.Core.Interface do
     else
       changeset
     end
+  end
+
+  defp validate_interface_attributes_combinations(%Ecto.Changeset{valid?: true} = changeset) do
+    interface_type = get_field(changeset, :type)
+    aggregation = get_field(changeset, :aggregation, :individual)
+
+    case {interface_type, aggregation} do
+      {:properties, :individual} ->
+        changeset
+
+      {:properties, :object} ->
+        add_error(changeset, :aggregation, "must be individual for properties interfaces")
+
+      {:datastream, :individual} ->
+        changeset
+
+      {:datastream, :object} ->
+        changeset
+    end
+  end
+
+  defp validate_interface_attributes_combinations(%Ecto.Changeset{valid?: false} = changeset) do
+    changeset
   end
 
   defp validate_mapping_uniqueness(changeset) do
