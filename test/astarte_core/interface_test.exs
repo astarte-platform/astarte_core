@@ -324,6 +324,21 @@ defmodule Astarte.Core.InterfaceTest do
            } = interface
   end
 
+  test "object aggregated properties interface is not valid" do
+    params = %{
+      "interface_name" => "bad",
+      "version_major" => 1,
+      "version_minor" => 0,
+      "type" => "properties",
+      "ownership" => "device",
+      "aggregation" => "object",
+      "mappings" => mappings_fixture()
+    }
+
+    assert %Ecto.Changeset{valid?: false, errors: [aggregation: _]} =
+             Interface.changeset(%Interface{}, params)
+  end
+
   test "valid datastream interface" do
     params = %{
       "interface_name" => "valid",
