@@ -80,6 +80,7 @@ defmodule Astarte.Core.Interface do
       |> validate_non_null_version()
       |> validate_length(:description, max: 1000)
       |> validate_length(:doc, max: 100_000)
+      |> validate_interface_attributes_combinations()
       |> put_interface_id()
       |> normalize_fields()
 
@@ -177,6 +178,34 @@ defmodule Astarte.Core.Interface do
     else
       changeset
     end
+  end
+
+  defp validate_interface_attributes_combinations(%Ecto.Changeset{valid?: true} = changeset) do
+    interface_type = get_field(changeset, :type)
+    aggregation = get_field(changeset, :aggregation, :individual)
+    # TODO: add support to server owned object aggregated in future releases
+    ownership = get_field(changeset, :ownership)
+
+    case {interface_type, aggregation, ownership} do
+      {:properties, :individual, _} ->
+        changeset
+
+      {:properties, :object, _} ->
+        add_error(changeset, :aggregation, "must be individual for properties interfaces")
+
+      {:datastream, :individual, _} ->
+        changeset
+
+      {:datastream, :object, :device} ->
+        changeset
+
+      {:datastream, :object, :server} ->
+        add_error(changeset, :ownership, "must be device for object aggregated interfaces")
+    end
+  end
+
+  defp validate_interface_attributes_combinations(%Ecto.Changeset{valid?: false} = changeset) do
+    changeset
   end
 
   defp validate_mapping_uniqueness(changeset) do
