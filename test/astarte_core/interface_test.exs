@@ -124,7 +124,7 @@ defmodule Astarte.Core.InterfaceTest do
   """
 
   test "aggregated datastream interface deserialization" do
-    {:ok, params} = Poison.decode(@aggregated_datastream_interface_json)
+    {:ok, params} = Jason.decode(@aggregated_datastream_interface_json)
 
     {:ok, interface} =
       Interface.changeset(%Interface{}, params)
@@ -154,7 +154,7 @@ defmodule Astarte.Core.InterfaceTest do
   end
 
   test "individual property server owned interface deserialization" do
-    {:ok, params} = Poison.decode(@individual_property_server_owned_interface)
+    {:ok, params} = Jason.decode(@individual_property_server_owned_interface)
 
     {:ok, interface} =
       Interface.changeset(%Interface{}, params)
@@ -179,7 +179,7 @@ defmodule Astarte.Core.InterfaceTest do
   end
 
   test "individual property device owned interface deserialization" do
-    {:ok, params} = Poison.decode(@individual_property_device_owned_interface)
+    {:ok, params} = Jason.decode(@individual_property_device_owned_interface)
 
     {:ok, interface} =
       Interface.changeset(%Interface{}, params)
@@ -204,7 +204,7 @@ defmodule Astarte.Core.InterfaceTest do
   end
 
   test "invalid mapping document" do
-    {:ok, params} = Poison.decode(@invalid_mapping_document)
+    {:ok, params} = Jason.decode(@invalid_mapping_document)
 
     assert %Ecto.Changeset{valid?: false, changes: %{mappings: [mapping_changeset]}} =
              Interface.changeset(%Interface{}, params)

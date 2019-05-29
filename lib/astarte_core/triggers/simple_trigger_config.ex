@@ -46,7 +46,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     field :device_id, :string
   end
 
-  defimpl Poison.Encoder, for: SimpleTriggerConfig do
+  defimpl Jason.Encoder, for: SimpleTriggerConfig do
     def encode(%SimpleTriggerConfig{type: "data_trigger"} = config, options) do
       config_map =
         if config.value_match_operator != "*" do
@@ -77,12 +77,12 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
           config_map
         end
 
-      Poison.Encoder.Map.encode(config_map, options)
+      Jason.Encoder.Map.encode(config_map, options)
     end
 
     def encode(%SimpleTriggerConfig{type: "device_trigger"} = config, options) do
       %{"type" => config.type, "on" => config.on, "device_id" => config.device_id}
-      |> Poison.Encoder.Map.encode(options)
+      |> Jason.Encoder.Map.encode(options)
     end
   end
 

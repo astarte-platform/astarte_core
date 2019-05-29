@@ -221,7 +221,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   ]
 
   test "build endpoints automaton" do
-    {:ok, params} = Poison.decode(@test_draft_interface_a_0)
+    {:ok, params} = Jason.decode(@test_draft_interface_a_0)
 
     {:ok, document} =
       Interface.changeset(%Interface{}, params)
@@ -247,7 +247,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   # end
 
   test "build endpoints automaton and resolve some endpoints" do
-    {:ok, params} = Poison.decode(@valid_interface)
+    {:ok, params} = Jason.decode(@valid_interface)
 
     {:ok, document} =
       Interface.changeset(%Interface{}, params)
@@ -309,7 +309,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   end
 
   test "build endpoints automaton and test resolve failure" do
-    {:ok, params} = Poison.decode(@valid_interface)
+    {:ok, params} = Jason.decode(@valid_interface)
 
     {:ok, document} =
       Interface.changeset(%Interface{}, params)
@@ -328,7 +328,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
   end
 
   test "build endpoints automaton and fail due to invalid interface" do
-    {:ok, params} = Poison.decode(@invalid_interface)
+    {:ok, params} = Jason.decode(@invalid_interface)
 
     {:ok, document} =
       Interface.changeset(%Interface{}, params)

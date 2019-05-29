@@ -351,8 +351,8 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
         known_value: @int_known_value
       }
 
-      assert Poison.encode(config) ==
-               Poison.encode(%{
+      assert Jason.encode(config) ==
+               Jason.encode(%{
                  "type" => "data_trigger",
                  "interface_name" => @interface_name,
                  "interface_major" => @interface_major,
@@ -374,8 +374,8 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
         known_value: @int_known_value
       }
 
-      assert Poison.encode(config) ==
-               Poison.encode(%{
+      assert Jason.encode(config) ==
+               Jason.encode(%{
                  "type" => "data_trigger",
                  "interface_name" => @interface_name,
                  "interface_major" => @interface_major,
@@ -396,8 +396,8 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
         known_value: @int_known_value
       }
 
-      assert Poison.encode(config) ==
-               Poison.encode(%{
+      assert Jason.encode(config) ==
+               Jason.encode(%{
                  "type" => "data_trigger",
                  "interface_name" => "*",
                  "on" => "value_change_applied",
@@ -416,8 +416,8 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
         device_id: device_id
       }
 
-      assert Poison.encode(config) ==
-               Poison.encode(%{
+      assert Jason.encode(config) ==
+               Jason.encode(%{
                  "type" => "device_trigger",
                  "on" => "device_disconnected",
                  "device_id" => device_id

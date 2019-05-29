@@ -52,7 +52,7 @@ defmodule Astarte.Core.Mixfile do
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ecto, "~> 2.2"},
       {:exprotobuf, "~> 1.2"},
-      {:poison, "~> 3.1"},
+      {:jason, "~> 1.1"},
       {:excoveralls, "~> 0.10", only: :test}
     ]
   end

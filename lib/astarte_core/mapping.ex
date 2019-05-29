@@ -190,7 +190,7 @@ defmodule Astarte.Core.Mapping do
     end
   end
 
-  defimpl Poison.Encoder, for: Mapping do
+  defimpl Jason.Encoder, for: Mapping do
     def encode(%Mapping{} = mapping, options) do
       %Mapping{
         endpoint: endpoint,
@@ -215,7 +215,7 @@ defmodule Astarte.Core.Mapping do
       |> add_key_if_not_default(:explicit_timestamp, explicit_timestamp, false)
       |> add_key_if_not_nil(:description, description)
       |> add_key_if_not_nil(:doc, doc)
-      |> Poison.Encoder.Map.encode(options)
+      |> Jason.Encoder.Map.encode(options)
     end
 
     defp add_key_if_not_default(encode_map, _key, default, default), do: encode_map
