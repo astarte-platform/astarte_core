@@ -405,6 +405,26 @@ defmodule Astarte.Core.InterfaceTest do
            } = interface
   end
 
+  test "interface JSON serialization/deserialization" do
+    params = %{
+      "interface_name" => "valid",
+      "version_major" => 1,
+      "version_minor" => 0,
+      "type" => "datastream",
+      "ownership" => "device",
+      "mappings" => mappings_fixture()
+    }
+
+    assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
+    assert {:ok, %Interface{} = interface} = Ecto.Changeset.apply_action(changeset, :insert)
+
+    roundtrip =
+      Jason.encode!(interface)
+      |> Jason.decode!()
+
+    assert roundtrip == params
+  end
+
   defp mappings_fixture do
     [
       %{
