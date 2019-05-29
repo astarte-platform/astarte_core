@@ -185,14 +185,14 @@ defmodule Astarte.Core.Mapping.ValueType do
           :ok
         end
 
-      {%Bson.Bin{bin: bin}, :binaryblob} when is_binary(bin) ->
+      {{_subtype, bin}, :binaryblob} when is_binary(bin) ->
         if byte_size(bin) > @blob_size do
           {:error, :value_size_exceeded}
         else
           :ok
         end
 
-      {%Bson.UTC{ms: _ms} = _v, :datetime} ->
+      {%DateTime{} = _v, :datetime} ->
         :ok
 
       {v, :datetime} when is_integer(v) ->

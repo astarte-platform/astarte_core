@@ -83,11 +83,11 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
       known_value: encoded_known_value
     } = protobuf_data_trigger
 
-    %{v: plain_value} =
+    %{"v" => plain_value} =
       if encoded_known_value do
-        Bson.decode(encoded_known_value)
+        Cyanide.decode!(encoded_known_value)
       else
-        %{v: nil}
+        %{"v" => nil}
       end
 
     path_match_tokens =

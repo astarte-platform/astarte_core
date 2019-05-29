@@ -296,7 +296,7 @@ defmodule Astarte.Core.Interface do
     end
   end
 
-  defimpl Poison.Encoder, for: Interface do
+  defimpl Jason.Encoder, for: Interface do
     def encode(%Interface{} = interface, options) do
       %Interface{
         name: name,
@@ -321,7 +321,7 @@ defmodule Astarte.Core.Interface do
       |> add_key_if_not_default(:aggregation, aggregation, :individual)
       |> add_key_if_not_nil(:description, description)
       |> add_key_if_not_nil(:doc, doc)
-      |> Poison.Encoder.Map.encode(options)
+      |> Jason.Encoder.Map.encode(options)
     end
 
     defp add_key_if_not_default(encode_map, _key, default, default), do: encode_map
