@@ -246,8 +246,8 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
   end
 
   def extract_bson_value(bson_value) do
-    case Bson.decode(bson_value) do
-      %{v: value} ->
+    case Cyanide.decode!(bson_value) do
+      %{"v" => value} ->
         value
 
       other ->

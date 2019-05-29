@@ -332,7 +332,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     data_trigger = %DataTrigger{
       interface_name: interface_name,
       interface_major: interface_major,
-      known_value: known_value && Bson.encode(%{v: known_value}),
+      known_value: known_value && Cyanide.encode!(%{v: known_value}),
       match_path: match_path,
       data_trigger_type: trigger_type,
       value_match_operator: value_match_operator
@@ -392,8 +392,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
     decoded_known_value =
       if known_value do
-        Bson.decode(known_value)
-        |> Map.get(:v)
+        Cyanide.decode!(known_value)
+        |> Map.get("v")
       else
         nil
       end

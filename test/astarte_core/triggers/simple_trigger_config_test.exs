@@ -94,7 +94,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
       interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
       data_trigger_type = :INCOMING_DATA
       match_operator = :GREATER_THAN
-      known_value = Bson.encode(%{v: @int_known_value})
+      known_value = Cyanide.encode!(%{v: @int_known_value})
 
       assert {:ok, %SimpleTriggerConfig{} = config} =
                SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, @valid_data_trigger_map)
@@ -212,7 +212,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
       interface_id = CQLUtils.interface_id(@interface_name, @interface_major)
       data_trigger_type = :INCOMING_DATA
       match_operator = :GREATER_THAN
-      known_value = Bson.encode(%{v: @int_known_value})
+      known_value = Cyanide.encode!(%{v: @int_known_value})
 
       config = %SimpleTriggerConfig{
         type: "data_trigger",
@@ -252,7 +252,7 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
       any_interface_object_type_int = SimpleTriggersUtils.object_type_to_int!(:any_interface)
       data_trigger_type = :VALUE_CHANGE
       match_operator = :CONTAINS
-      known_value = Bson.encode(%{v: @string_known_value})
+      known_value = Cyanide.encode!(%{v: @string_known_value})
 
       config = %SimpleTriggerConfig{
         type: "data_trigger",
