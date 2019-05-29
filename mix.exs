@@ -53,7 +53,6 @@ defmodule Astarte.Core.Mixfile do
       {:ecto, "~> 2.2"},
       {:exprotobuf, "~> 1.2"},
       {:poison, "~> 3.1"},
-      {:distillery, "~> 1.5", runtime: false},
       {:excoveralls, "~> 0.10", only: :test}
     ]
   end
