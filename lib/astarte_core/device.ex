@@ -21,7 +21,7 @@ defmodule Astarte.Core.Device do
   Utility functions to deal with Astarte devices
   """
 
-  @type device_id :: binary
+  @type device_id :: <<_::128>>
   @type encoded_device_id :: String.t()
 
   @doc """
@@ -32,7 +32,10 @@ defmodule Astarte.Core.Device do
 
   Returns `{:ok, device_id}` or `{:error, reason}`.
   """
-  @spec decode_device_id(String.t(), keyword) :: {:ok, device_id} | {:error, atom}
+  @spec decode_device_id(encoded_device_id :: encoded_device_id(), opts :: options) ::
+          {:ok, device_id :: device_id()} | {:error, atom()}
+        when options: [option],
+             option: {:allow_extended_id, boolean()}
   def decode_device_id(encoded_device_id, opts \\ [])
       when is_binary(encoded_device_id) and is_list(opts) do
     allow_extended = Keyword.get(opts, :allow_extended_id, false)
@@ -51,7 +54,8 @@ defmodule Astarte.Core.Device do
 
   Returns `{:ok, device_id, extended_id}` (where `device_id` is a binary with the first 128 bits of the decoded id and `extended_id` the rest of the decoded binary) or `{:error, reason}`.
   """
-  @spec decode_device_id(String.t()) :: {:ok, device_id, binary} | {:error, atom}
+  @spec decode_extended_device_id(encoded_device_id :: encoded_device_id()) ::
+          {:ok, device_id :: device_id(), extended_id :: binary()} | {:error, atom()}
   def decode_extended_device_id(encoded_device_id) when is_binary(encoded_device_id) do
     with {:ok, decoded} <- Base.url_decode64(encoded_device_id, padding: false),
          <<device_id::binary-size(16), extended_id::binary>> <- decoded do
@@ -67,7 +71,7 @@ defmodule Astarte.Core.Device do
 
   Returns the encoded device id.
   """
-  @spec encode_device_id(device_id) :: encoded_device_id
+  @spec encode_device_id(device_id :: device_id()) :: encoded_device_id :: encoded_device_id()
   def encode_device_id(device_id) when is_binary(device_id) and byte_size(device_id) == 16 do
     Base.url_encode64(device_id, padding: false)
   end
