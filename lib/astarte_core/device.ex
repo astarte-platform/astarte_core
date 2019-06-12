@@ -71,4 +71,15 @@ defmodule Astarte.Core.Device do
   def encode_device_id(device_id) when is_binary(device_id) and byte_size(device_id) == 16 do
     Base.url_encode64(device_id, padding: false)
   end
+
+  @doc """
+  Generate a random Astarte device id.
+
+  The generated device id is also a valid UUID v4.
+  """
+  @spec random_device_id :: device_id :: device_id()
+  def random_device_id do
+    <<u0::48, _::4, u1::12, _::2, u2::62>> = :crypto.strong_rand_bytes(16)
+    <<u0::48, 4::4, u1::12, 2::2, u2::62>>
+  end
 end
