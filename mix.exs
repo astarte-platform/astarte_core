@@ -50,7 +50,7 @@ defmodule Astarte.Core.Mixfile do
     [
       {:cyanide, github: "ispirata/cyanide"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:ecto, "~> 2.2"},
+      {:ecto, "~> 3.0"},
       {:exprotobuf, "~> 1.2"},
       {:jason, "~> 1.1"},
       {:excoveralls, "~> 0.10", only: :test}
