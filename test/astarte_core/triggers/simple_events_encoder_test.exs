@@ -309,6 +309,5 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
                "value" => old_format_value
              }
     end
-
   end
 end

@@ -18,6 +18,7 @@ mix:test-ci:
         - mix deps.compile
         - mix compile
         - mix coveralls
+        - mix format --check-formatted
     cache:
         paths:
             - deps
