@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fix interface validation: object aggregated properties interfaces are not valid.
 - Fix interface validation: server owned object aggregated interfaces are not yet supported, hence not valid.
+- Fix Poison encoding for Bson.Bin and Bson.UTC structs when serializing trigger events.
 
 ## [0.10.0] - 2019-04-16
 
