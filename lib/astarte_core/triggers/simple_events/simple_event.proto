@@ -24,6 +24,7 @@ message SimpleEvent {
 
     string realm = 4;
     string device_id = 5;
+    int64 timestamp = 18;
 
     oneof event {
         DeviceConnectedEvent device_connected_event = 6;
