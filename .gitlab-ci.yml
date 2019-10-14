@@ -19,6 +19,3 @@ mix:test-ci:
         - mix compile
         - mix coveralls
         - mix format --check-formatted
-    cache:
-        paths:
-            - deps
