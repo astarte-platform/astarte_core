@@ -245,21 +245,6 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     end
   end
 
-  defimpl Poison.Encoder, for: Bson.UTC do
-    def encode(%Bson.UTC{ms: ms}, opts) do
-      DateTime.from_unix!(ms, :millisecond)
-      |> DateTime.to_iso8601()
-      |> Poison.Encoder.BitString.encode(opts)
-    end
-  end
-
-  defimpl Poison.Encoder, for: Bson.Bin do
-    def encode(%Bson.Bin{bin: bin}, opts) do
-      Base.encode64(bin)
-      |> Poison.Encoder.BitString.encode(opts)
-    end
-  end
-
   def extract_bson_value(bson_value) do
     case Cyanide.decode!(bson_value) do
       %{"v" => value} ->
