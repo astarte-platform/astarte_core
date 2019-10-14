@@ -19,5 +19,3 @@ mix:test-ci:
         - mix compile
         - mix coveralls
         - mix format --check-formatted
-    except:
-        - branches@Astarte-NG/astarte_core
