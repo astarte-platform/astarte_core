@@ -21,18 +21,24 @@ defmodule Astarte.Core.Group do
   Functions that deal with Astarte groups
   """
 
-  @group_name_regex ~r<^(astarte|interface|interfaces|devices|query|realm|triggers)[-:/_.@$]>
-
   @doc """
   Returns true if `group_name` is a valid group name, false otherwise.
 
-  Valid group names _do not_ match this regular expression: `#{inspect(@group_name_regex)}`
+  Valid group names _do not_ start with reserved characters `@` and `~`.
   """
   def valid_name?("") do
     false
   end
 
-  def valid_name?(group_name) do
-    not String.match?(group_name, @group_name_regex)
+  def valid_name?("~" <> _rest) do
+    false
+  end
+
+  def valid_name?("@" <> _rest) do
+    false
+  end
+
+  def valid_name?(_group_name) do
+    true
   end
 end
