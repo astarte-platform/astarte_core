@@ -35,6 +35,7 @@ defmodule Astarte.Core.Mixfile do
       ],
       description: description(),
       package: package(),
+      dialyzer_cache_directory: dialyzer_cache_directory(Mix.env()),
       deps: deps(),
       source_url: "https://github.com/astarte-platform/astarte_core",
       homepage_url: "https://astarte-platform.org/"
@@ -46,14 +47,22 @@ defmodule Astarte.Core.Mixfile do
     [extra_applications: [:logger]]
   end
 
+  defp dialyzer_cache_directory(:ci) do
+    "dialyzer_cache"
+  end
+
+  defp dialyzer_cache_directory(_) do
+    nil
+  end
+
   defp deps do
     [
       {:cyanide, github: "ispirata/cyanide"},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ecto, "~> 3.0"},
       {:exprotobuf, "~> 1.2"},
       {:jason, "~> 1.1"},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:dialyzex, github: "Comcast/dialyzex", only: [:dev, :ci]}
     ]
   end
 
