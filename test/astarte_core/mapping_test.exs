@@ -73,7 +73,9 @@ defmodule Astarte.Core.MappingTest do
       "type" => "integer",
       "retention" => "stored",
       "reliability" => "guaranteed",
-      "expiry" => 60
+      "expiry" => 60,
+      "database_retention_policy" => "use_ttl",
+      "database_retention_ttl" => 60
     }
 
     assert %Ecto.Changeset{valid?: true} = changeset = Mapping.changeset(%Mapping{}, params, opts)
@@ -122,8 +124,47 @@ defmodule Astarte.Core.MappingTest do
              retention: :discard,
              reliability: :unreliable,
              expiry: 0,
+             database_retention_policy: :no_ttl,
+             database_retention_ttl: nil,
              allow_unset: false
            } = mapping
+  end
+
+  test "mapping from legacy database result" do
+    legacy_result = [
+      endpoint: "/test",
+      # integer
+      value_type: 3,
+      # unique
+      reliability: 3,
+      # stored
+      retention: 3,
+      expiry: 0,
+      database_retention_policy: nil,
+      database_retention_ttl: nil,
+      allow_unset: false,
+      explicit_timestamp: true,
+      endpoint_id: <<24, 101, 36, 39, 201, 240, 51, 175, 45, 122, 166, 194, 132, 91, 176, 154>>,
+      interface_id: <<3, 203, 231, 42, 212, 254, 30, 12, 159, 114, 187, 196, 29, 30, 5, 219>>
+    ]
+
+    expected_mapping = %Mapping{
+      endpoint: "/test",
+      value_type: :integer,
+      reliability: :unique,
+      retention: :stored,
+      expiry: 0,
+      database_retention_policy: :no_ttl,
+      database_retention_ttl: nil,
+      allow_unset: false,
+      explicit_timestamp: true,
+      description: nil,
+      doc: nil,
+      endpoint_id: <<24, 101, 36, 39, 201, 240, 51, 175, 45, 122, 166, 194, 132, 91, 176, 154>>,
+      interface_id: <<3, 203, 231, 42, 212, 254, 30, 12, 159, 114, 187, 196, 29, 30, 5, 219>>
+    }
+
+    assert Mapping.from_db_result!(legacy_result) == expected_mapping
   end
 
   defp opts_fixture do

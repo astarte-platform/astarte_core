@@ -24,6 +24,7 @@ defmodule Astarte.Core.Mapping do
   import Ecto.Changeset
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Mapping
+  alias Astarte.Core.Mapping.DatabaseRetentionPolicy
   alias Astarte.Core.Mapping.ValueType
   alias Astarte.Core.Mapping.Reliability
   alias Astarte.Core.Mapping.Retention
@@ -38,6 +39,8 @@ defmodule Astarte.Core.Mapping do
     :reliability,
     :retention,
     :expiry,
+    :database_retention_policy,
+    :database_retention_ttl,
     :allow_unset,
     :explicit_timestamp,
     :description,
@@ -53,6 +56,8 @@ defmodule Astarte.Core.Mapping do
     field :reliability, Reliability, default: :unreliable
     field :retention, Retention, default: :discard
     field :expiry, :integer, default: 0
+    field :database_retention_policy, DatabaseRetentionPolicy, default: :no_ttl
+    field :database_retention_ttl, :integer, default: nil
     field :allow_unset, :boolean, default: false
     field :explicit_timestamp, :boolean, default: false
     field :description
@@ -81,10 +86,16 @@ defmodule Astarte.Core.Mapping do
     |> validate_length(:endpoint, min: 2, max: 256)
     |> validate_format(:endpoint, mapping_regex())
     |> validate_number(:expiry, greater_than_or_equal_to: 0)
+    |> validate_number(:database_retention_ttl,
+      greater_than_or_equal_to: 60,
+      less_than: 20 * 365 * 24 * 60 * 60
+    )
     |> validate_not_set_unless(:allow_unset, interface_type, [:properties, nil])
     |> validate_not_set_unless(:expiry, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:retention, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:reliability, interface_type, [:datastream, nil])
+    |> validate_not_set_unless(:database_retention_policy, interface_type, [:datastream, nil])
+    |> validate_not_set_unless(:database_retention_ttl, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:explicit_timestamp, interface_type, [:datastream, nil])
     |> validate_length(:description, max: 1000)
     |> validate_length(:doc, max: 100_000)
@@ -157,6 +168,8 @@ defmodule Astarte.Core.Mapping do
       reliability: reliability,
       retention: retention,
       expiry: expiry,
+      database_retention_policy: database_retention_policy,
+      database_retention_ttl: database_retention_ttl,
       allow_unset: allow_unset,
       explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
@@ -169,11 +182,21 @@ defmodule Astarte.Core.Mapping do
       reliability: Reliability.from_int(reliability),
       retention: Retention.from_int(retention),
       expiry: expiry,
+      database_retention_policy:
+        database_retention_policy_from_maybe_int(database_retention_policy),
+      database_retention_ttl: database_retention_ttl,
       allow_unset: allow_unset,
       explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
       interface_id: interface_id
     }
+  end
+
+  defp database_retention_policy_from_maybe_int(database_retention_policy) do
+    case database_retention_policy do
+      nil -> :no_ttl
+      any_int -> DatabaseRetentionPolicy.from_int(database_retention_policy)
+    end
   end
 
   defp validate_not_set_unless(changeset, field, param, values) do
@@ -198,6 +221,8 @@ defmodule Astarte.Core.Mapping do
         reliability: reliability,
         retention: retention,
         expiry: expiry,
+        database_retention_policy: database_retention_policy,
+        database_retention_ttl: database_retention_ttl,
         allow_unset: allow_unset,
         explicit_timestamp: explicit_timestamp,
         description: description,
@@ -211,6 +236,8 @@ defmodule Astarte.Core.Mapping do
       |> add_key_if_not_default(:reliability, reliability, :unreliable)
       |> add_key_if_not_default(:retention, retention, :discard)
       |> add_key_if_not_default(:expiry, expiry, 0)
+      |> add_key_if_not_default(:database_retention_policy, database_retention_policy, :no_ttl)
+      |> add_key_if_not_nil(:database_retention_ttl, database_retention_ttl)
       |> add_key_if_not_default(:allow_unset, allow_unset, false)
       |> add_key_if_not_default(:explicit_timestamp, explicit_timestamp, false)
       |> add_key_if_not_nil(:description, description)
