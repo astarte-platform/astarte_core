@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - `astarte`, `system` and all names starting with `system_` are now reserved realm names.
+- Add `database_retention_policy` and `database_retention_ttl` mapping attributes.
 
 ## [0.10.2] - Unreleased
 ### Added
