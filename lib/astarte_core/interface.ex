@@ -94,7 +94,7 @@ defmodule Astarte.Core.Interface do
   end
 
   def interface_name_regex do
-    ~r/^[a-zA-Z]+(\.[a-zA-Z0-9]+)*$/
+    ~r/^([a-zA-Z][a-zA-Z0-9]*\.([a-zA-Z0-9][a-zA-Z0-9-]*\.)*)?[a-zA-Z][a-zA-Z0-9]*$/
   end
 
   defp handle_legacy_ownership(changeset) do
