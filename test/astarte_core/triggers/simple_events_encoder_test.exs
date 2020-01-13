@@ -56,6 +56,58 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
              }
     end
 
+    test "works for IncomingDataEvent with empty bson_value (e.g. unset)" do
+      alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
+
+      interface = "com.example.Interface"
+      path = "/another/path"
+      value = nil
+      bson_value = <<>>
+
+      event = %IncomingDataEvent{
+        interface: interface,
+        path: path,
+        bson_value: bson_value
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "incoming_data",
+               "interface" => interface,
+               "path" => path,
+               "value" => value
+             }
+    end
+
+    test "works for IncomingDataEvent with nil bson_value (e.g. unset)" do
+      alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
+
+      interface = "com.example.Interface"
+      path = "/another/path"
+      value = nil
+      bson_value = nil
+
+      event = %IncomingDataEvent{
+        interface: interface,
+        path: path,
+        bson_value: bson_value
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "incoming_data",
+               "interface" => interface,
+               "path" => path,
+               "value" => value
+             }
+    end
+
     test "works for IncomingIntrospectionEvent" do
       alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
 
