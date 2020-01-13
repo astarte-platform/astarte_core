@@ -245,6 +245,16 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     end
   end
 
+  def extract_bson_value(nil) do
+    # Handle nil bson value as nil
+    nil
+  end
+
+  def extract_bson_value(<<>>) do
+    # Handle empty binary bson value as nil
+    nil
+  end
+
   def extract_bson_value(bson_value) do
     case Cyanide.decode!(bson_value) do
       %{"v" => value} ->
