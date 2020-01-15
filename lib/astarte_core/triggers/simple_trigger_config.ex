@@ -238,10 +238,15 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
 
   defp validate_interface(%Ecto.Changeset{} = changeset) do
     if get_field(changeset, :interface_name) == "*" do
-      if get_field(changeset, :match_path) != "/*" do
-        add_error(changeset, :match_path, "must be /* when interface_name is *")
-      else
-        delete_change(changeset, :interface_major)
+      cond do
+        get_field(changeset, :on) != "incoming_data" ->
+          add_error(changeset, :on, "must be incoming_data when interface_name is *")
+
+        get_field(changeset, :match_path) != "/*" ->
+          add_error(changeset, :match_path, "must be /* when interface_name is *")
+
+        true ->
+          delete_change(changeset, :interface_major)
       end
     else
       changeset
