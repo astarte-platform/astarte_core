@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.11.0-beta.2] - Unreleased
 ### Changed
 - Restrict the use of `*` as `interface_name` only to `incoming_data` data triggers.
+- Allow hyphens in `interface_name`. Both the top level domain and the last domain component
+  must not contain hyphens. ([#7](https://github.com/astarte-platform/astarte_core/issues/7))
 
 ### Fixed
 - Handle empty `bson_value` in `Triggers.SimpleEvents.Encoder`, avoiding crashes when an empty bson

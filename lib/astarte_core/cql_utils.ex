@@ -35,6 +35,7 @@ defmodule Astarte.Core.CQLUtils do
       interface_name
       |> String.downcase()
       |> String.replace(".", "_")
+      |> String.replace("-", "")
 
     long_table_name = "#{safe_interface_name}_v" <> Integer.to_string(major_version)
     long_name_len = String.length(long_table_name)
