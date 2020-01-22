@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.11.0-beta.2] - Unreleased
+### Changed
+- Restrict the use of `*` as `interface_name` only to `incoming_data` data triggers.
+- Allow hyphens in `interface_name`. Both the top level domain and the last domain component
+  must not contain hyphens. ([#7](https://github.com/astarte-platform/astarte_core/issues/7))
+
+### Fixed
+- Handle empty `bson_value` in `Triggers.SimpleEvents.Encoder`, avoiding crashes when an empty bson
+  value is sent as event (e.g. unset).
+
 ## [0.11.0-beta.1] - 2019-12-24
 ### Changed
 - `astarte`, `system` and all names starting with `system_` are now reserved realm names.

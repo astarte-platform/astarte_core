@@ -242,6 +242,35 @@ defmodule Astarte.Core.InterfaceTest do
              Interface.changeset(%Interface{}, params)
   end
 
+  test "valid interface_name containing hyphens" do
+    params = %{
+      "interface_name" => "org.astarte-platform.InterfaceName",
+      "version_major" => 1,
+      "version_minor" => 0,
+      "type" => "properties",
+      "ownership" => "device",
+      "aggregation" => "individual",
+      "mappings" => mappings_fixture()
+    }
+
+    assert %Ecto.Changeset{valid?: true} = Interface.changeset(%Interface{}, params)
+  end
+
+  test "invalid interface_name start with hyphens" do
+    params = %{
+      "interface_name" => "-org.astarte-platform.interface-name",
+      "version_major" => 1,
+      "version_minor" => 0,
+      "type" => "properties",
+      "ownership" => "device",
+      "aggregation" => "individual",
+      "mappings" => mappings_fixture()
+    }
+
+    assert %Ecto.Changeset{valid?: false, errors: [interface_name: _]} =
+             Interface.changeset(%Interface{}, params)
+  end
+
   test "long interface_name fails" do
     params = %{
       # aaaaa...
@@ -423,6 +452,44 @@ defmodule Astarte.Core.InterfaceTest do
       |> Jason.decode!()
 
     assert roundtrip == params
+  end
+
+  describe "interface_name regex" do
+    test "accepts valid names" do
+      # valid interface_name
+      assert "JustInterfaceName1" =~ Interface.interface_name_regex()
+      assert "JustInterfaceName" =~ Interface.interface_name_regex()
+      assert "justinterfacename" =~ Interface.interface_name_regex()
+      assert "com.astarte-platform.InterfaceName1" =~ Interface.interface_name_regex()
+      assert "com.astarte-platform.InterfaceName" =~ Interface.interface_name_regex()
+      assert "com.astarte-platform.interfacename" =~ Interface.interface_name_regex()
+      assert "a.InterfaceName" =~ Interface.interface_name_regex()
+      assert "com.a.InterfaceName" =~ Interface.interface_name_regex()
+      assert "com.0.aa" =~ Interface.interface_name_regex()
+      assert "aaa.a-.aaaaa" =~ Interface.interface_name_regex()
+      assert "c0m.InterfaceName" =~ Interface.interface_name_regex()
+
+      # Shouldn't be ok, but we are accepting it anyway:
+      assert "com.a-.interfacename" =~ Interface.interface_name_regex()
+    end
+
+    test "rejects invalid names" do
+      # Not ok:
+      refute "com.-.InterfaceName" =~ Interface.interface_name_regex()
+      refute "c-m.InterfaceName" =~ Interface.interface_name_regex()
+      refute "a-.a" =~ Interface.interface_name_regex()
+      refute "c-o-m.astarte-platform.interfacename" =~ Interface.interface_name_regex()
+      refute "1JustInterfaceName" =~ Interface.interface_name_regex()
+      refute "just-interface-name" =~ Interface.interface_name_regex()
+      refute "com.astarte-platform.InterfaceName-" =~ Interface.interface_name_regex()
+      refute "com.astarte-platform.InterfaceName." =~ Interface.interface_name_regex()
+      refute "-a.a" =~ Interface.interface_name_regex()
+      refute "0.test.InterfaceName" =~ Interface.interface_name_regex()
+      refute "0.InterfaceName" =~ Interface.interface_name_regex()
+      refute "-" =~ Interface.interface_name_regex()
+      refute "." =~ Interface.interface_name_regex()
+      refute "-." =~ Interface.interface_name_regex()
+    end
   end
 
   defp mappings_fixture do
