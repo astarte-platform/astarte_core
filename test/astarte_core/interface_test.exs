@@ -368,8 +368,7 @@ defmodule Astarte.Core.InterfaceTest do
              Interface.changeset(%Interface{}, params)
   end
 
-  # TODO: add support to server owned object aggregated in future releases
-  test "object aggregated server owned interface is not yet valid" do
+  test "object aggregated server owned interface is valid" do
     params = %{
       "interface_name" => "bad",
       "version_major" => 1,
@@ -380,8 +379,8 @@ defmodule Astarte.Core.InterfaceTest do
       "mappings" => mappings_fixture()
     }
 
-    assert %Ecto.Changeset{valid?: false, errors: [ownership: _]} =
-             Interface.changeset(%Interface{}, params)
+    assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
+    assert {:ok, interface} = Ecto.Changeset.apply_action(changeset, :insert)
   end
 
   test "valid datastream interface" do

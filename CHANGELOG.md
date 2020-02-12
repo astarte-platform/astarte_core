@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.11.0-beta.2] - Unreleased
+## [0.11.0-beta.3] - Unreleased
+### Changed
+- Add support for aggregated server owned interfaces.
+
+## [0.11.0-beta.2] - 2020-01-24
 ### Changed
 - Restrict the use of `*` as `interface_name` only to `incoming_data` data triggers.
 - Allow hyphens in `interface_name`. Both the top level domain and the last domain component
