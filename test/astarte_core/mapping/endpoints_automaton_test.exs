@@ -220,6 +220,39 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
     }
   ]
 
+  @double_parametric_overlaps [
+    %Mapping{
+      endpoint: "/some/%{param}"
+    },
+    %Mapping{
+      endpoint: "/%{some}/param"
+    }
+  ]
+
+  @alias_parametric_overlaps [
+    %Mapping{
+      endpoint: "/param/%{some_param}"
+    },
+    %Mapping{
+      endpoint: "/param/%{some_other_param}"
+    }
+  ]
+
+  @endpoint_similar_tokens [
+    %Mapping{
+      endpoint: "/b/%{a}/%{b}/a"
+    },
+    %Mapping{
+      endpoint: "/a/a/a/b"
+    },
+    %Mapping{
+      endpoint: "/a/a/b"
+    },
+    %Mapping{
+      endpoint: "/a/b"
+    }
+  ]
+
   test "build endpoints automaton" do
     {:ok, params} = Jason.decode(@test_draft_interface_a_0)
 
@@ -238,13 +271,23 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
 
   test "parametric endpoints that can overlap for a given parameter choice are marked as overlapping" do
     assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(@parametric_overlaps)
+    assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(@double_parametric_overlaps)
   end
 
-  # TODO: this fails right now
-  # test "parametric endpoints that can overlap for a given parameter choice are marked as overlapping even if the parametric endpoint is the prefix" do
-  #  assert {:error, :overlapping_mappings} =
-  #           EndpointsAutomaton.build(@inverted_parametric_overlaps)
-  # end
+  test "parametric endpoints that can overlap for a given parameter choice are marked as overlapping even if the parametric endpoint is the prefix" do
+    assert {:error, :overlapping_mappings} =
+             EndpointsAutomaton.build(@inverted_parametric_overlaps)
+  end
+
+  test "parametric endpoints overlap even when placeholders have different names" do
+    assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(@alias_parametric_overlaps)
+  end
+
+  test "automaton states depend on both tokens and token position" do
+    assert {:ok, automaton} = EndpointsAutomaton.build(@endpoint_similar_tokens)
+    assert EndpointsAutomaton.lint(@endpoint_similar_tokens) == []
+    assert EndpointsAutomaton.is_valid?(automaton, @endpoint_similar_tokens) == true
+  end
 
   test "build endpoints automaton and resolve some endpoints" do
     {:ok, params} = Jason.decode(@valid_interface)
@@ -335,6 +378,6 @@ defmodule Astarte.Core.Mapping.EndpointsAutomatonTest do
       |> Ecto.Changeset.apply_action(:insert)
 
     assert {:error, :overlapping_mappings} = EndpointsAutomaton.build(document.mappings)
-    assert ["/test/pluto/v"] = EndpointsAutomaton.lint(document.mappings)
+    assert ["/test/%{ind}/v", "/test/pluto/v"] = EndpointsAutomaton.lint(document.mappings)
   end
 end

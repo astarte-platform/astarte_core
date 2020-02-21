@@ -149,6 +149,14 @@ defmodule Astarte.Core.Mapping do
   end
 
   @doc """
+  Check if token is a placeholder.
+  """
+  @spec is_placeholder?(String.t()) :: boolean()
+  def is_placeholder?(token) when is_binary(token) do
+    String.match?(token, @placeholder_regex)
+  end
+
+  @doc """
   Deserializes a `%Mapping{}` from `db_result`.
   `db_result` can be a keyword list or a map.
 

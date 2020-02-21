@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Add support for aggregated server owned interfaces.
 
+### Fixed
+- Correctly handle parametric endpoints regardless of the ordering, so that overlapping endpoints are always refused. (See #2)
+
 ## [0.11.0-beta.2] - 2020-01-24
 ### Changed
 - Restrict the use of `*` as `interface_name` only to `incoming_data` data triggers.
