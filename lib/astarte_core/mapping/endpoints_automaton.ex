@@ -93,24 +93,16 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
   defp do_transitions([token | tail_tokens], current_states, transitions) do
     next_states =
       List.foldl(current_states, [], fn state, acc ->
-        transition = Map.get(transitions, {state, token})
-        epsi_transition = Map.get(transitions, {state, ""})
+        if Mapping.is_placeholder?(token) do
+          all_state_transitions = state_transitions(transitions, state)
 
-        transition_list =
-          if transition do
-            [transition]
-          else
-            []
-          end
+          all_state_transitions ++ acc
+        else
+          transition_list = Map.get(transitions, {state, token}) |> List.wrap()
+          epsi_transition_list = Map.get(transitions, {state, ""}) |> List.wrap()
 
-        epsi_transition_list =
-          if epsi_transition do
-            [epsi_transition]
-          else
-            []
-          end
-
-        transition_list ++ epsi_transition_list ++ acc
+          transition_list ++ epsi_transition_list ++ acc
+        end
       end)
 
     do_transitions(tail_tokens, next_states, transitions)
@@ -121,14 +113,7 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
       List.foldl(current_states, [], fn state, acc ->
         good_state =
           if accepting_states[state] == nil do
-            Enum.reduce(transitions, [], fn transition, acc ->
-              if match?({{^state, _}, _}, transition) do
-                {_, next_state} = transition
-                [next_state | acc]
-              else
-                acc
-              end
-            end)
+            state_transitions(transitions, state)
           else
             [state]
           end
@@ -146,6 +131,16 @@ defmodule Astarte.Core.Mapping.EndpointsAutomaton do
     else
       force_transitions(next_states, transitions, accepting_states)
     end
+  end
+
+  defp state_transitions(transitions, state) do
+    Enum.reduce(transitions, [], fn
+      {{^state, _}, next_state}, acc ->
+        [next_state | acc]
+
+      _transition, acc ->
+        acc
+    end)
   end
 
   defp do_build(mappings) do
