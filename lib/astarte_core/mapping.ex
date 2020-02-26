@@ -203,7 +203,7 @@ defmodule Astarte.Core.Mapping do
   defp database_retention_policy_from_maybe_int(database_retention_policy) do
     case database_retention_policy do
       nil -> :no_ttl
-      any_int -> DatabaseRetentionPolicy.from_int(database_retention_policy)
+      _any_int -> DatabaseRetentionPolicy.from_int(database_retention_policy)
     end
   end
 
