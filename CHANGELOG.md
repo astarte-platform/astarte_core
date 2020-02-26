@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-## [0.11.0-beta.3] - Unreleased
+## [0.11.0-rc.0] - 2020-02-26
 ### Changed
 - Add support for aggregated server owned interfaces.
 
