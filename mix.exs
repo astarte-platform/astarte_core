@@ -57,12 +57,15 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
-      {:cyanide, github: "ispirata/cyanide"},
-      {:ecto, "~> 3.0"},
-      {:exprotobuf, "~> 1.2"},
-      {:jason, "~> 1.1"},
-      {:excoveralls, "~> 0.10", only: :test},
-      {:dialyzex, github: "Comcast/dialyzex", only: [:dev, :ci]}
+      {:cyanide, "== 1.0.0"},
+      {:ecto, "== 3.1.7"},
+      {:exprotobuf, "== 1.2.17"},
+      {:jason, "== 1.1.2"},
+      {:excoveralls, "== 0.11.1", only: :test},
+      {:dialyzex,
+       github: "Comcast/dialyzex",
+       ref: "cdc7cf71fe6df0ce4cf59e3f497579697a05c989",
+       only: [:dev, :ci]}
     ]
   end
 
