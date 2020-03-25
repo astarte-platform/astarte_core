@@ -59,6 +59,7 @@ defmodule Astarte.Core.Mixfile do
     [
       {:cyanide, "== 1.0.0"},
       {:ecto, "== 3.1.7"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:exprotobuf, "== 1.2.17"},
       {:jason, "== 1.1.2"},
       {:excoveralls, "== 0.11.1", only: :test},
