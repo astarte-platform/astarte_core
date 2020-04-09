@@ -40,7 +40,7 @@
             "type": "string",
             "enum": ["no_ttl", "use_ttl"],
             "default": "no_ttl",
-            "description": "Useful only with datastream. Defines whether data is expired from the database after a given time to live interval."
+            "description": "Useful only with datastream. Defines whether data should expire from the database after a given interval. Valid values are: no_ttl and use_ttl."
         },
         "database_retention_ttl": {
             "type": "integer",
