@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add `exchange` to `AMQPTriggerTarget` proto. This will allow to send events to any user defined
   AMQP exchange (see [#351](https://github.com/astarte-platform/astarte/issues/351)).
+- Add additional options to `AMQPTriggerTarget` such as `priority`, `expiration` and `persistent`.
 
 ## [0.11.0] - 2020-04-06
 

@@ -26,4 +26,8 @@ message AMQPTriggerTarget {
     string routing_key = 4;
     map<string, string> static_headers = 5;
     string exchange = 6;
+
+    int32 message_expiration_ms = 7;
+    int32 message_priority = 8;
+    bool message_persistent = 9;
 }
