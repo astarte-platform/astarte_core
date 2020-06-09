@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add `exchange` to `AMQPTriggerTarget` proto. This will allow to send events to any user defined
   AMQP exchange (see [#351](https://github.com/astarte-platform/astarte/issues/351)).
 - Add additional options to `AMQPTriggerTarget` such as `priority`, `expiration` and `persistent`.
+- Add support for device-specific and group-specific triggers.
+
+### Changed
+- It is now possible to omit the `device_id` in a `device_trigger`. This is equivalent to passing
+  `*` as `device_id`. The old behaviour is still supported.
 
 ## [0.11.0] - 2020-04-06
 
