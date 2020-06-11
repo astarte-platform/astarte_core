@@ -12,8 +12,8 @@ on:
   pull_request:
 
 env:
-  elixir_version: 1.10.2
-  otp_version: 22.3
+  elixir_version: 1.10.3
+  otp_version: 23.0
 
 jobs:
   test-dialyzer:
