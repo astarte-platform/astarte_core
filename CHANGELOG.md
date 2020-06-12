@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - It is now possible to omit the `device_id` in a `device_trigger`. This is equivalent to passing
   `*` as `device_id`. The old behaviour is still supported.
 
+## [0.11.1] - 2020-05-18
+
 ## [0.11.0] - 2020-04-06
 
 ## [0.11.0-rc.1] - 2020-03-25
