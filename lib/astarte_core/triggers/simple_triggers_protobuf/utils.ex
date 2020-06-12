@@ -30,10 +30,16 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
   @any_device_object_id <<140, 77, 4, 17, 75, 202, 11, 92, 131, 72, 15, 167, 65, 149, 191, 244>>
   @any_interface_object_id <<247, 238, 60, 243, 184, 175, 236, 43, 25, 242, 126, 91, 253, 141, 17,
                              119>>
+  @groups_namespace <<36, 234, 86, 36, 135, 212, 64, 186, 187, 188, 84, 47, 123, 78, 154, 123>>
   @device_object_type_int 1
   @interface_object_type_int 2
   @any_interface_object_type_int 3
   @any_device_object_type_int 4
+  @group_object_type_int 5
+  @group_and_interface_object_type_int 6
+  @device_and_interface_object_type_int 7
+  @group_and_any_interface_object_type_int 8
+  @device_and_any_interface_object_type_int 9
 
   def any_interface_object_id do
     @any_interface_object_id
@@ -47,6 +53,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
   def object_type_to_int!(:interface), do: @interface_object_type_int
   def object_type_to_int!(:any_device), do: @any_device_object_type_int
   def object_type_to_int!(:any_interface), do: @any_interface_object_type_int
+  def object_type_to_int!(:group), do: @group_object_type_int
+  def object_type_to_int!(:group_and_interface), do: @group_and_interface_object_type_int
+  def object_type_to_int!(:device_and_interface), do: @device_and_interface_object_type_int
+  def object_type_to_int!(:group_and_any_interface), do: @group_and_any_interface_object_type_int
+
+  def object_type_to_int!(:device_and_any_interface),
+    do: @device_and_any_interface_object_type_int
 
   def deserialize_trigger_target(payload) do
     %TriggerTargetContainer{
@@ -72,6 +85,28 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
     else
       CQLUtils.interface_id(interface_name, interface_major)
     end
+  end
+
+  def get_group_object_id(group_name) when is_binary(group_name) do
+    UUID.uuid5(@groups_namespace, group_name, :raw)
+  end
+
+  def get_device_and_any_interface_object_id(device_id) when is_binary(device_id) do
+    UUID.uuid5(@any_device_object_id, device_id, :raw)
+  end
+
+  def get_group_and_any_interface_object_id(group_name) when is_binary(group_name) do
+    UUID.uuid5(@any_device_object_id, group_name, :raw)
+  end
+
+  def get_device_and_interface_object_id(device_id, interface_id)
+      when is_binary(device_id) and is_binary(interface_id) do
+    UUID.uuid5(interface_id, device_id, :raw)
+  end
+
+  def get_group_and_interface_object_id(group_name, interface_id)
+      when is_binary(group_name) and is_binary(interface_id) do
+    UUID.uuid5(interface_id, group_name, :raw)
   end
 
   def simple_trigger_to_data_trigger(protobuf_data_trigger) do

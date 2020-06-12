@@ -46,4 +46,6 @@ message DataTrigger {
     string match_path = 5;
     MatchOperator value_match_operator = 6 [default = ANY];
     bytes known_value = 7;
+    string device_id = 8;
+    string group_name = 9;
 }

@@ -27,4 +27,6 @@ message DeviceTrigger {
     }
 
     DeviceEventType device_event_type = 2;
+    string device_id = 3;
+    string group_name = 4;
 }
