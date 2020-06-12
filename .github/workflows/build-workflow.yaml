@@ -12,13 +12,13 @@ on:
   pull_request:
 
 env:
-  elixir_version: 1.10.3
-  otp_version: 23.0
+  elixir_version: "1.10.3"
+  otp_version: "23.0"
 
 jobs:
   test-dialyzer:
     name: Check Dialyzer
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     env:
       MIX_ENV: ci
     steps:
@@ -44,7 +44,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-dialyzer_cache-${{ github.sha }}
           ${{ runner.os }}-dialyzer_cache-
-    - uses: actions/setup-elixir@v1.2.0
+    - uses: actions/setup-elixir@v1.3.0
       with:
         otp-version: ${{ env.otp_version }}
         elixir-version: ${{ env.elixir_version }}
@@ -56,7 +56,7 @@ jobs:
 
   test-coverage:
     name: Build and Test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     # Wait for Dialyzer to give it a go before building
     needs:
       - test-dialyzer
@@ -78,7 +78,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-_build-${{ github.sha }}
           ${{ runner.os }}-_build-
-    - uses: actions/setup-elixir@v1.2.0
+    - uses: actions/setup-elixir@v1.3.0
       with:
         otp-version: ${{ env.otp_version }}
         elixir-version: ${{ env.elixir_version }}
@@ -87,7 +87,7 @@ jobs:
     - name: Check formatting
       run: mix format --check-formatted
     - name: Compile
-      run: mix do compile
+      run: mix compile
     - name: Test and Coverage
       run: mix coveralls.json  --exclude wip -o coverage_results
     - name: Upload Coverage Results to CodeCov
