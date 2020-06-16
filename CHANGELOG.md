@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   AMQP exchange (see [#351](https://github.com/astarte-platform/astarte/issues/351)).
 - Add additional options to `AMQPTriggerTarget` such as `priority`, `expiration` and `persistent`.
 - Add support for device-specific and group-specific triggers.
+- Add `DeviceErrorEvent` to `SimpleEvents`, allowing to react to a device error.
 
 ### Changed
 - It is now possible to omit the `device_id` in a `device_trigger`. This is equivalent to passing

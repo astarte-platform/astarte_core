@@ -18,6 +18,29 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
       assert roundtrip == %{"type" => "device_connected", "device_ip_address" => ip}
     end
 
+    test "works for DeviceErrorEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceErrorEvent
+
+      error_name = "invalid_introspection"
+      metadata_map = %{"base64_payload" => Base.encode64("notanintrospection")}
+      metadata = Enum.into(metadata_map, [])
+
+      event = %DeviceErrorEvent{
+        error_name: error_name,
+        metadata: metadata
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "device_error",
+               "error_name" => error_name,
+               "metadata" => metadata_map
+             }
+    end
+
     test "works for DeviceDisconnectedEvent" do
       alias Astarte.Core.Triggers.SimpleEvents.DeviceDisconnectedEvent
 
