@@ -47,6 +47,26 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     end
   end
 
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceErrorEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceErrorEvent
+
+    def encode(%DeviceErrorEvent{} = event, opts) do
+      %DeviceErrorEvent{
+        error_name: error_name,
+        metadata: metadata
+      } = event
+
+      metadata_map = Enum.into(metadata, %{})
+
+      %{
+        "type" => "device_error",
+        "error_name" => error_name,
+        "metadata" => metadata_map
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
   defimpl Jason.Encoder, for: SimpleEvents.IncomingDataEvent do
     alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
 

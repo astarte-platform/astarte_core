@@ -39,5 +39,6 @@ message SimpleEvent {
         InterfaceAddedEvent interface_added_event = 15;
         InterfaceRemovedEvent interface_removed_event = 16;
         InterfaceMinorUpdatedEvent interface_minor_updated_event = 17;
+        DeviceErrorEvent device_error_event = 19;
     }
 }
