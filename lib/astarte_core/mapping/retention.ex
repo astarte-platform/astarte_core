@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Mapping.Retention do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @mapping_retention_discard 1
   @mapping_retention_volatile 2

@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Mapping.Reliability do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @mapping_reliability_unreliable 1
   @mapping_reliability_guaranteed 2

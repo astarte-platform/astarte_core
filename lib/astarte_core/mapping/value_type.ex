@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Mapping.ValueType do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @mapping_value_type_double 1
   @mapping_value_type_doublearray 2

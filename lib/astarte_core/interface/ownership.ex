@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Interface.Ownership do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @interface_ownership_device 1
   @interface_ownership_server 2
