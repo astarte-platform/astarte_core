@@ -60,6 +60,8 @@ defmodule Astarte.Core.Mixfile do
       {:cyanide, "~> 1.0"},
       {:ecto, "~> 3.4"},
       {:exprotobuf, "~> 1.2"},
+      # Lock gpb to 4.12.0 until this is solved https://github.com/bitwalker/exprotobuf/issues/113
+      {:gpb, "~> 4.12.0"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.12", only: :test},
