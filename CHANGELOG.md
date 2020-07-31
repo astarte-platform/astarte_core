@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-beta.1] - Unreleased
+### Fixed
+- Return an error instead of crashing when the endpoint is not present within a mapping.
+
 ## [1.0.0-alpha.1] - 2020-06-18
 ### Added
 - Add `exchange` to `AMQPTriggerTarget` proto. This will allow to send events to any user defined
