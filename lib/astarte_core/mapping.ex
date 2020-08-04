@@ -196,7 +196,9 @@ defmodule Astarte.Core.Mapping do
       allow_unset: allow_unset,
       explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
-      interface_id: interface_id
+      interface_id: interface_id,
+      doc: Map.get(db_result, :doc),
+      description: Map.get(db_result, :description)
     }
   end
 
