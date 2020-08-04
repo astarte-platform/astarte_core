@@ -75,7 +75,9 @@ defmodule Astarte.Core.MappingTest do
       "reliability" => "guaranteed",
       "expiry" => 60,
       "database_retention_policy" => "use_ttl",
-      "database_retention_ttl" => 60
+      "database_retention_ttl" => 60,
+      "doc" => "The doc.",
+      "description" => "The description."
     }
 
     assert %Ecto.Changeset{valid?: true} = changeset = Mapping.changeset(%Mapping{}, params, opts)
@@ -86,7 +88,9 @@ defmodule Astarte.Core.MappingTest do
              value_type: :integer,
              retention: :stored,
              reliability: :guaranteed,
-             expiry: 60
+             expiry: 60,
+             doc: "The doc.",
+             description: "The description."
            } = mapping
   end
 
