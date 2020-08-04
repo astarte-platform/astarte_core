@@ -195,7 +195,7 @@ defmodule Astarte.Core.Interface do
     changeset
   end
 
-  defp validate_mapping_uniqueness(changeset) do
+  defp validate_mapping_uniqueness(%Ecto.Changeset{valid?: true} = changeset) do
     mappings = get_field(changeset, :mappings, [])
 
     unique_count =
@@ -210,6 +210,10 @@ defmodule Astarte.Core.Interface do
     else
       changeset
     end
+  end
+
+  defp validate_mapping_uniqueness(%Ecto.Changeset{valid?: false} = changeset) do
+    changeset
   end
 
   defp validate_all_mappings_have_same_attributes(changeset) do
