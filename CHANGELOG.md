@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - It is now possible to omit the `device_id` in a `device_trigger`. This is equivalent to passing
   `*` as `device_id`. The old behaviour is still supported.
 
+## [0.11.3] - 2020-09-24
+
+## [0.11.2] - 2020-08-14
+### Changed
+- Test against Elixir 1.8.2.
+
 ## [0.11.1] - 2020-05-18
 
 ## [0.11.0] - 2020-04-06
