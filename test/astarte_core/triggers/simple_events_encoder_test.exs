@@ -108,6 +108,33 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
              }
     end
 
+    test "works for IncomingDataEvent with binaryblob bson_value" do
+      alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
+
+      interface = "com.example.Interface"
+      path = "/another/path"
+      value = <<1, 2, 3, 230>>
+      encoded_value = value |> Base.encode64()
+      bson_value = Cyanide.encode!(%{v: {0, value}})
+
+      event = %IncomingDataEvent{
+        interface: interface,
+        path: path,
+        bson_value: bson_value
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "incoming_data",
+               "interface" => interface,
+               "path" => path,
+               "value" => encoded_value
+             }
+    end
+
     test "works for IncomingIntrospectionEvent" do
       alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
 
