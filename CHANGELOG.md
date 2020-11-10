@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - It is now possible to omit the `device_id` in a `device_trigger`. This is equivalent to passing
   `*` as `device_id`. The old behaviour is still supported.
 
+## [0.11.4] - Unreleased
+### Fixed
+- Correctly handle binaryblob value deserialization in events.
+
 ## [0.11.3] - 2020-09-24
 
 ## [0.11.2] - 2020-08-14
