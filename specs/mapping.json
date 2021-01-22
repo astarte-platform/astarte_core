@@ -6,7 +6,7 @@
     "properties": {
         "endpoint": {
             "type": "string",
-            "pattern": "^(/(%{([a-zA-Z][a-zA-Z0-9_]*)}|[a-zA-Z][a-zA-Z0-9_]*)){1,64}$",
+            "pattern": "^(/(%{([a-zA-Z_][a-zA-Z0-9_]*)}|[a-zA-Z_][a-zA-Z0-9_]*)){1,64}$",
             "minLength": 2,
             "maxLength": 256,
             "description": "The template of the path. This is a UNIX-like path (e.g. /my/path) and can be parametrized. Parameters are in the %{name} form, and can be used to create interfaces which represent dictionaries of mappings. When the interface aggregation is object, an object is composed by all the mappings for one specific parameter combination. /timestamp is a reserved path for timestamps, so every mapping on a datastream must not have any endpoint that ends with /timestamp."
