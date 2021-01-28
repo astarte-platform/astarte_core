@@ -277,6 +277,12 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
 
   def extract_bson_value(bson_value) do
     case Cyanide.decode!(bson_value) do
+      # Special case: binary bson type must be base64 encoded
+      # TODO: change this to the new Cyanide.Binary type when cyanide is
+      # upgraded
+      %{"v" => {0, value}} when is_binary(value) ->
+        Base.encode64(value)
+
       %{"v" => value} ->
         value
 

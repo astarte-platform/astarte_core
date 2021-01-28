@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Mapping.DatabaseRetentionPolicy do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @mapping_policy_no_ttl 1
   @mapping_policy_use_ttl 2

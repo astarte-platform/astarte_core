@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Interface.Aggregation do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @interface_aggregation_individual 1
   @interface_aggregation_object 2

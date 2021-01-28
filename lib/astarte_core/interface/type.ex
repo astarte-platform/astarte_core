@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Interface.Type do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @interface_type_properties 1
   @interface_type_datastream 2

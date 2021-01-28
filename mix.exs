@@ -65,6 +65,7 @@ defmodule Astarte.Core.Mixfile do
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.12", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:dialyzex, github: "Comcast/dialyzex", only: [:dev, :ci]}
     ]
   end

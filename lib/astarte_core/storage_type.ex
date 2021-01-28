@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.StorageType do
-  @behaviour Ecto.Type
+  use Ecto.Type
 
   @multi_interface_individual_properties_dbtable 1
   @multi_interface_individual_datastream_dbtable 2

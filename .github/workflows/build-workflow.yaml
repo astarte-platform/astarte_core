@@ -26,25 +26,20 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-          ${{ runner.os }}-mix-
+        key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     - uses: actions/cache@v1
       with:
         path: _build
-        key: ${{ runner.os }}-_build-${{ github.sha }}
+        key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-_build-${{ github.sha }}
-          ${{ runner.os }}-_build-
+          ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     - uses: actions/cache@v1
       with:
         path: dialyzer_cache
-        key: ${{ runner.os }}-dialyzer_cache-${{ github.sha }}
+        key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-dialyzer_cache-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-dialyzer_cache-${{ github.sha }}
-          ${{ runner.os }}-dialyzer_cache-
-    - uses: actions/setup-elixir@v1.3.0
+          ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-dialyzer_cache-
+    - uses: actions/setup-elixir@v1.5.0
       with:
         otp-version: ${{ env.otp_version }}
         elixir-version: ${{ env.elixir_version }}
@@ -67,18 +62,14 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-          ${{ runner.os }}-mix-
+        key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     - uses: actions/cache@v1
       with:
         path: _build
-        key: ${{ runner.os }}-_build-${{ github.sha }}
+        key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-_build-${{ github.sha }}
-          ${{ runner.os }}-_build-
-    - uses: actions/setup-elixir@v1.3.0
+          ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+    - uses: actions/setup-elixir@v1.5.0
       with:
         otp-version: ${{ env.otp_version }}
         elixir-version: ${{ env.elixir_version }}
