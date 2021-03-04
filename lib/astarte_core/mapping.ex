@@ -99,6 +99,7 @@ defmodule Astarte.Core.Mapping do
     |> validate_not_set_unless(:explicit_timestamp, interface_type, [:datastream, nil])
     |> validate_length(:description, max: 1000)
     |> validate_length(:doc, max: 100_000)
+    |> validate_database_retention_policy_and_ttl()
     |> normalize_fields()
     |> put_change(:interface_id, interface_id)
     |> put_endpoint_id(interface_name, interface_major)
@@ -218,6 +219,20 @@ defmodule Astarte.Core.Mapping do
           []
         end
       end)
+    else
+      changeset
+    end
+  end
+
+  defp validate_database_retention_policy_and_ttl(changeset) do
+    # May return a more generic error if validate_not_set_unless/4 is used
+    if get_field(changeset, :database_retention_policy) == :no_ttl and
+         get_field(changeset, :database_retention_ttl) != nil do
+      add_error(
+        changeset,
+        :database_retention_policy,
+        "must be use_ttl if database_retention_ttl is set"
+      )
     else
       changeset
     end
