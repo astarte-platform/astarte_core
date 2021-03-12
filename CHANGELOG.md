@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update dependencies and Elixir version to 1.11
 - If `database_retention_policy` is set to `:no_ttl`, `database_retention_ttl` must not be set. (See #51)
 
+### Fixed
+- Correctly handle SimpleEvents JSON encoding even when they contain an object aggregation with a
+  binaryblob value.
+
 ## [1.0.0-beta.1] - 2021-02-11
 ### Fixed
 - Return an error instead of crashing when the endpoint is not present within a mapping.
