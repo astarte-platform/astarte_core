@@ -1,6 +1,6 @@
 %{
   "certifi": {:hex, :certifi, "2.5.3", "70bdd7e7188c804f3a30ee0e7c99655bc35d8ac41c23e12325f36ab449b70651", [:rebar3], [{:parse_trans, "~>3.3", [hex: :parse_trans, repo: "hexpm", optional: false]}], "hexpm", "ed516acb3929b101208a9d700062d520f3953da3b6b918d866106ffa980e1c10"},
-  "cyanide": {:hex, :cyanide, "1.0.0", "9c2090e965f4254fea9ab2fa85e52a696e4e57547aec0babfa0a95fe1588ea76", [:mix], [], "hexpm", "74a8960fbde347c76f83dfedade938839b739770015f87dd724bba4a7cacdd96"},
+  "cyanide": {:git, "https://github.com/ispirata/cyanide.git", "cb806a659c6ece1e6ebb7df90fbd05be3c68ad2b", []},
   "decimal": {:hex, :decimal, "2.0.0", "a78296e617b0f5dd4c6caf57c714431347912ffb1d0842e998e9792b5642d697", [:mix], [], "hexpm", "34666e9c55dea81013e77d9d87370fe6cb6291d1ef32f46a1600230b1d44f577"},
   "dialyzex": {:git, "https://github.com/Comcast/dialyzex.git", "cdc7cf71fe6df0ce4cf59e3f497579697a05c989", []},
   "earmark_parser": {:hex, :earmark_parser, "1.4.12", "b245e875ec0a311a342320da0551da407d9d2b65d98f7a9597ae078615af3449", [:mix], [], "hexpm", "711e2cc4d64abb7d566d43f54b78f7dc129308a63bc103fbd88550d2174b3160"},
