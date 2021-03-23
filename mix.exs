@@ -57,7 +57,7 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
-      {:cyanide, "~> 1.0"},
+      {:cyanide, github: "ispirata/cyanide"},
       {:ecto, "~> 3.4"},
       {:exprotobuf, "~> 1.2"},
       # Lock gpb to 4.12.0 until this is solved https://github.com/bitwalker/exprotobuf/issues/113
