@@ -277,17 +277,28 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
 
   def extract_bson_value(bson_value) do
     case Cyanide.decode!(bson_value) do
-      # Special case: binary bson type must be base64 encoded
-      # TODO: change this to the new Cyanide.Binary type when cyanide is
-      # upgraded
-      %{"v" => {0, value}} when is_binary(value) ->
-        Base.encode64(value)
+      # With object aggregations we traverse all values to normalize them
+      %{"v" => object} when is_map(object) ->
+        for {k, v} <- object, into: %{} do
+          {k, normalize_value(v)}
+        end
 
       %{"v" => value} ->
-        value
+        normalize_value(value)
 
       other ->
         other
     end
+  end
+
+  # Special case: binary bson type must be base64 encoded
+  # TODO: change this to the new Cyanide.Binary type when cyanide is
+  # upgraded
+  defp normalize_value({0, value}) when is_binary(value) do
+    Base.encode64(value)
+  end
+
+  defp normalize_value(value) do
+    value
   end
 end

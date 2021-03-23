@@ -134,6 +134,54 @@ defmodule Astarte.Core.MappingTest do
            } = mapping
   end
 
+  test "mapping with no_ttl policy and valid database_retention_ttl set fails" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/valid",
+      "type" => "string",
+      "reliability" => "guaranteed",
+      "database_retention_policy" => "no_ttl",
+      "database_retention_ttl" => 80
+    }
+
+    assert %Ecto.Changeset{valid?: false, errors: [database_retention_policy: _]} =
+             Mapping.changeset(%Mapping{}, params, opts)
+  end
+
+  test "mapping with no_ttl policy and invalid database_retention_ttl set fails" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/valid",
+      "type" => "string",
+      "reliability" => "guaranteed",
+      "database_retention_policy" => "no_ttl",
+      "database_retention_ttl" => 0
+    }
+
+    assert %Ecto.Changeset{
+             valid?: false,
+             errors: [
+               {:database_retention_policy, _},
+               {:database_retention_ttl, _}
+             ]
+           } = Mapping.changeset(%Mapping{}, params, opts)
+  end
+
+  test "mapping with no_ttl policy and no database_retention_ttl succeeds" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/valid",
+      "type" => "string",
+      "reliability" => "guaranteed",
+      "database_retention_policy" => "no_ttl"
+    }
+
+    assert %Ecto.Changeset{valid?: true} = Mapping.changeset(%Mapping{}, params, opts)
+  end
+
   test "mapping from legacy database result" do
     legacy_result = [
       endpoint: "/test",
