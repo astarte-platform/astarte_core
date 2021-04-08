@@ -29,7 +29,7 @@ defmodule Astarte.Core.Mapping do
   alias Astarte.Core.Mapping.Reliability
   alias Astarte.Core.Mapping.Retention
 
-  @placeholder_regex ~r/%{[a-zA-Z]+[a-zA-Z0-9_]*}/
+  @placeholder_regex ~r/%{[a-zA-Z_]+[a-zA-Z0-9_]*}/
 
   @required_fields [
     :endpoint,
@@ -138,7 +138,7 @@ defmodule Astarte.Core.Mapping do
   end
 
   def mapping_regex do
-    ~r/^(\/(%{([a-zA-Z]+[a-zA-Z0-9_]*)}|[a-zA-Z]+[a-zA-Z0-9_]*)){1,64}$/
+    ~r/^(\/(%{([a-zA-Z_]+[a-zA-Z0-9_]*)}|[a-zA-Z_]+[a-zA-Z0-9_]*)){1,64}$/
   end
 
   @doc """
