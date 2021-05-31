@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 ### Changed
 - Extend interface mappings charset to support name prefixed with underscore
+### Added
+- Add delivery policies to triggers.
 
 ## [1.0.0-rc.0] - 2021-05-05
 
