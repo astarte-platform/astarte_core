@@ -158,6 +158,61 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
              }
     end
 
+    test "works for IncomingDataEvent with datetime bson_value" do
+      alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
+
+      interface = "com.example.Interface"
+      path = "/another/path"
+      value = DateTime.utc_now() |> DateTime.truncate(:millisecond)
+      encoded_value = value |> DateTime.to_iso8601()
+      bson_value = Cyanide.encode!(%{v: value})
+
+      event = %IncomingDataEvent{
+        interface: interface,
+        path: path,
+        bson_value: bson_value
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "incoming_data",
+               "interface" => interface,
+               "path" => path,
+               "value" => encoded_value
+             }
+    end
+
+    test "works for IncomingDataEvent with binaryblobarray bson_value" do
+      alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
+
+      interface = "com.example.Interface"
+      path = "/another/path"
+      values = [<<1, 2, 3, 230>>, <<4, 5, 6, 230>>]
+      encoded_values = values |> Enum.map(&Base.encode64/1)
+      wrapped_values = values |> Enum.map(&{0, &1})
+      bson_value = Cyanide.encode!(%{v: wrapped_values})
+
+      event = %IncomingDataEvent{
+        interface: interface,
+        path: path,
+        bson_value: bson_value
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "incoming_data",
+               "interface" => interface,
+               "path" => path,
+               "value" => encoded_values
+             }
+    end
+
     test "works for IncomingIntrospectionEvent" do
       alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
 

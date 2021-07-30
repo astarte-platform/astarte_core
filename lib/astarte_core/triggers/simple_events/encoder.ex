@@ -277,8 +277,12 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
 
   def extract_bson_value(bson_value) do
     case Cyanide.decode!(bson_value) do
+      # Handle array types
+      %{"v" => array} when is_list(array) ->
+        Enum.map(array, &normalize_value/1)
+
       # With object aggregations we traverse all values to normalize them
-      %{"v" => object} when is_map(object) ->
+      %{"v" => object} when is_map(object) and not is_struct(object) ->
         for {k, v} <- object, into: %{} do
           {k, normalize_value(v)}
         end
