@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Extend interface mappings charset to support name prefixed with underscore
+  
+## [1.0.1] - 2021-12-16
+### Added
+- Handle array values when decoding simple events
+
+### Fixed
+- Don't treat structs as object aggregations when decoding simple events
 
 ## [1.0.0] - 2021-06-28
 
