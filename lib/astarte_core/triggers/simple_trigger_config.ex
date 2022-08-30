@@ -45,6 +45,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     field :match_path, :string
     field :value_match_operator, :string
     field :known_value, :any, virtual: true
+    # Device (introspection) Trigger specific
+    field :match_interface, :string
   end
 
   defimpl Jason.Encoder, for: SimpleTriggerConfig do
@@ -141,7 +143,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     :type,
     :on,
     :group_name,
-    :device_id
+    :device_id,
+    :match_interface
   ]
   @device_trigger_required_keys [
     :type,
@@ -151,13 +154,21 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     "device_connected" => :DEVICE_CONNECTED,
     "device_disconnected" => :DEVICE_DISCONNECTED,
     "device_empty_cache_received" => :DEVICE_EMPTY_CACHE_RECEIVED,
-    "device_error" => :DEVICE_ERROR
+    "device_error" => :DEVICE_ERROR,
+    "incoming_introspection" => :INCOMING_INTROSPECTION,
+    "interface_added" => :INTERFACE_ADDED,
+    "interface_removed" => :INTERFACE_REMOVED,
+    "interface_minor_updated" => :INTERFACE_MINOR_UPDATED
   }
   @device_trigger_condition_to_string %{
     :DEVICE_CONNECTED => "device_connected",
     :DEVICE_DISCONNECTED => "device_disconnected",
     :DEVICE_EMPTY_CACHE_RECEIVED => "device_empty_cache_received",
-    :DEVICE_ERROR => "device_error"
+    :DEVICE_ERROR => "device_error",
+    :INCOMING_INTROSPECTION => "incoming_introspection",
+    :INTERFACE_ADDED => "interface_added",
+    :INTERFACE_REMOVED => "interface_removed",
+    :INTERFACE_MINOR_UPDATED => "interface_minor_updated"
   }
 
   @allowed_trigger_types [
@@ -194,6 +205,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> validate_device_id(:device_id)
     |> validate_group_name(:group_name)
     |> validate_device_id_xor_group_name()
+    |> validate_match_interface_allowed_in_introspection()
   end
 
   def changeset(%SimpleTriggerConfig{} = simple_trigger_config, params) when is_map(params) do
@@ -331,6 +343,27 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     end
   end
 
+  defp validate_match_interface_allowed_in_introspection(%Ecto.Changeset{} = changeset) do
+    # TODO change, this is ugly
+    if get_field(changeset, :match_interface) != nil do
+      if Enum.member?(
+           [
+             "interface_minor_updated",
+             "interface_removed",
+             "interface_added",
+             "incoming_introspection"
+           ],
+           get_field(changeset, :on)
+         ) do
+        changeset
+      else
+        add_error(changeset, :match_interface, "is allowed only in introspection triggers")
+      end
+    else
+      changeset
+    end
+  end
+
   defp put_data_trigger_atoms(%{on: condition, value_match_operator: operator} = params) do
     condition_atom = Map.get(@data_trigger_condition_to_atom, condition)
     operator_atom = Map.get(@data_trigger_operator_to_atom, operator)
@@ -434,7 +467,9 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     %SimpleTriggerConfig{
       device_id: device_id,
       group_name: group_name,
-      on: event_type
+      on: event_type,
+      # this field is nil if it is not an introspection trigger
+      match_interface: match_interface
     } = config
 
     {object_id, object_type} = get_device_trigger_object(config)
@@ -442,7 +477,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     device_trigger = %DeviceTrigger{
       device_id: device_id,
       group_name: group_name,
-      device_event_type: event_type
+      device_event_type: event_type,
+      match_interface: match_interface
     }
 
     %TaggedSimpleTrigger{

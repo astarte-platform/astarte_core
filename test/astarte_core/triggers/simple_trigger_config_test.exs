@@ -253,6 +253,34 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
                group_name: ^group_name
              } = config
     end
+
+    test "changeset generates a SimpleTriggerConfig from a valid device trigger map with specific device and introspection condition" do
+      device_map =
+        @valid_device_trigger_map
+        |> Map.put("device_id", @encoded_device_id)
+        |> Map.put("on", "incoming_introspection")
+
+      assert {:ok, %SimpleTriggerConfig{} = config} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, device_map)
+               |> Ecto.Changeset.apply_action(:insert)
+
+      assert %SimpleTriggerConfig{
+               type: "device_trigger",
+               on: "incoming_introspection",
+               device_id: @encoded_device_id
+             } = config
+    end
+
+    test "changeset with invalid match_interface without introspection on returns an error changeset" do
+      invalid_match_interface =
+        @valid_device_trigger_map
+        |> Map.put("device_id", @encoded_device_id)
+        |> Map.put("match_interface", "super.evil.Interface")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_match_interface)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
   end
 
   describe "conversion to and from TaggedSimpleTrigger" do
