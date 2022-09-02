@@ -271,15 +271,73 @@ defmodule Astarte.Core.SimpleTriggerConfigTest do
              } = config
     end
 
-    test "changeset with invalid match_interface without introspection on returns an error changeset" do
-      invalid_match_interface =
+    test "changeset with invalid interface_name without interface_major on interface_added returns an error changeset" do
+      invalid_interface_name =
         @valid_device_trigger_map
         |> Map.put("device_id", @encoded_device_id)
-        |> Map.put("match_interface", "super.evil.Interface")
+        |> Map.put("interface_name", @interface_name)
+        |> Map.put("on", "interface_added")
 
       assert {:error, %Changeset{}} =
-               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_match_interface)
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_interface_name)
                |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset with invalid interface_name without interface_major on interface_removed returns an error changeset" do
+      invalid_interface_name =
+        @valid_device_trigger_map
+        |> Map.put("device_id", @encoded_device_id)
+        |> Map.put("interface_name", @interface_name)
+        |> Map.put("on", "interface_removed")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_interface_name)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset with invalid any interface name on interface_minor_updated returns an error changeset" do
+      invalid_interface_name =
+        @valid_device_trigger_map
+        |> Map.put("device_id", @encoded_device_id)
+        |> Map.put("interface_name", "*")
+        |> Map.put("on", "interface_minor_updated")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_interface_name)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset with invalid interface name on incoming_introspection returns an error changeset" do
+      invalid_interface_name =
+        @valid_device_trigger_map
+        |> Map.put("device_id", @encoded_device_id)
+        |> Map.put("interface_name", "*")
+        |> Map.put("on", "incoming_introspection")
+
+      assert {:error, %Changeset{}} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, invalid_interface_name)
+               |> Ecto.Changeset.apply_action(:insert)
+    end
+
+    test "changeset generates a SimpleTriggerConfig from a valid device trigger map interface and major on introspection_added" do
+      device_map =
+        @valid_device_trigger_map
+        |> Map.put("device_id", @encoded_device_id)
+        |> Map.put("on", "interface_added")
+        |> Map.put("interface_name", @interface_name)
+        |> Map.put("interface_major", 1)
+
+      assert {:ok, %SimpleTriggerConfig{} = config} =
+               SimpleTriggerConfig.changeset(%SimpleTriggerConfig{}, device_map)
+               |> Ecto.Changeset.apply_action(:insert)
+
+      assert %SimpleTriggerConfig{
+               type: "device_trigger",
+               on: "interface_added",
+               device_id: @encoded_device_id,
+               interface_name: @interface_name,
+               interface_major: 1
+             } = config
     end
   end
 

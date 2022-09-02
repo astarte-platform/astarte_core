@@ -39,14 +39,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     field :on, :string
     field :group_name, :string
     field :device_id, :string
-    # Data Trigger specific
+    # Data and Introspection Trigger specific
     field :interface_name, :string
     field :interface_major, :integer
+    # Data Trigger specific
     field :match_path, :string
     field :value_match_operator, :string
     field :known_value, :any, virtual: true
-    # Device (introspection) Trigger specific
-    field :match_interface, :string
   end
 
   defimpl Jason.Encoder, for: SimpleTriggerConfig do
@@ -144,7 +143,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     :on,
     :group_name,
     :device_id,
-    :match_interface
+    :interface_name,
+    :interface_major
   ]
   @device_trigger_required_keys [
     :type,
@@ -205,7 +205,9 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     |> validate_device_id(:device_id)
     |> validate_group_name(:group_name)
     |> validate_device_id_xor_group_name()
-    |> validate_match_interface_allowed_in_introspection()
+    |> validate_introspection_triggers_interface_match_allowed()
+    |> validate_introspection_triggers_interface_version()
+    |> validate_introspection_triggers_match_conditions()
   end
 
   def changeset(%SimpleTriggerConfig{} = simple_trigger_config, params) when is_map(params) do
@@ -270,6 +272,72 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       changeset
       |> validate_format(:interface_name, Interface.interface_name_regex())
       |> validate_required([:interface_major])
+    end
+  end
+
+  defp validate_introspection_triggers_interface_version(%Ecto.Changeset{} = changeset) do
+    if allows_interface_match?(changeset) do
+      validate_introspection_trigger_interface_name_and_major(changeset)
+    else
+      changeset
+    end
+  end
+
+  defp validate_introspection_trigger_interface_name_and_major(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :interface_name) == "*" do
+      delete_change(changeset, :interface_major)
+    else
+      changeset
+      |> validate_format(:interface_name, Interface.interface_name_regex())
+      |> validate_required([:interface_major])
+    end
+  end
+
+  defp validate_introspection_triggers_match_conditions(%Ecto.Changeset{} = changeset) do
+    case get_field(changeset, :on) do
+      "incoming_introspection" ->
+        validate_incoming_introspection_interface_name(changeset)
+
+      "interface_minor_updated" ->
+        validate_interface_minor_updated_interface_name(changeset)
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp validate_incoming_introspection_interface_name(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :interface_name) == nil do
+      changeset
+    else
+      add_error(
+        changeset,
+        :interface_name,
+        "must not be set in incoming_introspection triggers"
+      )
+    end
+  end
+
+  defp validate_interface_minor_updated_interface_name(%Ecto.Changeset{} = changeset) do
+    interface_name = get_field(changeset, :interface_name)
+
+    cond do
+      interface_name == nil ->
+        add_error(
+          changeset,
+          :interface_name,
+          "must be set in interface_minor_updated triggers"
+        )
+
+      interface_name == "*" ->
+        add_error(
+          changeset,
+          :interface_name,
+          "must not be '*' in interface_minor_updated triggers"
+        )
+
+      true ->
+        changeset
     end
   end
 
@@ -343,25 +411,23 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     end
   end
 
-  defp validate_match_interface_allowed_in_introspection(%Ecto.Changeset{} = changeset) do
-    # TODO change, this is ugly
-    if get_field(changeset, :match_interface) != nil do
-      if Enum.member?(
-           [
-             "interface_minor_updated",
-             "interface_removed",
-             "interface_added",
-             "incoming_introspection"
-           ],
-           get_field(changeset, :on)
-         ) do
-        changeset
-      else
-        add_error(changeset, :match_interface, "is allowed only in introspection triggers")
-      end
+  defp validate_introspection_triggers_interface_match_allowed(%Ecto.Changeset{} = changeset) do
+    if get_field(changeset, :interface_name) != nil and not allows_interface_match?(changeset) do
+      add_error(
+        changeset,
+        :interface_name,
+        "is allowed only in if 'on' is one of interface_minor_updated, interface_removed, interface_added"
+      )
     else
       changeset
     end
+  end
+
+  defp allows_interface_match?(%Ecto.Changeset{} = changeset) do
+    Enum.member?(
+      ["interface_minor_updated", "interface_removed", "interface_added"],
+      get_field(changeset, :on)
+    )
   end
 
   defp put_data_trigger_atoms(%{on: condition, value_match_operator: operator} = params) do
@@ -468,8 +534,9 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_id: device_id,
       group_name: group_name,
       on: event_type,
-      # this field is nil if it is not an introspection trigger
-      match_interface: match_interface
+      # these fields are nil if it is not an introspection trigger
+      interface_name: interface_name,
+      interface_major: interface_major
     } = config
 
     {object_id, object_type} = get_device_trigger_object(config)
@@ -478,7 +545,8 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       device_id: device_id,
       group_name: group_name,
       device_event_type: event_type,
-      match_interface: match_interface
+      interface_name: interface_name,
+      interface_major: interface_major
     }
 
     %TaggedSimpleTrigger{
@@ -558,7 +626,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     %DeviceTrigger{
       group_name: group_name,
       device_id: inner_device_id,
-      device_event_type: device_event_type
+      device_event_type: device_event_type,
+      # those field are nil if it is not an introspection trigger
+      interface_name: interface_name,
+      interface_major: interface_major
     } = device_trigger
 
     condition = Map.fetch!(@device_trigger_condition_to_string, device_event_type)
@@ -582,7 +653,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
       type: "device_trigger",
       on: condition,
       device_id: device_id,
-      group_name: normalize_proto_string_default(group_name)
+      group_name: normalize_proto_string_default(group_name),
+      # those field are nil if it is not an introspection trigger
+      interface_name: interface_name,
+      interface_major: interface_major
     }
   end
 
