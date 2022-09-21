@@ -22,6 +22,5 @@ message SimpleTriggerContainer {
     oneof simple_trigger {
         DeviceTrigger device_trigger = 2;
         DataTrigger data_trigger = 3;
-        IntrospectionTrigger introspection_trigger = 4;
     }
 }
