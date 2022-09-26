@@ -13,7 +13,7 @@ on:
 
 env:
   elixir_version: "1.11.4"
-  otp_version: "23.2"
+  otp_version: "23.3"
 
 jobs:
   test-dialyzer:
