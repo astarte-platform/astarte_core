@@ -1,7 +1,7 @@
 //
 // This file is part of Astarte.
 //
-// Copyright 2017 Ispirata Srl
+// Copyright 2022 SECO Mind srl
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,6 @@
 // limitations under the License.
 //
 
-message Trigger {
-    int32 version = 1 [default = 1];
-
-    bytes trigger_uuid = 2;
-    repeated bytes simple_triggers_uuids = 3;
-    bytes action = 4;
-    // TODO: add condition
-
-    string name = 5;
-    string policy = 6;
+message ErrorRange {
+    repeated int32 error_codes = 1;
 }

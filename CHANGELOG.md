@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Introspection triggers are part of device triggers. Expose an API closer to other triggers.
 
 ## [1.0.4] - 2022-09-26
+### Added
+- Add delivery policies to triggers.
 
 ## [1.0.3] - 2022-07-04
 
