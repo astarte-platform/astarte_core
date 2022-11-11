@@ -16,6 +16,8 @@
 // limitations under the License.
 //
 
+syntax = "proto3";
+
 message InterfaceMinorUpdatedEvent {
   string interface = 1;
   int32 major_version = 2;

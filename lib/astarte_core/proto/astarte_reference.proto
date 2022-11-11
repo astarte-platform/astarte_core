@@ -16,6 +16,8 @@
 // limitations under the License.
 //
 
+syntax = "proto3";
+
 message AstarteReference {
     int32 object_type = 1;
     bytes object_uuid = 2;

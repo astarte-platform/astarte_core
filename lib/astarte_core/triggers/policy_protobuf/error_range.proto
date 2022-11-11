@@ -16,6 +16,8 @@
 // limitations under the License.
 //
 
+syntax = "proto3";
+
 message ErrorRange {
     repeated int32 error_codes = 1;
 }

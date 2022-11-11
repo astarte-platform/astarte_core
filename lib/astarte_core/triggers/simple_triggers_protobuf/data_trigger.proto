@@ -16,6 +16,8 @@
 // limitations under the License.
 //
 
+syntax = "proto3";
+
 message DataTrigger {
     int32 version = 1 [default = 1];
 

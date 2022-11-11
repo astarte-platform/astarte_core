@@ -16,6 +16,8 @@
 // limitations under the License.
 //
 
+syntax = "proto3";
+
 message Policy {
     string name = 1;
     int32 maximum_capacity = 2;
