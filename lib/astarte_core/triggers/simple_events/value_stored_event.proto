@@ -16,6 +16,8 @@
 // limitations under the License.
 //
 
+syntax = "proto3";
+
 message ValueStoredEvent {
   string interface = 1;
   string path = 2;
