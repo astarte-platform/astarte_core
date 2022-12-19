@@ -19,7 +19,7 @@
 syntax = "proto3";
 
 message AMQPTriggerTarget {
-    int32 version = 1;
+    int32 version = 1 [deprecated = true];
 
     // those should stay null, they get overwritten once loaded
     optional bytes simple_trigger_id = 2;

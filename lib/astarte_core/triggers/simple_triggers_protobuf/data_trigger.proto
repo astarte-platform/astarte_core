@@ -19,7 +19,7 @@
 syntax = "proto3";
 
 message DataTrigger {
-    int32 version = 1;
+    int32 version = 1 [deprecated = true];
 
     enum DataTriggerType {
         INVALID = 0;

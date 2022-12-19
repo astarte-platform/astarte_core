@@ -33,7 +33,7 @@ import "lib/astarte_core/triggers/simple_events/interface_removed_event.proto";
 import "lib/astarte_core/triggers/simple_events/interface_minor_updated_event.proto";
 
 message SimpleEvent {
-    int32 version = 1;
+    int32 version = 1 [deprecated = true];
 
     optional bytes simple_trigger_id = 2;
     optional bytes parent_trigger_id = 3;

@@ -21,7 +21,7 @@ syntax = "proto3";
 import "lib/astarte_core/triggers/simple_triggers_protobuf/simple_trigger_container.proto";
 
 message TaggedSimpleTrigger {
-    int32 version = 1;
+    int32 version = 1 [deprecated = true];
 
     optional bytes object_id = 2;
     int32 object_type = 3;

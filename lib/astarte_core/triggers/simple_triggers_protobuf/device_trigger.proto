@@ -19,7 +19,7 @@
 syntax = "proto3";
 
 message DeviceTrigger {
-    int32 version = 1;
+    int32 version = 1 [deprecated = true];
 
     enum DeviceEventType {
         INVALID = 0;

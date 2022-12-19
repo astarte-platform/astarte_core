@@ -19,7 +19,7 @@
 syntax = "proto3";
 
 message Trigger {
-    int32 version = 1;
+    int32 version = 1 [deprecated = true];
 
     optional bytes trigger_uuid = 2;
     repeated bytes simple_triggers_uuids = 3;
