@@ -19,9 +19,10 @@
 syntax = "proto3";
 
 message DataTrigger {
-    int32 version = 1 [default = 1];
+    int32 version = 1;
 
     enum DataTriggerType {
+        INVALID = 0;
         INCOMING_DATA = 1;
         VALUE_CHANGE = 2;
         VALUE_CHANGE_APPLIED = 3;
@@ -31,6 +32,7 @@ message DataTrigger {
     }
 
     enum MatchOperator {
+        INVALID_OPERATOR = 0;
         ANY = 1;
         EQUAL_TO = 2;
         NOT_EQUAL_TO = 3;

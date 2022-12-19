@@ -18,6 +18,8 @@
 
 syntax = "proto3";
 
+import "lib/astarte_core/triggers/policy_protobuf/handler.proto";
+
 message Policy {
     string name = 1;
     int32 maximum_capacity = 2;

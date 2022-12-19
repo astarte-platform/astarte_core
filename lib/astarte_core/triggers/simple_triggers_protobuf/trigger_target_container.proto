@@ -18,8 +18,10 @@
 
 syntax = "proto3";
 
+import "lib/astarte_core/triggers/simple_triggers_protobuf/amqp_trigger_target.proto";
+
 message TriggerTargetContainer {
-    int32 version = 1 [default = 1];
+    int32 version = 1;
 
     oneof trigger_target {
         AMQPTriggerTarget amqp_trigger_target = 2;

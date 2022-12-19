@@ -19,13 +19,13 @@
 syntax = "proto3";
 
 message Trigger {
-    int32 version = 1 [default = 1];
+    int32 version = 1;
 
     bytes trigger_uuid = 2;
     repeated bytes simple_triggers_uuids = 3;
     bytes action = 4;
     // TODO: add condition
 
-    string name = 5;
-    string policy = 6;
+    optional string name = 5;
+    optional string policy = 6;
 }

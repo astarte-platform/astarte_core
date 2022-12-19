@@ -21,6 +21,7 @@ syntax = "proto3";
 message ErrorKeyword {
 
     enum KeywordType {
+        INVALID = 0;
         ANY_ERROR = 1;
         CLIENT_ERROR = 2;
         SERVER_ERROR = 3;

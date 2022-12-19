@@ -18,8 +18,11 @@
 
 syntax = "proto3";
 
+import "lib/astarte_core/triggers/simple_triggers_protobuf/data_trigger.proto";
+import "lib/astarte_core/triggers/simple_triggers_protobuf/device_trigger.proto";
+
 message SimpleTriggerContainer {
-    int32 version = 1 [default = 1];
+    int32 version = 1;
 
     oneof simple_trigger {
         DeviceTrigger device_trigger = 2;

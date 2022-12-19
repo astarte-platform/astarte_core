@@ -19,9 +19,10 @@
 syntax = "proto3";
 
 message DeviceTrigger {
-    int32 version = 1 [default = 1];
+    int32 version = 1;
 
     enum DeviceEventType {
+        INVALID = 0;
         DEVICE_CONNECTED = 1;
         DEVICE_DISCONNECTED = 2;
         DEVICE_EMPTY_CACHE_RECEIVED = 3;
