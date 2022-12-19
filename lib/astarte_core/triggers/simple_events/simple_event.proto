@@ -35,11 +35,11 @@ import "lib/astarte_core/triggers/simple_events/interface_minor_updated_event.pr
 message SimpleEvent {
     int32 version = 1;
 
-    bytes simple_trigger_id = 2;
-    bytes parent_trigger_id = 3;
+    optional bytes simple_trigger_id = 2;
+    optional bytes parent_trigger_id = 3;
 
-    string realm = 4;
-    string device_id = 5;
+    optional string realm = 4;
+    optional string device_id = 5;
     int64 timestamp = 18;
 
     oneof event {

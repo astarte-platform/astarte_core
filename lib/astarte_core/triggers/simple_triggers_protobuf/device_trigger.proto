@@ -34,8 +34,8 @@ message DeviceTrigger {
     }
 
     DeviceEventType device_event_type = 2;
-    string device_id = 3;
-    string group_name = 4;
-    string interface_name = 5;
+    optional string device_id = 3;
+    optional string group_name = 4;
+    optional string interface_name = 5;
     int32 interface_major = 6;
 }

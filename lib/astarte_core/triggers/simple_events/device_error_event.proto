@@ -19,6 +19,6 @@
 syntax = "proto3";
 
 message DeviceErrorEvent {
-  string error_name = 1;
+  optional string error_name = 1;
   map<string, string> metadata = 2;
 }

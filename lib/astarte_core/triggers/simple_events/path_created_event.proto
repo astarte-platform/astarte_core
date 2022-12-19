@@ -19,7 +19,7 @@
 syntax = "proto3";
 
 message PathCreatedEvent {
-  string interface = 1;
-  string path = 2;
-  bytes bson_value = 3;
+  optional string interface = 1;
+  optional string path = 2;
+  optional bytes bson_value = 3;
 }

@@ -22,12 +22,12 @@ message AMQPTriggerTarget {
     int32 version = 1;
 
     // those should stay null, they get overwritten once loaded
-    bytes simple_trigger_id = 2;
-    bytes parent_trigger_id = 3;
+    optional bytes simple_trigger_id = 2;
+    optional bytes parent_trigger_id = 3;
 
-    string routing_key = 4;
+    optional string routing_key = 4;
     map<string, string> static_headers = 5;
-    string exchange = 6;
+    optional string exchange = 6;
 
     int32 message_expiration_ms = 7;
     int32 message_priority = 8;
