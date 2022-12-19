@@ -26,6 +26,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
 
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TriggerTargetContainer
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.SimpleTriggerContainer
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.AMQPTriggerTarget
 
   @any_device_object_id <<140, 77, 4, 17, 75, 202, 11, 92, 131, 72, 15, 167, 65, 149, 191, 244>>
   @any_interface_object_id <<247, 238, 60, 243, 184, 175, 236, 43, 25, 242, 126, 91, 253, 141, 17,
@@ -63,16 +64,17 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
 
   def deserialize_trigger_target(payload) do
     %TriggerTargetContainer{
-      version: 1,
       trigger_target: {_target_type, target}
     } = TriggerTargetContainer.decode(payload)
 
-    target
+    %AMQPTriggerTarget{static_headers: static_headers_map} = target
+
+    # Use a list of pairs instead of a map be compatible with old (exprotobuf) decoding
+    %{target | static_headers: Enum.into(static_headers_map, [])}
   end
 
   def deserialize_simple_trigger(payload) do
     %SimpleTriggerContainer{
-      version: 1,
       simple_trigger: {simple_trigger_type, simple_trigger}
     } = SimpleTriggerContainer.decode(payload)
 
