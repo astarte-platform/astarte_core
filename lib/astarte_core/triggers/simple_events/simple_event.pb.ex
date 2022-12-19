@@ -12,7 +12,7 @@ defmodule Astarte.Core.Triggers.SimpleEvents.SimpleEvent do
   field :parent_trigger_id, 3, proto3_optional: true, type: :bytes, json_name: "parentTriggerId"
   field :realm, 4, proto3_optional: true, type: :string
   field :device_id, 5, proto3_optional: true, type: :string, json_name: "deviceId"
-  field :timestamp, 18, type: :int64
+  field :timestamp, 18, proto3_optional: true, type: :int64
 
   field :device_connected_event, 6,
     type: Astarte.Core.Triggers.SimpleEvents.DeviceConnectedEvent,

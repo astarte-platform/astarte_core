@@ -40,7 +40,7 @@ message SimpleEvent {
 
     optional string realm = 4;
     optional string device_id = 5;
-    int64 timestamp = 18;
+    optional int64 timestamp = 18;
 
     oneof event {
         DeviceConnectedEvent device_connected_event = 6;
