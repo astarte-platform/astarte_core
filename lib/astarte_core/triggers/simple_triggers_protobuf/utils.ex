@@ -118,6 +118,13 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils do
       known_value: encoded_known_value
     } = protobuf_data_trigger
 
+    value_match_operator =
+      if value_match_operator == :INVALID_OPERATOR do
+        :ANY
+      else
+        value_match_operator
+      end
+
     %{"v" => plain_value} =
       if encoded_known_value do
         Cyanide.decode!(encoded_known_value)
