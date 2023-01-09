@@ -19,9 +19,10 @@
 syntax = "proto3";
 
 message DeviceTrigger {
-    int32 version = 1 [default = 1];
+    int32 version = 1 [deprecated = true];
 
     enum DeviceEventType {
+        INVALID = 0;
         DEVICE_CONNECTED = 1;
         DEVICE_DISCONNECTED = 2;
         DEVICE_EMPTY_CACHE_RECEIVED = 3;
@@ -33,8 +34,8 @@ message DeviceTrigger {
     }
 
     DeviceEventType device_event_type = 2;
-    string device_id = 3;
-    string group_name = 4;
-    string interface_name = 5;
+    optional string device_id = 3;
+    optional string group_name = 4;
+    optional string interface_name = 5;
     int32 interface_major = 6;
 }

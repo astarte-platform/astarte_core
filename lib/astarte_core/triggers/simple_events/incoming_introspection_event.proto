@@ -19,5 +19,5 @@
 syntax = "proto3";
 
 message IncomingIntrospectionEvent {
-  string introspection = 1;
+  optional string introspection = 1;
 }

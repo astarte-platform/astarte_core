@@ -60,7 +60,7 @@ defmodule Astarte.Core.Mixfile do
       {:cyanide, github: "ispirata/cyanide"},
       {:ecto, "~> 3.4"},
       {:ecto_morph, "~> 0.1.23"},
-      {:exprotobuf, "~> 1.2"},
+      {:protobuf, github: "elixir-protobuf/protobuf"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.15", only: :test},

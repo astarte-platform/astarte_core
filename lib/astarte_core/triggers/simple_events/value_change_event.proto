@@ -19,8 +19,8 @@
 syntax = "proto3";
 
 message ValueChangeEvent {
-  string interface = 1;
-  string path = 2;
-  bytes old_bson_value = 3;
-  bytes new_bson_value = 4;
+  optional string interface = 1;
+  optional string path = 2;
+  optional bytes old_bson_value = 3;
+  optional bytes new_bson_value = 4;
 }
