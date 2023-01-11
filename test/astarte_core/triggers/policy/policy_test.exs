@@ -174,6 +174,20 @@ defmodule Astarte.Core.Triggers.PolicyTest do
                Policy.changeset(%Policy{}, params)
     end
 
+    test "invalid policy prefetch_count out of range" do
+      params = %{
+        name: "pippo",
+        maximum_capacity: 100,
+        error_handlers: [
+          %{on: "any_error", strategy: "discard"}
+        ],
+        prefetch_count: 0
+      }
+
+      assert %Ecto.Changeset{valid?: false, errors: [prefetch_count: _]} =
+               Policy.changeset(%Policy{}, params)
+    end
+
     test "valid policy discard and retry" do
       params = %{
         name: "pippo",
@@ -189,43 +203,86 @@ defmodule Astarte.Core.Triggers.PolicyTest do
     end
   end
 
-  test "policy protobuf roundtrip" do
-    policy = %Policy{
-      name: "pippo",
-      maximum_capacity: 100,
-      error_handlers: [
-        %Handler{on: %ErrorKeyword{keyword: "client_error"}, strategy: "retry"},
-        %Handler{on: %ErrorRange{error_codes: [500, 501, 503]}, strategy: "discard"}
-      ],
-      retry_times: 10
-    }
+  describe "policy protobuf roundtrip" do
+    test "when prefetch_count is set" do
+      policy = %Policy{
+        name: "pippo",
+        maximum_capacity: 100,
+        error_handlers: [
+          %Handler{on: %ErrorKeyword{keyword: "client_error"}, strategy: "retry"},
+          %Handler{on: %ErrorRange{error_codes: [500, 501, 503]}, strategy: "discard"}
+        ],
+        retry_times: 10,
+        prefetch_count: 2
+      }
 
-    policy_proto = Policy.to_policy_proto(policy)
+      policy_proto = Policy.to_policy_proto(policy)
 
-    assert %PolicyProto{
-             name: "pippo",
-             maximum_capacity: 100,
-             retry_times: 10,
-             event_ttl: 0,
-             error_handlers: error_handlers
-           } = policy_proto
+      assert %PolicyProto{
+               name: "pippo",
+               maximum_capacity: 100,
+               retry_times: 10,
+               event_ttl: 0,
+               prefetch_count: 2,
+               error_handlers: error_handlers
+             } = policy_proto
 
-    assert [
-             %HandlerProto{
-               strategy: :RETRY,
-               on: tagged_error_keyword
-             },
-             %HandlerProto{
-               strategy: :DISCARD,
-               on: tagged_error_range
-             }
-           ] = error_handlers
+      assert [
+               %HandlerProto{
+                 strategy: :RETRY,
+                 on: tagged_error_keyword
+               },
+               %HandlerProto{
+                 strategy: :DISCARD,
+                 on: tagged_error_range
+               }
+             ] = error_handlers
 
-    assert {:error_keyword, %ErrorKeywordProto{keyword: :CLIENT_ERROR}} = tagged_error_keyword
+      assert {:error_keyword, %ErrorKeywordProto{keyword: :CLIENT_ERROR}} = tagged_error_keyword
 
-    assert {:error_range, %ErrorRangeProto{error_codes: [500, 501, 503]}} = tagged_error_range
+      assert {:error_range, %ErrorRangeProto{error_codes: [500, 501, 503]}} = tagged_error_range
 
-    assert policy == Policy.from_policy_proto!(policy_proto)
+      assert policy == Policy.from_policy_proto!(policy_proto)
+    end
+
+    test "when prefetch_count is not set" do
+      policy = %Policy{
+        name: "pippo",
+        maximum_capacity: 100,
+        error_handlers: [
+          %Handler{on: %ErrorKeyword{keyword: "client_error"}, strategy: "retry"},
+          %Handler{on: %ErrorRange{error_codes: [500, 501, 503]}, strategy: "discard"}
+        ],
+        retry_times: 10
+      }
+
+      policy_proto = Policy.to_policy_proto(policy)
+
+      assert %PolicyProto{
+               name: "pippo",
+               maximum_capacity: 100,
+               retry_times: 10,
+               event_ttl: 0,
+               error_handlers: error_handlers
+             } = policy_proto
+
+      assert [
+               %HandlerProto{
+                 strategy: :RETRY,
+                 on: tagged_error_keyword
+               },
+               %HandlerProto{
+                 strategy: :DISCARD,
+                 on: tagged_error_range
+               }
+             ] = error_handlers
+
+      assert {:error_keyword, %ErrorKeywordProto{keyword: :CLIENT_ERROR}} = tagged_error_keyword
+
+      assert {:error_range, %ErrorRangeProto{error_codes: [500, 501, 503]}} = tagged_error_range
+
+      assert policy == Policy.from_policy_proto!(policy_proto)
+    end
   end
 
   test "JSON encode" do
@@ -238,7 +295,8 @@ defmodule Astarte.Core.Triggers.PolicyTest do
         }
       ],
       maximum_capacity: 300,
-      retry_times: 10
+      retry_times: 10,
+      prefetch_count: 1
     }
 
     assert Jason.encode(policy) ==
@@ -252,7 +310,8 @@ defmodule Astarte.Core.Triggers.PolicyTest do
                ],
                "maximum_capacity" => 300,
                "retry_times" => 10,
-               "event_ttl" => nil
+               "event_ttl" => nil,
+               "prefetch_count" => 1
              })
   end
 

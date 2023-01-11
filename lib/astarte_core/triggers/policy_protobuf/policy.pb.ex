@@ -14,4 +14,6 @@ defmodule Astarte.Core.Triggers.PolicyProtobuf.Policy do
     repeated: true,
     type: Astarte.Core.Triggers.PolicyProtobuf.Handler,
     json_name: "errorHandlers"
+
+  field :prefetch_count, 6, type: :int32, json_name: "prefetchCount"
 end
