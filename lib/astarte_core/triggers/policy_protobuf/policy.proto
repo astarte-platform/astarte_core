@@ -26,4 +26,5 @@ message Policy {
     int32 retry_times = 3;
     int32 event_ttl = 4;
     repeated Handler error_handlers = 5;
+    int32 prefetch_count = 6;
 }

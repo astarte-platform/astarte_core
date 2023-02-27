@@ -36,7 +36,8 @@ defmodule Astarte.Core.Triggers.Policy do
     :name,
     :maximum_capacity,
     :retry_times,
-    :event_ttl
+    :event_ttl,
+    :prefetch_count
   ]
 
   @derive Jason.Encoder
@@ -46,6 +47,7 @@ defmodule Astarte.Core.Triggers.Policy do
     field :maximum_capacity, :integer
     field :retry_times, :integer
     field :event_ttl, :integer
+    field :prefetch_count, :integer
     embeds_many :error_handlers, Policy.Handler
   end
 
@@ -58,6 +60,7 @@ defmodule Astarte.Core.Triggers.Policy do
     |> validate_inclusion(:retry_times, 1..100)
     |> validate_inclusion(:event_ttl, 1..86_400)
     |> validate_inclusion(:maximum_capacity, 1..1_000_000)
+    |> validate_inclusion(:prefetch_count, 1..300)
     |> cast_embed(:error_handlers, with: &Handler.changeset/2, required: true)
     |> validate_length(:error_handlers, min: 1, max: 200)
     |> validate_all_handlers_on_different_errors()
@@ -119,6 +122,7 @@ defmodule Astarte.Core.Triggers.Policy do
            maximum_capacity: maximum_capacity,
            retry_times: retry_times,
            event_ttl: event_ttl,
+           prefetch_count: prefetch_count,
            error_handlers: error_handlers
          } <- policy_proto do
       event_ttl =
@@ -134,7 +138,8 @@ defmodule Astarte.Core.Triggers.Policy do
          error_handlers: Enum.map(error_handlers, &Handler.from_handler_proto/1),
          maximum_capacity: maximum_capacity,
          retry_times: retry_times,
-         event_ttl: event_ttl
+         event_ttl: event_ttl,
+         prefetch_count: prefetch_count
        }}
     else
       _ -> {:error, :invalid_policy_data}
@@ -169,7 +174,8 @@ defmodule Astarte.Core.Triggers.Policy do
       error_handlers: error_handlers,
       maximum_capacity: maximum_capacity,
       retry_times: retry_times,
-      event_ttl: event_ttl
+      event_ttl: event_ttl,
+      prefetch_count: prefetch_count
     } = policy
 
     %PolicyProto{
@@ -177,6 +183,7 @@ defmodule Astarte.Core.Triggers.Policy do
       maximum_capacity: maximum_capacity,
       retry_times: retry_times,
       event_ttl: event_ttl || 0,
+      prefetch_count: prefetch_count,
       error_handlers: Enum.map(error_handlers, &Handler.to_handler_proto/1)
     }
   end
