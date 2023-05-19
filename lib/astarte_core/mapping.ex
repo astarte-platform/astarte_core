@@ -225,16 +225,24 @@ defmodule Astarte.Core.Mapping do
   end
 
   defp validate_database_retention_policy_and_ttl(changeset) do
-    # May return a more generic error if validate_not_set_unless/4 is used
-    if get_field(changeset, :database_retention_policy) == :no_ttl and
-         get_field(changeset, :database_retention_ttl) != nil do
-      add_error(
-        changeset,
-        :database_retention_policy,
-        "must be use_ttl if database_retention_ttl is set"
-      )
-    else
-      changeset
+    case {get_field(changeset, :database_retention_policy),
+          get_field(changeset, :database_retention_ttl)} do
+      {:no_ttl, any} when not is_nil(any) ->
+        add_error(
+          changeset,
+          :database_retention_policy,
+          "must be use_ttl if database_retention_ttl is set"
+        )
+
+      {:use_ttl, nil} ->
+        add_error(
+          changeset,
+          :database_retention_ttl,
+          "must be set if database_retention_policy is use_ttl"
+        )
+
+      _ ->
+        changeset
     end
   end
 
