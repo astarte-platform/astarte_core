@@ -182,6 +182,24 @@ defmodule Astarte.Core.MappingTest do
     assert %Ecto.Changeset{valid?: true} = Mapping.changeset(%Mapping{}, params, opts)
   end
 
+  test "mapping with use_ttl policy and no database_retention_ttl fails" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/invalid",
+      "type" => "string",
+      "reliability" => "guaranteed",
+      "database_retention_policy" => "use_ttl"
+    }
+
+    assert %Ecto.Changeset{
+             valid?: false,
+             errors: [
+               {:database_retention_ttl, _}
+             ]
+           } = Mapping.changeset(%Mapping{}, params, opts)
+  end
+
   test "mapping from legacy database result" do
     legacy_result = [
       endpoint: "/test",
