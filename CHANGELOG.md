@@ -4,10 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - Unreleased
+### Fixed
+- Forward ported changes from 1.0.5 (Do not allow mappings where `database_retention_policy`...)
+
+## [1.1.0-rc.0] - 2023-06-08
+### Changed
+- Bump Elixir and Erlang to 1.14.5 and 25.3.2, respectively.
+
+## [1.1.0-alpha.0] - 2022-11-14
 ### Changed
 - Extend interface mappings charset to support name prefixed with underscore
 - Introspection triggers are part of device triggers. Expose an API closer to other triggers.
+
+## [1.0.5] - Unreleased
+### Fixed
+- Do not allow mappings where `database_retention_policy` is
+  `use_ttl` but no ttl is set. Fix #84.
 
 ## [1.0.4] - 2022-09-26
 ### Added

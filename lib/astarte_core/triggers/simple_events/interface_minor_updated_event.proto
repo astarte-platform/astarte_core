@@ -19,7 +19,7 @@
 syntax = "proto3";
 
 message InterfaceMinorUpdatedEvent {
-  string interface = 1;
+  optional string interface = 1;
   int32 major_version = 2;
   int32 old_minor_version = 3;
   int32 new_minor_version = 4;

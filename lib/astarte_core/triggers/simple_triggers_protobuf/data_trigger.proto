@@ -19,9 +19,10 @@
 syntax = "proto3";
 
 message DataTrigger {
-    int32 version = 1 [default = 1];
+    int32 version = 1 [deprecated = true];
 
     enum DataTriggerType {
+        INVALID = 0;
         INCOMING_DATA = 1;
         VALUE_CHANGE = 2;
         VALUE_CHANGE_APPLIED = 3;
@@ -31,6 +32,7 @@ message DataTrigger {
     }
 
     enum MatchOperator {
+        INVALID_OPERATOR = 0;
         ANY = 1;
         EQUAL_TO = 2;
         NOT_EQUAL_TO = 3;
@@ -43,11 +45,11 @@ message DataTrigger {
     }
 
     DataTriggerType data_trigger_type = 2;
-    string interface_name = 3;
+    optional string interface_name = 3;
     int32 interface_major = 4;
-    string match_path = 5;
-    MatchOperator value_match_operator = 6 [default = ANY];
-    bytes known_value = 7;
-    string device_id = 8;
-    string group_name = 9;
+    optional string match_path = 5;
+    MatchOperator value_match_operator = 6;
+    optional bytes known_value = 7;
+    optional string device_id = 8;
+    optional string group_name = 9;
 }

@@ -22,8 +22,8 @@ defmodule Astarte.Core.Mixfile do
   def project do
     [
       app: :astarte_core,
-      version: "1.1.0-dev",
-      elixir: "~> 1.11",
+      version: "1.1.0-rc.0",
+      elixir: "~> 1.14",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
@@ -60,12 +60,10 @@ defmodule Astarte.Core.Mixfile do
       {:cyanide, github: "ispirata/cyanide"},
       {:ecto, "~> 3.4"},
       {:ecto_morph, "~> 0.1.23"},
-      {:exprotobuf, "~> 1.2"},
-      # Lock gpb to 4.12.0 until this is solved https://github.com/bitwalker/exprotobuf/issues/113
-      {:gpb, "~> 4.12.0"},
+      {:protobuf, github: "elixir-protobuf/protobuf"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
-      {:excoveralls, "~> 0.12", only: :test},
+      {:excoveralls, "~> 0.15", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:dialyzex, github: "Comcast/dialyzex", only: [:dev, :ci]}
     ]

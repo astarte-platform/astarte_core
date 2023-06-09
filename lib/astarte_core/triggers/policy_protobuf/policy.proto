@@ -18,10 +18,13 @@
 
 syntax = "proto3";
 
+import "lib/astarte_core/triggers/policy_protobuf/handler.proto";
+
 message Policy {
-    string name = 1;
+    optional string name = 1;
     int32 maximum_capacity = 2;
     int32 retry_times = 3;
     int32 event_ttl = 4;
     repeated Handler error_handlers = 5;
+    int32 prefetch_count = 6;
 }

@@ -18,15 +18,29 @@
 
 syntax = "proto3";
 
+import "lib/astarte_core/triggers/simple_events/device_connected_event.proto";
+import "lib/astarte_core/triggers/simple_events/device_disconnected_event.proto";
+import "lib/astarte_core/triggers/simple_events/device_error_event.proto";
+import "lib/astarte_core/triggers/simple_events/incoming_data_event.proto";
+import "lib/astarte_core/triggers/simple_events/value_change_event.proto";
+import "lib/astarte_core/triggers/simple_events/value_change_applied_event.proto";
+import "lib/astarte_core/triggers/simple_events/path_created_event.proto";
+import "lib/astarte_core/triggers/simple_events/path_removed_event.proto";
+import "lib/astarte_core/triggers/simple_events/value_stored_event.proto";
+import "lib/astarte_core/triggers/simple_events/incoming_introspection_event.proto";
+import "lib/astarte_core/triggers/simple_events/interface_added_event.proto";
+import "lib/astarte_core/triggers/simple_events/interface_removed_event.proto";
+import "lib/astarte_core/triggers/simple_events/interface_minor_updated_event.proto";
+
 message SimpleEvent {
-    int32 version = 1 [default = 1];
+    int32 version = 1 [deprecated = true];
 
-    bytes simple_trigger_id = 2;
-    bytes parent_trigger_id = 3;
+    optional bytes simple_trigger_id = 2;
+    optional bytes parent_trigger_id = 3;
 
-    string realm = 4;
-    string device_id = 5;
-    int64 timestamp = 18;
+    optional string realm = 4;
+    optional string device_id = 5;
+    optional int64 timestamp = 18;
 
     oneof event {
         DeviceConnectedEvent device_connected_event = 6;

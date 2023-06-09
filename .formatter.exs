@@ -1,5 +1,5 @@
 [
-  import_deps: [:ecto],
+  import_deps: [:ecto, :protobuf],
   inputs: [
     "lib/**/*.{ex,exs}",
     "test/**/*.{ex,exs}",
