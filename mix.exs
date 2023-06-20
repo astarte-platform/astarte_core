@@ -57,10 +57,10 @@ defmodule Astarte.Core.Mixfile do
 
   defp deps do
     [
-      {:cyanide, github: "ispirata/cyanide"},
+      {:cyanide, "~> 2.0"},
       {:ecto, "~> 3.4"},
       {:ecto_morph, "~> 0.1.23"},
-      {:protobuf, github: "elixir-protobuf/protobuf"},
+      {:protobuf, "~> 0.12"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.15", only: :test},
