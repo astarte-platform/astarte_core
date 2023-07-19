@@ -299,8 +299,8 @@ defmodule Astarte.Core.Triggers.PolicyTest do
       prefetch_count: 1
     }
 
-    assert Jason.encode(policy) ==
-             Jason.encode(%{
+    assert Jason.decode!(Jason.encode!(policy)) ==
+             %{
                "name" => "somename",
                "error_handlers" => [
                  %{
@@ -312,7 +312,7 @@ defmodule Astarte.Core.Triggers.PolicyTest do
                "retry_times" => 10,
                "event_ttl" => nil,
                "prefetch_count" => 1
-             })
+             }
   end
 
   test "JSON decode" do
