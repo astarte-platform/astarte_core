@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.1.0] - 2023-06-20
 ### Fixed
 - Forward ported changes from 1.0.5 (Do not allow mappings where `database_retention_policy`...)
+- Handle Cyanide 2.0 binaries correctly. Fix #95.
 
 ## [1.1.0-rc.0] - 2023-06-08
 ### Changed
