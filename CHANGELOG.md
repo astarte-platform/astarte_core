@@ -4,14 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.1.1] - Unreleased
+## [1.1.1] - 2023-10-03
 ### Fixed
+- Handle Cyanide 2.0 binaries correctly. Fix #95.
 - Correctly encode binaryblobarrays in JSON payload of Astarte events.
 
 ## [1.1.0] - 2023-06-20
 ### Fixed
 - Forward ported changes from 1.0.5 (Do not allow mappings where `database_retention_policy`...)
-- Handle Cyanide 2.0 binaries correctly. Fix #95.
 
 ## [1.1.0-rc.0] - 2023-06-08
 ### Changed
