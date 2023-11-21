@@ -300,6 +300,11 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     Base.encode64(value)
   end
 
+  # Special case: make sure binary bson type is base64 encoded inside arrays in objects, too
+  defp normalize_value(binary_array) when is_list(binary_array) do
+    Enum.map(binary_array, &normalize_value/1)
+  end
+
   defp normalize_value(value) do
     value
   end
