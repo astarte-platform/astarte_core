@@ -185,6 +185,13 @@ defmodule Astarte.Core.Mapping.ValueType do
           :ok
         end
 
+      {%Cyanide.Binary{subtype: _subtype, data: bin}, :binaryblob} when is_binary(bin) ->
+        if byte_size(bin) > @blob_size do
+          {:error, :value_size_exceeded}
+        else
+          :ok
+        end
+
       {{_subtype, bin}, :binaryblob} when is_binary(bin) ->
         if byte_size(bin) > @blob_size do
           {:error, :value_size_exceeded}
