@@ -23,7 +23,7 @@ defmodule Astarte.Core.Mixfile do
     [
       app: :astarte_core,
       version: "1.2.0-dev",
-      elixir: "~> 1.14",
+      elixir: "~> 1.15",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
@@ -35,7 +35,7 @@ defmodule Astarte.Core.Mixfile do
       ],
       description: description(),
       package: package(),
-      dialyzer_cache_directory: dialyzer_cache_directory(Mix.env()),
+      dialyzer: [plt_core_path: dialyzer_cache_directory(Mix.env())],
       deps: deps(),
       source_url: "https://github.com/astarte-platform/astarte_core",
       homepage_url: "https://astarte-platform.org/"
@@ -65,7 +65,7 @@ defmodule Astarte.Core.Mixfile do
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.15", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:dialyzex, github: "Comcast/dialyzex", only: [:dev, :ci]}
+      {:dialyxir, "~> 1.4", only: [:dev, :ci], runtime: false}
     ]
   end
 
