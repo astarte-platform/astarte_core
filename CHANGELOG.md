@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Bump Elixir to 1.15.7.
 - Bump Erlang/OTP to 26.1.
+- IncomingIntrospectionEvent holds now a interface-name -> {major, minor} map
+  instead of the plain introspection string.
 
 ## [1.1.1] - 2023-10-03
 ### Fixed

@@ -412,4 +412,31 @@ defmodule Astarte.Core.SimpleEventsTest do
       assert ValueStoredEvent.decode(serialized_event) == event
     end
   end
+
+  describe "IncomingIntrospectionEvent" do
+    alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
+
+    test "is correctly serialized when payload is a string" do
+      introspection_string = "com.an.Interface:1:0;com.another.Interface:0:1"
+
+      event = %IncomingIntrospectionEvent{introspection: introspection_string}
+
+      assert ^event =
+               IncomingIntrospectionEvent.encode(event) |> IncomingIntrospectionEvent.decode()
+    end
+
+    test "is correctly serialized when payload is a map" do
+      alias Astarte.Core.Triggers.SimpleEvents.InterfaceVersion
+
+      introspection_map = %{
+        "com.an.Interface" => %InterfaceVersion{major: 1, minor: 0},
+        "com.another.Interface" => %InterfaceVersion{major: 0, minor: 1}
+      }
+
+      event = %IncomingIntrospectionEvent{introspection_map: introspection_map}
+
+      assert ^event =
+               IncomingIntrospectionEvent.encode(event) |> IncomingIntrospectionEvent.decode()
+    end
+  end
 end

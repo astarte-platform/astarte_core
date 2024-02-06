@@ -1,7 +1,7 @@
 //
 // This file is part of Astarte.
 //
-// Copyright 2017 Ispirata Srl
+// Copyright 2017-2024 SECO Mind Srl
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,12 @@
 
 syntax = "proto3";
 
+message InterfaceVersion {
+  int32 major = 1;
+  int32 minor = 2;
+}
+
 message IncomingIntrospectionEvent {
-  optional string introspection = 1;
+  optional string introspection = 1 [deprecated = true];
+  map<string, InterfaceVersion> introspection_map = 2;
 }
