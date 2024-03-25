@@ -1,6 +1,7 @@
 defmodule CQLUtilsTest do
   use ExUnit.Case
   alias Astarte.Core.CQLUtils
+  alias Astarte.Core.Realm
 
   test "interface name to table name" do
     assert CQLUtils.interface_name_to_table_name("com.ispirata.Hemera.DeviceLog", 1) ==
@@ -147,5 +148,43 @@ defmodule CQLUtilsTest do
 
     assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/foo") !=
              Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/bar")
+  end
+
+  test "realm name does not get encoded, persistent_term exists" do
+    assert CQLUtils.realm_name_to_keyspace_name("example", "atestinstance") ==
+             "atestinstanceexample"
+
+    assert Realm.valid_name?(CQLUtils.realm_name_to_keyspace_name("example", "atestinstance")) ==
+             true
+  end
+
+  test "realm name gets encoded, persistent_term exists" do
+    assert CQLUtils.realm_name_to_keyspace_name(
+             "averyveryverylongrealmnamejustforthistest",
+             "atestinstance"
+           ) ==
+             "yxrlc3rpbnn0yw5jzwf2zxj5dmvyexzlcnlsb25ncmvhbg1u"
+
+    assert Realm.valid_name?(
+             CQLUtils.realm_name_to_keyspace_name(
+               "averyveryverylongrealmnamejustforthistest",
+               "atestinstance"
+             )
+           ) == true
+  end
+
+  test "realm name is empty, persistent_term exists" do
+    assert CQLUtils.realm_name_to_keyspace_name("", "atestinstance") == "atestinstance"
+
+    assert Realm.valid_name?(CQLUtils.realm_name_to_keyspace_name("", "atestinstance")) ==
+             true
+  end
+
+  test "realm name is not empty, persistent_term does not exists" do
+    assert CQLUtils.realm_name_to_keyspace_name("example") ==
+             "example"
+
+    assert Realm.valid_name?(CQLUtils.realm_name_to_keyspace_name("example")) ==
+             true
   end
 end
