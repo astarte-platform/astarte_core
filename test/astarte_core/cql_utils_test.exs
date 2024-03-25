@@ -150,7 +150,7 @@ defmodule CQLUtilsTest do
              Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/bar")
   end
 
-  test "realm name does not get encoded, persistent_term exists" do
+  test "realm name does not get encoded" do
     assert CQLUtils.realm_name_to_keyspace_name("example", "atestinstance") ==
              "atestinstanceexample"
 
@@ -158,7 +158,7 @@ defmodule CQLUtilsTest do
              true
   end
 
-  test "realm name gets encoded, persistent_term exists" do
+  test "realm name is > 47 characters long" do
     assert CQLUtils.realm_name_to_keyspace_name(
              "averyveryverylongrealmnamejustforthistest",
              "atestinstance"
@@ -173,14 +173,14 @@ defmodule CQLUtilsTest do
            ) == true
   end
 
-  test "realm name is empty, persistent_term exists" do
+  test "realm name is empty, instance id exists" do
     assert CQLUtils.realm_name_to_keyspace_name("", "atestinstance") == "atestinstance"
 
     assert Realm.valid_name?(CQLUtils.realm_name_to_keyspace_name("", "atestinstance")) ==
              true
   end
 
-  test "realm name is not empty, persistent_term does not exists" do
+  test "realm name is not empty, no instance id" do
     assert CQLUtils.realm_name_to_keyspace_name("example") ==
              "example"
 
