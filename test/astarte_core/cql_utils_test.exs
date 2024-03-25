@@ -1,6 +1,7 @@
 defmodule CQLUtilsTest do
   use ExUnit.Case
   alias Astarte.Core.CQLUtils
+  alias Astarte.Core.Realm
 
   test "interface name to table name" do
     assert CQLUtils.interface_name_to_table_name("com.ispirata.Hemera.DeviceLog", 1) ==
@@ -147,5 +148,30 @@ defmodule CQLUtilsTest do
 
     assert Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/foo") !=
              Astarte.Core.CQLUtils.endpoint_id("com.foo", 2, "/a/%{something}/bar")
+  end
+
+  describe "Realm name to keyspace name translation" do
+    test "works with a short realm name that does not get encoded" do
+      assert CQLUtils.realm_name_to_keyspace_name("example", "atestinstance") ==
+               "atestinstanceexample"
+
+      assert Realm.valid_name?(CQLUtils.realm_name_to_keyspace_name("example", "atestinstance")) ==
+               true
+    end
+
+    test "works with a long realm name that does get encoded" do
+      assert CQLUtils.realm_name_to_keyspace_name(
+               "averyveryverylongrealmnamejustforthistest",
+               "atestinstance"
+             ) ==
+               "yxrlc3rpbnn0yw5jzwf2zxj5dmvyexzlcnlsb25ncmvhbg1u"
+
+      assert Realm.valid_name?(
+               CQLUtils.realm_name_to_keyspace_name(
+                 "averyveryverylongrealmnamejustforthistest",
+                 "atestinstance"
+               )
+             ) == true
+    end
   end
 end
