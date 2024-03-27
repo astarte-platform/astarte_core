@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Bump Erlang/OTP to 26.1.
 - IncomingIntrospectionEvent holds now a interface-name -> {major, minor} map
   instead of the plain introspection string.
+- add function for translating realm to keyspace, based on persistent_term 
 
 ## [1.1.1] - 2023-10-03
 ### Fixed

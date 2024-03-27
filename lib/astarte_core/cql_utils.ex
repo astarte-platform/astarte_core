@@ -167,4 +167,21 @@ defmodule Astarte.Core.CQLUtils do
 
     eid
   end
+
+  @spec realm_name_to_keyspace_name(nonempty_binary(), nonempty_binary()) :: nonempty_binary()
+  def realm_name_to_keyspace_name(realm_name, astarte_instance_id \\ "")
+      when is_binary(realm_name) do
+    encode_instance_with_realm(astarte_instance_id, realm_name)
+  end
+
+  defp encode_instance_with_realm(astarte_instance_id, realm_name) do
+    case String.length(astarte_instance_id <> realm_name) do
+      len when len >= 48 -> Base.url_encode64(astarte_instance_id <> realm_name, padding: false)
+      _ -> astarte_instance_id <> realm_name
+    end
+    |> String.replace("-", "")
+    |> String.replace("_", "")
+    |> String.slice(0..47)
+    |> String.downcase()
+  end
 end
