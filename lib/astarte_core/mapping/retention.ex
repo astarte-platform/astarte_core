@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,7 +51,21 @@ defmodule Astarte.Core.Mapping.Retention do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, retention} ->
+        retention
+
+      :error ->
+        raise ArgumentError, message: "#{inspect(value)} is not a valid retention representation"
+    end
+  end
 
   @impl true
   def dump(retention) when is_atom(retention) do
@@ -63,9 +77,9 @@ defmodule Astarte.Core.Mapping.Retention do
     end
   end
 
-  def to_int(retention) when is_atom(retention) do
+  def dump!(retention) when is_atom(retention) do
     case dump(retention) do
-      {:ok, int} -> int
+      {:ok, retention_int} -> retention_int
       :error -> raise ArgumentError, message: "#{inspect(retention)} is not a valid retention"
     end
   end
@@ -80,14 +94,11 @@ defmodule Astarte.Core.Mapping.Retention do
     end
   end
 
-  def from_int(retention_int) when is_integer(retention_int) do
-    case load(retention_int) do
-      {:ok, retention} ->
-        retention
+  def to_int(retention) when is_atom(retention) do
+    dump!(retention)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{retention_int} is not a valid retention int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end

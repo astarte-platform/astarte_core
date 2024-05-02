@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -185,29 +185,29 @@ defmodule Astarte.Core.Mapping do
       interface_id: interface_id
     } = db_result
 
+    database_retention_policy =
+      database_retention_policy
+      |> Kernel.||(:no_ttl)
+      |> DatabaseRetentionPolicy.cast!()
+
+    doc = Map.get(db_result, :doc)
+    description = Map.get(db_result, :description)
+
     %Mapping{
       endpoint: endpoint,
-      value_type: ValueType.from_int(value_type),
-      reliability: Reliability.from_int(reliability),
-      retention: Retention.from_int(retention),
+      value_type: ValueType.cast!(value_type),
+      reliability: Reliability.cast!(reliability),
+      retention: Retention.cast!(retention),
       expiry: expiry,
-      database_retention_policy:
-        database_retention_policy_from_maybe_int(database_retention_policy),
+      database_retention_policy: database_retention_policy,
       database_retention_ttl: database_retention_ttl,
       allow_unset: allow_unset,
       explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
       interface_id: interface_id,
-      doc: Map.get(db_result, :doc),
-      description: Map.get(db_result, :description)
+      doc: doc,
+      description: description
     }
-  end
-
-  defp database_retention_policy_from_maybe_int(database_retention_policy) do
-    case database_retention_policy do
-      nil -> :no_ttl
-      _any_int -> DatabaseRetentionPolicy.from_int(database_retention_policy)
-    end
   end
 
   defp validate_not_set_unless(changeset, field, param, values) do
