@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,22 @@ defmodule Astarte.Core.Mapping.DatabaseRetentionPolicy do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, policy} ->
+        policy
+
+      :error ->
+        raise ArgumentError,
+          message: "#{inspect(value)} is not a valid database retention policy representation"
+    end
+  end
 
   @impl true
   def dump(policy) when is_atom(policy) do
@@ -59,10 +74,10 @@ defmodule Astarte.Core.Mapping.DatabaseRetentionPolicy do
     end
   end
 
-  def to_int(policy) when is_atom(policy) do
+  def dump!(policy) when is_atom(policy) do
     case dump(policy) do
-      {:ok, int} ->
-        int
+      {:ok, policy_int} ->
+        policy_int
 
       :error ->
         raise ArgumentError,
@@ -79,14 +94,11 @@ defmodule Astarte.Core.Mapping.DatabaseRetentionPolicy do
     end
   end
 
-  def from_int(policy_int) when is_integer(policy_int) do
-    case load(policy_int) do
-      {:ok, policy} ->
-        policy
+  def to_int(database_retention_policy) when is_atom(database_retention_policy) do
+    dump!(database_retention_policy)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{policy_int} is not a valid database retention policy int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end

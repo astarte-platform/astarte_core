@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -66,11 +66,11 @@ defmodule Astarte.Core.InterfaceDescriptor do
         name: name,
         major_version: major_version,
         minor_version: minor_version,
-        type: Type.from_int(type),
-        ownership: Ownership.from_int(ownership),
-        aggregation: Aggregation.from_int(aggregation),
+        type: Type.cast!(type),
+        ownership: Ownership.cast!(ownership),
+        aggregation: Aggregation.cast!(aggregation),
         storage: storage,
-        storage_type: StorageType.from_int(storage_type),
+        storage_type: StorageType.cast!(storage_type),
         automaton:
           {:erlang.binary_to_term(automaton_transitions),
            :erlang.binary_to_term(automaton_accepting_states)},

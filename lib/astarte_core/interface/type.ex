@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,22 @@ defmodule Astarte.Core.Interface.Type do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, type} ->
+        type
+
+      :error ->
+        raise ArgumentError,
+          message: "#{inspect(value)} is not a valid interface type representation"
+    end
+  end
 
   @impl true
   def dump(type) when is_atom(type) do
@@ -59,7 +74,7 @@ defmodule Astarte.Core.Interface.Type do
     end
   end
 
-  def to_int(type) when is_atom(type) do
+  def dump!(type) when is_atom(type) do
     case dump(type) do
       {:ok, type_int} -> type_int
       :error -> raise ArgumentError, message: "#{inspect(type)} is not a valid interface type"
@@ -75,14 +90,11 @@ defmodule Astarte.Core.Interface.Type do
     end
   end
 
-  def from_int(type_int) when is_integer(type_int) do
-    case load(type_int) do
-      {:ok, type} ->
-        type
+  def to_int(interface) when is_atom(interface) do
+    dump!(interface)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{type_int} is not a valid interface type int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end
