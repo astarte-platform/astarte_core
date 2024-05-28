@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Extend interface mappings charset to support name prefixed with underscore
 - Introspection triggers are part of device triggers. Expose an API closer to other triggers.
 
+## [1.0.6] - 2024-04-18
+
 ## [1.0.5] - 2023-09-25
 ### Fixed
 - Do not allow mappings where `database_retention_policy` is
