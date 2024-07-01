@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,22 @@ defmodule Astarte.Core.Interface.Aggregation do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, aggregation} ->
+        aggregation
+
+      :error ->
+        raise ArgumentError,
+          message: "#{inspect(value)} is not a valid aggregation representation"
+    end
+  end
 
   @impl true
   def dump(aggregation) when is_atom(aggregation) do
@@ -59,7 +74,7 @@ defmodule Astarte.Core.Interface.Aggregation do
     end
   end
 
-  def to_int(aggregation) when is_atom(aggregation) do
+  def dump!(aggregation) when is_atom(aggregation) do
     case dump(aggregation) do
       {:ok, aggregation_int} -> aggregation_int
       :error -> raise ArgumentError, message: "#{inspect(aggregation)} is not a valid aggregation"
@@ -75,14 +90,11 @@ defmodule Astarte.Core.Interface.Aggregation do
     end
   end
 
-  def from_int(aggregation_int) when is_integer(aggregation_int) do
-    case load(aggregation_int) do
-      {:ok, aggregation} ->
-        aggregation
+  def to_int(aggregation) when is_atom(aggregation) do
+    dump!(aggregation)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{aggregation_int} is not a valid aggregation int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end
