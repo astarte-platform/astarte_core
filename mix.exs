@@ -22,7 +22,7 @@ defmodule Astarte.Core.Mixfile do
   def project do
     [
       app: :astarte_core,
-      version: "1.2.0-dev",
+      version: "1.2.1-dev",
       elixir: "~> 1.15",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
