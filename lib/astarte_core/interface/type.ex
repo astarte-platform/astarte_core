@@ -19,6 +19,8 @@
 defmodule Astarte.Core.Interface.Type do
   use Ecto.Type
 
+  @type t :: :properties | :datastream
+
   @interface_type_properties 1
   @interface_type_datastream 2
   @valid_atoms [

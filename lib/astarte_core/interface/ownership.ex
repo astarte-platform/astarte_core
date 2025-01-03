@@ -19,6 +19,8 @@
 defmodule Astarte.Core.Interface.Ownership do
   use Ecto.Type
 
+  @type t :: :device | :server
+
   @interface_ownership_device 1
   @interface_ownership_server 2
   @valid_atoms [
