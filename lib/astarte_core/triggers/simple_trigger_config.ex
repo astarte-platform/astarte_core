@@ -20,7 +20,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   @moduledoc """
   This module handles the functions for creating a `SimpleTriggerConfig` and converting it to and from a `TaggedSimpleTrigger`.
   """
-  use Ecto.Schema
+  use TypedEctoSchema
 
   import Ecto.Changeset
   alias Astarte.Core.CQLUtils
@@ -38,7 +38,7 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TriggerTargetContainer
 
   @primary_key false
-  embedded_schema do
+  typed_embedded_schema do
     # Common
     field :type, :string
     field :on, :string

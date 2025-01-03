@@ -60,6 +60,8 @@ defmodule Astarte.Core.Mixfile do
       {:cyanide, "~> 2.0"},
       {:ecto, "~> 3.4"},
       {:ecto_morph, "~> 0.1.23"},
+      {:typed_ecto_schema, "~> 0.4"},
+      {:typedstruct, "~> 0.5"},
       {:protobuf, "~> 0.12"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},

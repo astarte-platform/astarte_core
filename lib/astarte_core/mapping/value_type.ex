@@ -19,6 +19,22 @@
 defmodule Astarte.Core.Mapping.ValueType do
   use Ecto.Type
 
+  @type t ::
+          :double
+          | :integer
+          | :boolean
+          | :longinteger
+          | :string
+          | :binaryblob
+          | :datetime
+          | :doublearray
+          | :integerarray
+          | :booleanarray
+          | :longintegerarray
+          | :stringarray
+          | :binaryblobarray
+          | :datetimearray
+
   @mapping_value_type_double 1
   @mapping_value_type_doublearray 2
   @mapping_value_type_integer 3

@@ -17,7 +17,7 @@
 #
 
 defmodule Astarte.Core.Interface do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   alias Astarte.Core.CQLUtils
@@ -45,7 +45,7 @@ defmodule Astarte.Core.Interface do
   ]
 
   @primary_key false
-  embedded_schema do
+  typed_embedded_schema do
     field :interface_id, :binary
     field :name
     field :major_version, :integer

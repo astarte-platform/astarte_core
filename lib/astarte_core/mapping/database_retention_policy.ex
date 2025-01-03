@@ -19,6 +19,8 @@
 defmodule Astarte.Core.Mapping.DatabaseRetentionPolicy do
   use Ecto.Type
 
+  @type t :: :no_ttl | :use_ttl
+
   @mapping_policy_no_ttl 1
   @mapping_policy_use_ttl 2
   @valid_atoms [
