@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Function for translating realm to keyspace, to support multiple Astarte 
   instances sharing the same database
+- Added device capabilities
+- Added device capability `purge_property_compression_format`
 
 ### Changed
 - Bump Elixir to 1.15.7.
