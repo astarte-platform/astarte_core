@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,7 +51,22 @@ defmodule Astarte.Core.Mapping.Reliability do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(reliability) do
+    case cast(reliability) do
+      {:ok, reliability} ->
+        reliability
+
+      :error ->
+        raise ArgumentError,
+          message: "#{inspect(reliability)} is not a valid reliability representation"
+    end
+  end
 
   @impl true
   def dump(reliability) when is_atom(reliability) do
@@ -63,9 +78,9 @@ defmodule Astarte.Core.Mapping.Reliability do
     end
   end
 
-  def to_int(reliability) when is_atom(reliability) do
+  def dump!(reliability) when is_atom(reliability) do
     case dump(reliability) do
-      {:ok, int} -> int
+      {:ok, reliability_int} -> reliability_int
       :error -> raise ArgumentError, message: "#{inspect(reliability)} is not a valid reliability"
     end
   end
@@ -80,14 +95,11 @@ defmodule Astarte.Core.Mapping.Reliability do
     end
   end
 
-  def from_int(reliability_int) when is_integer(reliability_int) do
-    case load(reliability_int) do
-      {:ok, reliability} ->
-        reliability
+  def to_int(reliability) when is_atom(reliability) do
+    dump!(reliability)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{reliability_int} is not a valid reliability int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end

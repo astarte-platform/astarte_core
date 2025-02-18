@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,7 +46,22 @@ defmodule Astarte.Core.StorageType do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, value} ->
+        value
+
+      :error ->
+        raise ArgumentError,
+          message: "#{inspect(value)} is not a valid storage type representation"
+    end
+  end
 
   @impl true
   def dump(storage_type) when is_atom(storage_type) do
@@ -71,10 +86,7 @@ defmodule Astarte.Core.StorageType do
     end
   end
 
-  @doc """
-  returns storage_type associated int value.
-  """
-  def to_int(storage_type) when is_atom(storage_type) do
+  def dump!(storage_type) when is_atom(storage_type) do
     case dump(storage_type) do
       {:ok, storage_type_int} ->
         storage_type_int
@@ -107,17 +119,11 @@ defmodule Astarte.Core.StorageType do
     end
   end
 
-  @doc """
-  returns storage_type atom from a valid storage type int value.
-  """
-  def from_int(storage_type_int) when is_integer(storage_type_int) do
-    case load(storage_type_int) do
-      {:ok, storage_type} ->
-        storage_type
+  def to_int(storage_type) when is_atom(storage_type) do
+    dump!(storage_type)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{storage_type_int} is not a valid storage type int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end
