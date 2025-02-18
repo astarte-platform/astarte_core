@@ -19,6 +19,8 @@
 defmodule Astarte.Core.Interface.Aggregation do
   use Ecto.Type
 
+  @type t :: :individual | :object
+
   @interface_aggregation_individual 1
   @interface_aggregation_object 2
   @valid_atoms [

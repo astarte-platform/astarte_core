@@ -17,6 +17,8 @@
 #
 
 defmodule Astarte.Core.InterfaceDescriptor do
+  use TypedStruct
+
   alias Astarte.Core.Interface
   alias Astarte.Core.Interface.Aggregation
   alias Astarte.Core.Interface.Ownership
@@ -24,16 +26,18 @@ defmodule Astarte.Core.InterfaceDescriptor do
   alias Astarte.Core.InterfaceDescriptor
   alias Astarte.Core.StorageType
 
-  defstruct name: "",
-            major_version: 0,
-            minor_version: 0,
-            type: nil,
-            ownership: nil,
-            aggregation: nil,
-            interface_id: nil,
-            automaton: nil,
-            storage: nil,
-            storage_type: nil
+  typedstruct do
+    field :name, String.t(), default: ""
+    field :major_version, non_neg_integer(), default: 0
+    field :minor_version, non_neg_integer(), default: 0
+    field :type, Type.t()
+    field :ownership, Ownership.t()
+    field :aggregation, Aggregation.t()
+    field :interface_id, :binary
+    field :automaton, {%{}, %{}}
+    field :storage, String.t()
+    field :storage_type, StorageType.t()
+  end
 
   @doc """
   Deserializes an `%InterfaceDescriptor{}` from `db_result`.

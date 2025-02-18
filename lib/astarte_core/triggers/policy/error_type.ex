@@ -20,6 +20,8 @@ defmodule Astarte.Core.Triggers.Policy.ErrorType do
   use Ecto.Type
   alias Astarte.Core.Triggers.Policy
 
+  @type t :: %{}
+
   # a Json
   def type, do: :map
 

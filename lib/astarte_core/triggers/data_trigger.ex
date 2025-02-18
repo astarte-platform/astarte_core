@@ -17,14 +17,31 @@
 #
 
 defmodule Astarte.Core.Triggers.DataTrigger do
-  @enforce_keys [:trigger_targets]
-  defstruct [
-    :interface_id,
-    :path_match_tokens,
-    :value_match_operator,
-    :known_value,
-    :trigger_targets
-  ]
+  use TypedStruct
+  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.AMQPTriggerTarget
+
+  @type amqp_trigger_target :: AMQPTriggerTarget.t()
+  @type known_value :: term() | nil
+  @type interface_id :: :any_interface | :binary
+  @type path_match_tokens :: :any_endpoint | String.t()
+  @type value_match_operator ::
+          :ANY
+          | :EQUAL_TO
+          | :NOT_EQUAL_TO
+          | :GREATER_THAN
+          | :GREATER_OR_EQUAL_TO
+          | :LESS_THAN
+          | :LESS_OR_EQUAL_TO
+          | :CONTAINS
+          | :NOT_CONTAINS
+
+  typedstruct do
+    field :interface_id, interface_id()
+    field :path_match_tokens, path_match_tokens()
+    field :value_match_operator, value_match_operator()
+    field :known_value, known_value()
+    field :trigger_targets, [amqp_trigger_target()], enforce: true
+  end
 
   def are_congruent?(trigger_a, trigger_b) do
     trigger_a.interface_id == trigger_b.interface_id and
