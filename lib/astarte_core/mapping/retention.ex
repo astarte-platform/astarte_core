@@ -19,6 +19,8 @@
 defmodule Astarte.Core.Mapping.Retention do
   use Ecto.Type
 
+  @type t :: :discard | :volatile | :stored
+
   @mapping_retention_discard 1
   @mapping_retention_volatile 2
   @mapping_retention_stored 3
