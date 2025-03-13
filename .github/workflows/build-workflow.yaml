@@ -22,25 +22,25 @@ jobs:
     env:
       MIX_ENV: ci
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v1
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
       with:
         path: deps
         key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       with:
         path: _build
         key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     - id: plt_cache
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: dialyzer_cache
         key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-dialyzer_cache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-dialyzer_cache-
-    - uses: erlef/setup-beam@v1.15
+    - uses: erlef/setup-beam@v1.18
       with:
         otp-version: ${{ env.otp_version }}
         elixir-version: ${{ env.elixir_version }}
@@ -62,18 +62,18 @@ jobs:
     env:
       MIX_ENV: test
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v1
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
       with:
         path: deps
         key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       with:
         path: _build
         key: ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-${{ env.elixir_version }}-${{ env.otp_version }}-_build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-    - uses: erlef/setup-beam@v1.15
+    - uses: erlef/setup-beam@v1.18
       with:
         otp-version: ${{ env.otp_version }}
         elixir-version: ${{ env.elixir_version }}
@@ -85,8 +85,7 @@ jobs:
       run: mix compile
     - name: Test and Coverage
       run: mix coveralls.json  --exclude wip -o coverage_results
-    - name: Upload Coverage Results to CodeCov
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run: |
-        bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN
+    - uses: codecov/codecov-action@v5
+      name: Upload Coverage Results to CodeCov
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}

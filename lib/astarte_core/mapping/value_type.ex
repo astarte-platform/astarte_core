@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -90,7 +90,21 @@ defmodule Astarte.Core.Mapping.ValueType do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, value_type} ->
+        value_type
+
+      :error ->
+        raise ArgumentError, message: "#{inspect(value)} is not a valid value type representation"
+    end
+  end
 
   @impl true
   def dump(value_type) when is_atom(value_type) do
@@ -113,9 +127,9 @@ defmodule Astarte.Core.Mapping.ValueType do
     end
   end
 
-  def to_int(value_type) when is_atom(value_type) do
+  def dump!(value_type) when is_atom(value_type) do
     case dump(value_type) do
-      {:ok, int} -> int
+      {:ok, value_type_int} -> value_type_int
       :error -> raise ArgumentError, message: "#{inspect(value_type)} is not a valid value type"
     end
   end
@@ -141,15 +155,12 @@ defmodule Astarte.Core.Mapping.ValueType do
     end
   end
 
-  def from_int(value_type_int) when is_integer(value_type_int) do
-    case load(value_type_int) do
-      {:ok, value_type} ->
-        value_type
+  def to_int(value_type) when is_atom(value_type) do
+    dump!(value_type)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{value_type_int} is not a valid value type int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 
   def validate_value(expected_type, value) do

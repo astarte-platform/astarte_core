@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017-2018 Ispirata Srl
+# Copyright 2017-2024 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -60,7 +60,21 @@ defmodule Astarte.Core.Interface.Ownership do
     end
   end
 
+  def cast(int) when is_integer(int) do
+    load(int)
+  end
+
   def cast(_), do: :error
+
+  def cast!(value) do
+    case cast(value) do
+      {:ok, ownership} ->
+        ownership
+
+      :error ->
+        raise ArgumentError, message: "#{inspect(value)} is not a valid ownership representation"
+    end
+  end
 
   @impl true
   def dump(ownership) when is_atom(ownership) do
@@ -71,7 +85,7 @@ defmodule Astarte.Core.Interface.Ownership do
     end
   end
 
-  def to_int(ownership) when is_atom(ownership) do
+  def dump!(ownership) when is_atom(ownership) do
     case dump(ownership) do
       {:ok, ownership_int} -> ownership_int
       :error -> raise ArgumentError, message: "#{inspect(ownership)} is not a valid ownership"
@@ -87,14 +101,11 @@ defmodule Astarte.Core.Interface.Ownership do
     end
   end
 
-  def from_int(ownership_int) when is_integer(ownership_int) do
-    case load(ownership_int) do
-      {:ok, ownership} ->
-        ownership
+  def to_int(ownership) when is_atom(ownership) do
+    dump!(ownership)
+  end
 
-      :error ->
-        raise ArgumentError,
-          message: "#{ownership_int} is not a valid ownership int representation"
-    end
+  def from_int(int) when is_integer(int) do
+    cast!(int)
   end
 end
