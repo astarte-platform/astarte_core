@@ -20,7 +20,7 @@ defmodule Astarte.Core.Mapping do
   @moduledoc """
   This module handles Interface Mappings using Ecto Changesets
   """
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
   alias Astarte.Core.CQLUtils
   alias Astarte.Core.Mapping
@@ -50,7 +50,7 @@ defmodule Astarte.Core.Mapping do
   ]
 
   @primary_key false
-  embedded_schema do
+  typed_embedded_schema do
     field :endpoint
     field :value_type, ValueType
     field :reliability, Reliability, default: :unreliable

@@ -17,14 +17,14 @@
 #
 
 defmodule Astarte.Core.Triggers.Policy.ErrorRange do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @error_range 400..599
 
   @derive Jason.Encoder
   @primary_key false
-  embedded_schema do
+  typed_embedded_schema do
     field :error_codes, {:array, :integer}
   end
 
