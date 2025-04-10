@@ -241,7 +241,7 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
              }
     end
 
-    test "works for IncomingIntrospectionEvent" do
+    test "works for IncomingIntrospectionEvent with string introspection" do
       alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
 
       introspection = "com.example.Interface:0:2;com.example.AnotherInterface:1:1"
@@ -257,6 +257,34 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
       assert roundtrip == %{
                "type" => "incoming_introspection",
                "introspection" => introspection
+             }
+    end
+
+    test "works for IncomingIntrospectionEvent with map introspection" do
+      alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
+      alias Astarte.Core.Triggers.SimpleEvents.InterfaceVersion
+
+      introspection = %{
+        "com.example.Interface" => %InterfaceVersion{major: 0, minor: 2},
+        "com.example.AnotherInterface" => %InterfaceVersion{major: 1, minor: 1}
+      }
+
+      introspection_map = %{
+        "com.example.Interface" => %{"major" => 0, "minor" => 2},
+        "com.example.AnotherInterface" => %{"major" => 1, "minor" => 1}
+      }
+
+      event = %IncomingIntrospectionEvent{
+        introspection_map: introspection
+      }
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{
+               "type" => "incoming_introspection",
+               "introspection" => introspection_map
              }
     end
 
