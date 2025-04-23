@@ -28,7 +28,6 @@ defmodule Astarte.Core.Triggers.Policy do
 
   @required_fields [
     :name,
-    :error_handlers,
     :maximum_capacity
   ]
 
