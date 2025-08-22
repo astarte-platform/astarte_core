@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.2.1-rc.0] - 2025-08-22
+### Added
+- Allow `to_int` in custom enum types to be called with valid integers
+- Allow `from_int` in custom enum types to be called with valid atoms
+- Expose a custom `@type` for all structs
+- Implement json encoder for `IncomingIntrospectionEvent`
+
 ## [1.2.0] - 2024-07-01
 
 ## [1.2.0-rc.0] - 2024-05-28
