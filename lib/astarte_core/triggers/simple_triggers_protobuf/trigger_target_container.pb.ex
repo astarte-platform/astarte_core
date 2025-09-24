@@ -1,9 +1,7 @@
 defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.TriggerTargetContainer do
   @moduledoc false
 
-  use Protobuf, protoc_gen_elixir_version: "0.11.0", syntax: :proto3
-
-  def fully_qualified_name, do: "TriggerTargetContainer"
+  use Protobuf, protoc_gen_elixir_version: "0.15.0", syntax: :proto3
 
   oneof :trigger_target, 0
 

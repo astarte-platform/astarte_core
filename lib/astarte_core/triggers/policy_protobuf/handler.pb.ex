@@ -1,9 +1,7 @@
 defmodule Astarte.Core.Triggers.PolicyProtobuf.Handler.StrategyType do
   @moduledoc false
 
-  use Protobuf, enum: true, protoc_gen_elixir_version: "0.11.0", syntax: :proto3
-
-  def fully_qualified_name, do: "Handler.StrategyType"
+  use Protobuf, enum: true, protoc_gen_elixir_version: "0.15.0", syntax: :proto3
 
   field :INVALID, 0
   field :DISCARD, 1
@@ -13,9 +11,7 @@ end
 defmodule Astarte.Core.Triggers.PolicyProtobuf.Handler do
   @moduledoc false
 
-  use Protobuf, protoc_gen_elixir_version: "0.11.0", syntax: :proto3
-
-  def fully_qualified_name, do: "Handler"
+  use Protobuf, protoc_gen_elixir_version: "0.15.0", syntax: :proto3
 
   oneof :on, 0
 

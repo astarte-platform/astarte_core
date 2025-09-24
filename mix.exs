@@ -62,7 +62,7 @@ defmodule Astarte.Core.Mixfile do
       {:ecto_morph, "~> 0.1.23"},
       {:typed_ecto_schema, "~> 0.4"},
       {:typedstruct, "~> 0.5"},
-      {:protobuf, "~> 0.12"},
+      {:protobuf, "~> 0.15"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.15", only: :test},
