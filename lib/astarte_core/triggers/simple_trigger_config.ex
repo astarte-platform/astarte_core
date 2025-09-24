@@ -30,12 +30,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
   alias Astarte.Core.Interface
   alias Astarte.Core.Triggers.SimpleTriggerConfig
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.Utils, as: SimpleTriggersUtils
-  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.AMQPTriggerTarget
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DataTrigger
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.SimpleTriggerContainer
   alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TaggedSimpleTrigger
-  alias Astarte.Core.Triggers.SimpleTriggersProtobuf.TriggerTargetContainer
 
   @primary_key false
   typed_embedded_schema do

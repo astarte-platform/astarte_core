@@ -380,7 +380,7 @@ defmodule Astarte.Core.InterfaceTest do
     }
 
     assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
-    assert {:ok, interface} = Ecto.Changeset.apply_action(changeset, :insert)
+    assert {:ok, _interface} = Ecto.Changeset.apply_action(changeset, :insert)
   end
 
   test "valid datastream interface" do
