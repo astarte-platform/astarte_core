@@ -77,6 +77,11 @@ defmodule Astarte.Core.Triggers.SimpleEvents.SimpleEvent do
     json_name: "deviceErrorEvent",
     oneof: 0
 
+  field :device_deletion_started_event, 21,
+    type: Astarte.Core.Triggers.SimpleEvents.DeviceDeletionStartedEvent,
+    json_name: "deviceDeletionStartedEvent",
+    oneof: 0
+
   field :device_deletion_finished_event, 22,
     type: Astarte.Core.Triggers.SimpleEvents.DeviceDeletionFinishedEvent,
     json_name: "deviceDeletionFinishedEvent",
