@@ -20,6 +20,7 @@ syntax = "proto3";
 
 import "lib/astarte_core/triggers/simple_events/device_connected_event.proto";
 import "lib/astarte_core/triggers/simple_events/device_disconnected_event.proto";
+import "lib/astarte_core/triggers/simple_events/device_deletion_started_event.proto";
 import "lib/astarte_core/triggers/simple_events/device_deletion_finished_event.proto";
 import "lib/astarte_core/triggers/simple_events/device_error_event.proto";
 import "lib/astarte_core/triggers/simple_events/incoming_data_event.proto";
@@ -57,6 +58,7 @@ message SimpleEvent {
         InterfaceRemovedEvent interface_removed_event = 16;
         InterfaceMinorUpdatedEvent interface_minor_updated_event = 17;
         DeviceErrorEvent device_error_event = 19;
+        DeviceDeletionStartedEvent device_deletion_started_event = 21;
         DeviceDeletionFinishedEvent device_deletion_finished_event = 22;
     }
 }
