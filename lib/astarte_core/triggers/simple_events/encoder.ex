@@ -67,6 +67,39 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     end
   end
 
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceRegisteredEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceRegisteredEvent
+
+    def encode(%DeviceRegisteredEvent{}, opts) do
+      %{
+        "type" => "device_registered"
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceDeletionStartedEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionStartedEvent
+
+    def encode(%DeviceDeletionStartedEvent{}, opts) do
+      %{
+        "type" => "device_deletion_started"
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceDeletionFinishedEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionFinishedEvent
+
+    def encode(%DeviceDeletionFinishedEvent{}, opts) do
+      %{
+        "type" => "device_deletion_finished"
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
   defimpl Jason.Encoder, for: SimpleEvents.IncomingDataEvent do
     alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
 
