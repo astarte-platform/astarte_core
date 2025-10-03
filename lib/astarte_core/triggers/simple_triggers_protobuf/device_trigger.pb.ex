@@ -12,6 +12,9 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger.DeviceEvent
   field :INTERFACE_ADDED, 6
   field :INTERFACE_REMOVED, 7
   field :INTERFACE_MINOR_UPDATED, 8
+  field :DEVICE_REGISTERED, 9
+  field :DEVICE_DELETION_STARTED, 10
+  field :DEVICE_DELETION_FINISHED, 11
 end
 
 defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger do
