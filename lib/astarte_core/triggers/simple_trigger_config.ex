@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2017 Ispirata Srl
+# Copyright 2017 - 2025 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -161,7 +161,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     "incoming_introspection" => :INCOMING_INTROSPECTION,
     "interface_added" => :INTERFACE_ADDED,
     "interface_removed" => :INTERFACE_REMOVED,
-    "interface_minor_updated" => :INTERFACE_MINOR_UPDATED
+    "interface_minor_updated" => :INTERFACE_MINOR_UPDATED,
+    "device_registered" => :DEVICE_REGISTERED,
+    "device_deletion_started" => :DEVICE_DELETION_STARTED,
+    "device_deletion_finished" => :DEVICE_DELETION_FINISHED
   }
   @device_trigger_condition_to_string %{
     :DEVICE_CONNECTED => "device_connected",
@@ -171,7 +174,10 @@ defmodule Astarte.Core.Triggers.SimpleTriggerConfig do
     :INCOMING_INTROSPECTION => "incoming_introspection",
     :INTERFACE_ADDED => "interface_added",
     :INTERFACE_REMOVED => "interface_removed",
-    :INTERFACE_MINOR_UPDATED => "interface_minor_updated"
+    :INTERFACE_MINOR_UPDATED => "interface_minor_updated",
+    :DEVICE_REGISTERED => "device_registered",
+    :DEVICE_DELETION_STARTED => "device_deletion_started",
+    :DEVICE_DELETION_FINISHED => "device_deletion_finished"
   }
 
   @allowed_trigger_types [
