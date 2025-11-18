@@ -218,7 +218,7 @@ defmodule Astarte.Core.Interface do
 
   defp validate_all_mappings_have_same_attributes(changeset) do
     mappings = get_field(changeset, :mappings, [])
-    aggregation = get_field(changeset, :aggregation, [])
+    aggregation = get_field(changeset, :aggregation, :individual)
 
     if aggregation == :object and mappings != [] do
       %Mapping{
@@ -226,7 +226,9 @@ defmodule Astarte.Core.Interface do
         reliability: reliability,
         expiry: expiry,
         allow_unset: allow_unset,
-        explicit_timestamp: explicit_timestamp
+        explicit_timestamp: explicit_timestamp,
+        database_retention_policy: database_retention_policy,
+        database_retention_ttl: database_retention_ttl
       } = List.first(mappings)
 
       all_same_attributes =
@@ -236,12 +238,16 @@ defmodule Astarte.Core.Interface do
             reliability: mapping_reliability,
             expiry: mapping_expiry,
             allow_unset: mapping_allow_unset,
-            explicit_timestamp: mapping_explicit_timestamp
+            explicit_timestamp: mapping_explicit_timestamp,
+            database_retention_policy: mapping_database_retention_policy,
+            database_retention_ttl: mapping_database_retention_ttl
           } = mapping
 
           retention == mapping_retention and reliability == mapping_reliability and
             expiry == mapping_expiry and allow_unset == mapping_allow_unset and
-            explicit_timestamp == mapping_explicit_timestamp
+            explicit_timestamp == mapping_explicit_timestamp and
+            database_retention_policy == mapping_database_retention_policy and
+            database_retention_ttl == mapping_database_retention_ttl
         end)
 
       unless all_same_attributes do
