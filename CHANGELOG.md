@@ -21,6 +21,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add events for device deletion started and finished.
 - Add event for device registration.
 
+## [1.2.1] - Unreleased
+
+### Fixed
+- [astarte_realm_management] Insufficient validation for conflicting options in interface aggregate mappings
+  [#1072](https://github.com/astarte-platform/astarte/issues/1072)
+
+## [1.2.1-rc.0] - 2025-08-22
+### Added
+- Allow `to_int` in custom enum types to be called with valid integers
+- Allow `from_int` in custom enum types to be called with valid atoms
+- Expose a custom `@type` for all structs
+- Implement json encoder for `IncomingIntrospectionEvent`
+
 ## [1.2.0] - 2024-07-01
 
 ## [1.2.0-rc.0] - 2024-05-28
