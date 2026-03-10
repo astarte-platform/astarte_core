@@ -130,7 +130,8 @@ defmodule Astarte.Core.MappingTest do
              expiry: 0,
              database_retention_policy: :no_ttl,
              database_retention_ttl: nil,
-             allow_unset: false
+             allow_unset: false,
+             required: false
            } = mapping
   end
 
@@ -200,6 +201,44 @@ defmodule Astarte.Core.MappingTest do
            } = Mapping.changeset(%Mapping{}, params, opts)
   end
 
+  test "required flag defaults to false" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/valid",
+      "type" => "string"
+    }
+
+    changeset = Mapping.changeset(%Mapping{}, params, opts)
+    {:ok, mapping} = Ecto.Changeset.apply_action(changeset, :insert)
+    assert %Mapping{required: false} = mapping
+  end
+
+  test "required flag can be set to true" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/valid",
+      "type" => "string",
+      "required" => true
+    }
+
+    assert %Ecto.Changeset{valid?: true} = Mapping.changeset(%Mapping{}, params, opts)
+  end
+
+  test "required flag with invalid value fails" do
+    opts = opts_fixture()
+
+    params = %{
+      "endpoint" => "/valid",
+      "type" => "string",
+      "required" => "not_a_boolean"
+    }
+
+    assert %Ecto.Changeset{valid?: false, errors: [required: _]} =
+             Mapping.changeset(%Mapping{}, params, opts)
+  end
+
   test "mapping from legacy database result" do
     legacy_result = [
       endpoint: "/test",
@@ -215,7 +254,8 @@ defmodule Astarte.Core.MappingTest do
       allow_unset: false,
       explicit_timestamp: true,
       endpoint_id: <<24, 101, 36, 39, 201, 240, 51, 175, 45, 122, 166, 194, 132, 91, 176, 154>>,
-      interface_id: <<3, 203, 231, 42, 212, 254, 30, 12, 159, 114, 187, 196, 29, 30, 5, 219>>
+      interface_id: <<3, 203, 231, 42, 212, 254, 30, 12, 159, 114, 187, 196, 29, 30, 5, 219>>,
+      required: nil
     ]
 
     expected_mapping = %Mapping{
@@ -231,7 +271,8 @@ defmodule Astarte.Core.MappingTest do
       description: nil,
       doc: nil,
       endpoint_id: <<24, 101, 36, 39, 201, 240, 51, 175, 45, 122, 166, 194, 132, 91, 176, 154>>,
-      interface_id: <<3, 203, 231, 42, 212, 254, 30, 12, 159, 114, 187, 196, 29, 30, 5, 219>>
+      interface_id: <<3, 203, 231, 42, 212, 254, 30, 12, 159, 114, 187, 196, 29, 30, 5, 219>>,
+      required: false
     }
 
     assert Mapping.from_db_result!(legacy_result) == expected_mapping

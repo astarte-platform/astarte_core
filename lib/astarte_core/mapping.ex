@@ -45,7 +45,8 @@ defmodule Astarte.Core.Mapping do
     :explicit_timestamp,
     :description,
     :doc,
-    :path
+    :path,
+    :required
     | @required_fields
   ]
 
@@ -64,6 +65,7 @@ defmodule Astarte.Core.Mapping do
     field :doc
     field :endpoint_id, :binary
     field :interface_id, :binary
+    field :required, :boolean, default: false
     # Legacy support
     field :path, :string, virtual: true
     # Different input naming
@@ -182,7 +184,8 @@ defmodule Astarte.Core.Mapping do
       allow_unset: allow_unset,
       explicit_timestamp: explicit_timestamp,
       endpoint_id: endpoint_id,
-      interface_id: interface_id
+      interface_id: interface_id,
+      required: required
     } = db_result
 
     database_retention_policy =
@@ -206,7 +209,8 @@ defmodule Astarte.Core.Mapping do
       endpoint_id: endpoint_id,
       interface_id: interface_id,
       doc: doc,
-      description: description
+      description: description,
+      required: Kernel.||(required, false)
     }
   end
 
@@ -259,7 +263,8 @@ defmodule Astarte.Core.Mapping do
         allow_unset: allow_unset,
         explicit_timestamp: explicit_timestamp,
         description: description,
-        doc: doc
+        doc: doc,
+        required: required
       } = mapping
 
       %{
@@ -275,6 +280,7 @@ defmodule Astarte.Core.Mapping do
       |> add_key_if_not_default(:explicit_timestamp, explicit_timestamp, false)
       |> add_key_if_not_nil(:description, description)
       |> add_key_if_not_nil(:doc, doc)
+      |> add_key_if_not_default(:required, required, false)
       |> Jason.Encoder.Map.encode(options)
     end
 
