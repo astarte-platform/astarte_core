@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add events for device deletion started and finished.
 - Add event for device registration.
 
-## [1.2.1] - Unreleased
+## [1.2.1] - 2026-03-06
 
 ### Fixed
 - [astarte_realm_management] Insufficient validation for conflicting options in interface aggregate mappings
