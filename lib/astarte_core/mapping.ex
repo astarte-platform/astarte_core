@@ -65,11 +65,11 @@ defmodule Astarte.Core.Mapping do
     field :doc
     field :endpoint_id, :binary
     field :interface_id, :binary
+    field :required, :boolean, default: false
     # Legacy support
     field :path, :string, virtual: true
     # Different input naming
     field :type, ValueType, virtual: true
-    field :required, :boolean, default: false
   end
 
   def changeset(%Mapping{} = mapping, %{} = params, opts) do
