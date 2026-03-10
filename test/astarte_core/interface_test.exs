@@ -123,6 +123,31 @@ defmodule Astarte.Core.InterfaceTest do
   }
   """
 
+  @conflicting_properties_aggregated_datastreams """
+  {
+   "interface_name": "com.secomind.Hemera.DeviceValues",
+   "version_major": 1,
+   "version_minor": 0,
+   "type": "datastream",
+   "ownership": "producer",
+   "aggregation": "object",
+   "mappings": [
+       {
+           "endpoint": "/value/first",
+           "type": "integer",
+           "database_retention_policy": "use_ttl",
+           "database_retention_ttl": 600
+       },
+       {
+           "endpoint": "/value/second",
+           "type": "integer",
+           "database_retention_policy": "use_ttl",
+           "database_retention_ttl": 300
+       }
+   ]
+  }
+  """
+
   test "aggregated datastream interface deserialization" do
     {:ok, params} = Jason.decode(@aggregated_datastream_interface_json)
 
@@ -210,6 +235,16 @@ defmodule Astarte.Core.InterfaceTest do
              Interface.changeset(%Interface{}, params)
 
     assert %Ecto.Changeset{valid?: false, errors: [endpoint: _]} = mapping_changeset
+  end
+
+  test "attributes mismatch in aggregate mappings" do
+    {:ok, params} = Jason.decode(@conflicting_properties_aggregated_datastreams)
+
+    assert %Ecto.Changeset{
+             valid?: false,
+             errors: [mappings: _]
+           } =
+             Interface.changeset(%Interface{}, params)
   end
 
   test "invalid interface name" do
@@ -380,7 +415,7 @@ defmodule Astarte.Core.InterfaceTest do
     }
 
     assert %Ecto.Changeset{valid?: true} = changeset = Interface.changeset(%Interface{}, params)
-    assert {:ok, interface} = Ecto.Changeset.apply_action(changeset, :insert)
+    assert {:ok, _interface} = Ecto.Changeset.apply_action(changeset, :insert)
   end
 
   test "valid datastream interface" do

@@ -1,9 +1,7 @@
 defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger.DeviceEventType do
   @moduledoc false
 
-  use Protobuf, enum: true, protoc_gen_elixir_version: "0.11.0", syntax: :proto3
-
-  def fully_qualified_name, do: "DeviceTrigger.DeviceEventType"
+  use Protobuf, enum: true, protoc_gen_elixir_version: "0.15.0", syntax: :proto3
 
   field :INVALID, 0
   field :DEVICE_CONNECTED, 1
@@ -14,14 +12,15 @@ defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger.DeviceEvent
   field :INTERFACE_ADDED, 6
   field :INTERFACE_REMOVED, 7
   field :INTERFACE_MINOR_UPDATED, 8
+  field :DEVICE_REGISTERED, 9
+  field :DEVICE_DELETION_STARTED, 10
+  field :DEVICE_DELETION_FINISHED, 11
 end
 
 defmodule Astarte.Core.Triggers.SimpleTriggersProtobuf.DeviceTrigger do
   @moduledoc false
 
-  use Protobuf, protoc_gen_elixir_version: "0.11.0", syntax: :proto3
-
-  def fully_qualified_name, do: "DeviceTrigger"
+  use Protobuf, protoc_gen_elixir_version: "0.15.0", syntax: :proto3
 
   field :version, 1, type: :int32, deprecated: true
 

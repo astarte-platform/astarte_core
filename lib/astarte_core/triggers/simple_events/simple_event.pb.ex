@@ -1,9 +1,7 @@
 defmodule Astarte.Core.Triggers.SimpleEvents.SimpleEvent do
   @moduledoc false
 
-  use Protobuf, protoc_gen_elixir_version: "0.11.0", syntax: :proto3
-
-  def fully_qualified_name, do: "SimpleEvent"
+  use Protobuf, protoc_gen_elixir_version: "0.15.0", syntax: :proto3
 
   oneof :event, 0
 
@@ -77,5 +75,20 @@ defmodule Astarte.Core.Triggers.SimpleEvents.SimpleEvent do
   field :device_error_event, 19,
     type: Astarte.Core.Triggers.SimpleEvents.DeviceErrorEvent,
     json_name: "deviceErrorEvent",
+    oneof: 0
+
+  field :device_registered_event, 20,
+    type: Astarte.Core.Triggers.SimpleEvents.DeviceRegisteredEvent,
+    json_name: "deviceRegisteredEvent",
+    oneof: 0
+
+  field :device_deletion_started_event, 21,
+    type: Astarte.Core.Triggers.SimpleEvents.DeviceDeletionStartedEvent,
+    json_name: "deviceDeletionStartedEvent",
+    oneof: 0
+
+  field :device_deletion_finished_event, 22,
+    type: Astarte.Core.Triggers.SimpleEvents.DeviceDeletionFinishedEvent,
+    json_name: "deviceDeletionFinishedEvent",
     oneof: 0
 end

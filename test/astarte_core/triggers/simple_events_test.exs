@@ -48,6 +48,36 @@ defmodule Astarte.Core.SimpleEventsTest do
       assert DeviceErrorEvent.decode(serialized_event) == event
     end
 
+    test "still works for DeviceRegisteredEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceRegisteredEvent
+
+      serialized_event = <<>>
+      event = %DeviceRegisteredEvent{}
+
+      assert DeviceRegisteredEvent.encode(event) == serialized_event
+      assert DeviceRegisteredEvent.decode(serialized_event) == event
+    end
+
+    test "still works for DeviceDeletionStartedEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionStartedEvent
+
+      serialized_event = <<>>
+      event = %DeviceDeletionStartedEvent{}
+
+      assert DeviceDeletionStartedEvent.encode(event) == serialized_event
+      assert DeviceDeletionStartedEvent.decode(serialized_event) == event
+    end
+
+    test "still works for DeviceDeletionFinishedEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionFinishedEvent
+
+      serialized_event = <<>>
+      event = %DeviceDeletionFinishedEvent{}
+
+      assert DeviceDeletionFinishedEvent.encode(event) == serialized_event
+      assert DeviceDeletionFinishedEvent.decode(serialized_event) == event
+    end
+
     test "still works for IncomingDataEvent" do
       alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
 

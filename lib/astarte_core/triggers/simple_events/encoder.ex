@@ -1,7 +1,7 @@
 #
 # This file is part of Astarte.
 #
-# Copyright 2018 Ispirata Srl
+# Copyright 2018 - 2025 SECO Mind Srl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -67,6 +67,39 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     end
   end
 
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceRegisteredEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceRegisteredEvent
+
+    def encode(%DeviceRegisteredEvent{}, opts) do
+      %{
+        "type" => "device_registered"
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceDeletionStartedEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionStartedEvent
+
+    def encode(%DeviceDeletionStartedEvent{}, opts) do
+      %{
+        "type" => "device_deletion_started"
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
+  defimpl Jason.Encoder, for: SimpleEvents.DeviceDeletionFinishedEvent do
+    alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionFinishedEvent
+
+    def encode(%DeviceDeletionFinishedEvent{}, opts) do
+      %{
+        "type" => "device_deletion_finished"
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
   defimpl Jason.Encoder, for: SimpleEvents.IncomingDataEvent do
     alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
 
@@ -87,8 +120,34 @@ defmodule Astarte.Core.Triggers.SimpleEvents.Encoder do
     end
   end
 
+  defimpl Jason.Encoder, for: SimpleEvents.InterfaceVersion do
+    alias SimpleEvents.InterfaceVersion
+
+    def encode(interface_version, opts) do
+      %InterfaceVersion{major: major, minor: minor} = interface_version
+
+      %{
+        "major" => major,
+        "minor" => minor
+      }
+      |> Jason.Encoder.encode(opts)
+    end
+  end
+
   defimpl Jason.Encoder, for: SimpleEvents.IncomingIntrospectionEvent do
     alias Astarte.Core.Triggers.SimpleEvents.IncomingIntrospectionEvent
+
+    def encode(%IncomingIntrospectionEvent{introspection: nil} = event, opts) do
+      %IncomingIntrospectionEvent{
+        introspection_map: introspection_map
+      } = event
+
+      %{
+        "type" => "incoming_introspection",
+        "introspection" => introspection_map
+      }
+      |> Jason.Encoder.encode(opts)
+    end
 
     def encode(%IncomingIntrospectionEvent{} = event, opts) do
       %IncomingIntrospectionEvent{
