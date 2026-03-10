@@ -1,7 +1,7 @@
 //
 // This file is part of Astarte.
 //
-// Copyright 2017 Ispirata Srl
+// Copyright 2017 - 2025 SECO Mind Srl
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ message DeviceTrigger {
         INTERFACE_ADDED = 6;
         INTERFACE_REMOVED = 7;
         INTERFACE_MINOR_UPDATED = 8;
+        DEVICE_REGISTERED = 9;
+        DEVICE_DELETION_STARTED = 10;
+        DEVICE_DELETION_FINISHED = 11;
     }
 
     DeviceEventType device_event_type = 2;

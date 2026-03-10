@@ -19,7 +19,7 @@
 #
 
 defmodule Astarte.Core.Device.Capabilities do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   alias Astarte.Core.Device.Capabilities
@@ -29,7 +29,7 @@ defmodule Astarte.Core.Device.Capabilities do
   @permitted_fields [:purge_properties_compression_format] ++ @required_fields
 
   @primary_key false
-  embedded_schema do
+  typed_embedded_schema do
     field :purge_properties_compression_format, Ecto.Enum,
       values: [zlib: 0, plaintext: 1],
       default: :zlib

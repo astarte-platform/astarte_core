@@ -22,7 +22,7 @@ defmodule Astarte.Core.Mixfile do
   def project do
     [
       app: :astarte_core,
-      version: "1.3.0-dev",
+      version: "1.4.0-dev",
       elixir: "~> 1.15",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -62,7 +62,7 @@ defmodule Astarte.Core.Mixfile do
       {:ecto_morph, "~> 0.1.23"},
       {:typed_ecto_schema, "~> 0.4"},
       {:typedstruct, "~> 0.5"},
-      {:protobuf, "~> 0.12"},
+      {:protobuf, "~> 0.15"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2"},
       {:excoveralls, "~> 0.15", only: :test},
