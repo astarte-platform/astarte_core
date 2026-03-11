@@ -80,6 +80,7 @@ defmodule Astarte.Core.Mapping do
     interface_major = Keyword.fetch!(opts, :interface_major)
     interface_id = Keyword.fetch!(opts, :interface_id)
     interface_type = Keyword.get(opts, :interface_type)
+    interface_aggregation = Keyword.get(opts, :interface_aggregation)
 
     mapping
     |> cast(params, @permitted_fields)
@@ -99,6 +100,7 @@ defmodule Astarte.Core.Mapping do
     |> validate_not_set_unless(:database_retention_policy, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:database_retention_ttl, interface_type, [:datastream, nil])
     |> validate_not_set_unless(:explicit_timestamp, interface_type, [:datastream, nil])
+    |> validate_not_set_unless(:required, interface_aggregation, [:object, nil])
     |> validate_length(:description, max: 1000)
     |> validate_length(:doc, max: 100_000)
     |> validate_database_retention_policy_and_ttl()

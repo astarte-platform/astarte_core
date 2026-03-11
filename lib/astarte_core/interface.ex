@@ -130,13 +130,15 @@ defmodule Astarte.Core.Interface do
     minor = get_field(changeset, :minor_version)
     interface_id = get_field(changeset, :interface_id)
     type = get_field(changeset, :type)
+    aggregation = get_field(changeset, :aggregation)
 
     opts = [
       interface_name: name,
       interface_major: major,
       interface_minor: minor,
       interface_id: interface_id,
-      interface_type: type
+      interface_type: type,
+      interface_aggregation: aggregation
     ]
 
     fn type, params ->
