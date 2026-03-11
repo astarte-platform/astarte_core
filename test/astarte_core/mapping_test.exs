@@ -239,6 +239,19 @@ defmodule Astarte.Core.MappingTest do
              Mapping.changeset(%Mapping{}, params, opts)
   end
 
+  test "required flag does not accept individual aggregated interfaces" do
+    opts = opts_fixture() |> Keyword.put(:interface_aggregation, :individual)
+
+    params = %{
+      "endpoint" => "/invalid",
+      "type" => "string",
+      "required" => true
+    }
+
+    assert %Ecto.Changeset{valid?: false, errors: [required: {"must be blank", _}]} =
+             Mapping.changeset(%Mapping{}, params, opts)
+  end
+
   test "mapping from legacy database result" do
     legacy_result = [
       endpoint: "/test",
@@ -282,7 +295,13 @@ defmodule Astarte.Core.MappingTest do
     interface_name = "com.Name"
     interface_major = 1
     interface_id = CQLUtils.interface_id(interface_name, interface_major)
+    interface_aggregation = :object
 
-    [interface_name: interface_name, interface_major: interface_major, interface_id: interface_id]
+    [
+      interface_name: interface_name,
+      interface_major: interface_major,
+      interface_id: interface_id,
+      interface_aggregation: interface_aggregation
+    ]
   end
 end
