@@ -53,6 +53,42 @@ defmodule Astarte.Core.SimpleEventsEncoderTest do
       assert roundtrip == %{"type" => "device_disconnected"}
     end
 
+    test "works for DeviceRegisteredEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceRegisteredEvent
+
+      event = %DeviceRegisteredEvent{}
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{"type" => "device_registered"}
+    end
+
+    test "works for DeviceDeletionStartedEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionStartedEvent
+
+      event = %DeviceDeletionStartedEvent{}
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{"type" => "device_deletion_started"}
+    end
+
+    test "works for DeviceDeletionFinishedEvent" do
+      alias Astarte.Core.Triggers.SimpleEvents.DeviceDeletionFinishedEvent
+
+      event = %DeviceDeletionFinishedEvent{}
+
+      roundtrip =
+        Jason.encode!(event)
+        |> Jason.decode!()
+
+      assert roundtrip == %{"type" => "device_deletion_finished"}
+    end
+
     test "works for IncomingDataEvent" do
       alias Astarte.Core.Triggers.SimpleEvents.IncomingDataEvent
 
