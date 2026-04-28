@@ -23,7 +23,7 @@ defmodule Astarte.Core.Triggers.DataTrigger do
   @type amqp_trigger_target :: AMQPTriggerTarget.t()
   @type known_value :: term() | nil
   @type interface_id :: :any_interface | :binary
-  @type path_match_tokens :: :any_endpoint | String.t()
+  @type path_match_tokens :: :any_endpoint | [String.t()]
   @type value_match_operator ::
           :ANY
           | :EQUAL_TO
